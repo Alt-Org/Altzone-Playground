@@ -15,7 +15,7 @@ namespace Editor.Prg.BatchBuild
     internal static class BatchBuildPlayer
     {
         private static string LOG_PREFIX = nameof(BatchBuildPlayer);
-        private static string batchBuildPlayerStatusFile = "m_BatchBuildPlayerStatus";
+        private static string batchBuildPlayerStatusFile = "m_BuildPlayerStatus";
 
         private static string _projectFolderPath =>
             Directory.GetParent(Application.dataPath)?.FullName ?? "."; // Unity Editor: <path to project folder>/Assets
@@ -56,8 +56,8 @@ namespace Editor.Prg.BatchBuild
         {
             var projectFolderPath = _projectFolderPath;
             var options = getBuildPlayerOptions(projectFolderPath, _scenes);
-            writeOutValue(projectFolderPath, "m_ProjectFolderPath", projectFolderPath);
-            writeOutValue(projectFolderPath, "m_LocationPathName", options.locationPathName);
+            writeOutValue(projectFolderPath, "m_BuildProjectFolderPath", projectFolderPath);
+            writeOutValue(projectFolderPath, "m_BuildOutputName", options.locationPathName);
             var report = BuildPipeline.BuildPlayer(options);
             var summary = report.summary;
             if (summary.result == BuildResult.Failed)
@@ -275,6 +275,7 @@ namespace Editor.Prg.BatchBuild
                 var keystoreName = Path.Combine(localFolder, $"{keystoreHandle}.keystore");
                 if (!File.Exists(keystoreName))
                 {
+                    Log($"keystoreName={keystoreName}");
                     throw new UnityException("PlayerSettings.Android.keystoreName must be set (one way or another), can not sign without it");
                 }
                 PlayerSettings.Android.keystoreName = keystoreName;
