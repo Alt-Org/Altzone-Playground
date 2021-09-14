@@ -1,1 +1,0 @@
-_build_project.bat  -rebuild -nosvn
