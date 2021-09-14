@@ -69,3 +69,14 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Intellij products project files directory
+.idea/
+
+# This Project local settings override folder: XxxTest
+**/[Rr]esources/*[Tt]est/
+**/[Rr]esources/*[Tt]est.meta
+
+# This Project local settings files: LocalConfig2.asset
+**/[Rr]esources/[Ll]ocal*.asset
+**/[Rr]esources/[Ll]ocal*.asset.meta
