@@ -9,9 +9,8 @@ Sakari Lukkaroinen
 
 <b>koodaus</b>
 Jari Petäys
-Miku Pesola
-Juha Ahonen
 Eeva Myyryläinen 
+Joni Miettinen
 
 <b>koodariharjoittelijat</b>
 Jarkko Heimokari, Behzad Veissi 
