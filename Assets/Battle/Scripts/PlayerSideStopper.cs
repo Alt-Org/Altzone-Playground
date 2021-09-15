@@ -6,53 +6,46 @@ namespace Altzone.Nelinpeli
 {
     public class PlayerSideStopper : MonoBehaviour
     {
-        
-        public OnlinePlayer player;
-        public GameObject playerobj;
+        [SerializeField] private GameObject playerplaceholder;
+        [SerializeField] private OnlinePlayer player1;
+        [SerializeField] private OnlinePlayer player2;
 
         
         void OnTriggerStay2D(Collider2D other)
         {            
             if(other.gameObject.layer == 9)
-            {
-                if (!player) {                    
-                    if (gameObject.tag == "PelaajaAlue-1")
-                    {
-                        playerobj = GameObject.FindGameObjectWithTag("Pelaaja-1");
-                        if(playerobj)
-                        {
-                            player = playerobj.GetComponent<OnlinePlayer>();
-                        }
+            {                  
+                if (gameObject.tag == "PelaajaAlue-1")
+                {
+                    if (player1 == null) {
+                        playerplaceholder = GameObject.FindGameObjectWithTag("Pelaaja-1");
+                        player1 = playerplaceholder.GetComponent<OnlinePlayer>();
+                    } else {                        
+                        player1.playerStop(2);
                     }
-                    else if (gameObject.tag == "PelaajaAlue-2")
-                    {
-                        playerobj = GameObject.FindGameObjectWithTag("Pelaaja-2");
-                        if(playerobj)
-                        {
-                            player = playerobj.GetComponent<OnlinePlayer>();
-                        }
-                    }
-                    else if (gameObject.tag == "PelaajaAlue-3")
-                    {
-                        playerobj = GameObject.FindGameObjectWithTag("Pelaaja-3");
-                        if(playerobj)
-                        {
-                            player = playerobj.GetComponent<OnlinePlayer>();
-                        }
-                    }
-                    else if (gameObject.tag == "PelaajaAlue-4")
-                    {
-                        playerobj = GameObject.FindGameObjectWithTag("Pelaaja-4");
-                        if(playerobj)
-                        {
-                            player = playerobj.GetComponent<OnlinePlayer>();
-                        }
+
+                    if (player2 == null) {
+                        playerplaceholder = GameObject.FindGameObjectWithTag("Pelaaja-3");
+                        player2 = playerplaceholder.GetComponent<OnlinePlayer>();
+                    } else {                        
+                        player2.playerStop(2);
                     }
                 }
-                
-                if (player)
+                else if (gameObject.tag == "PelaajaAlue-2")
                 {
-                    player.playerStop(2);
+                    if (player1 == null) {
+                        playerplaceholder = GameObject.FindGameObjectWithTag("Pelaaja-2");
+                        player1 = playerplaceholder.GetComponent<OnlinePlayer>();
+                    } else {                        
+                        player1.playerStop(2);
+                    }
+
+                    if (player2 == null) {
+                        playerplaceholder = GameObject.FindGameObjectWithTag("Pelaaja-4");
+                        player2 = playerplaceholder.GetComponent<OnlinePlayer>();
+                    } else {                        
+                        player2.playerStop(2);
+                    }
                 }
             }
         }

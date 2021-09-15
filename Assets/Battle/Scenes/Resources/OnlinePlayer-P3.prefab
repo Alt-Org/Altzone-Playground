@@ -103,7 +103,7 @@ MonoBehaviour:
   startPos: {x: -2.27, y: 4}
   isPlayerClamped: 0
   areaMin: {x: -5, y: 0}
-  areaMax: {x: 0, y: 8}
+  areaMax: {x: 5, y: 8}
   _camera: {fileID: 0}
   _transform: {fileID: 0}
   positionZ: 0
@@ -137,11 +137,25 @@ MonoBehaviour:
   leftShieldTransform: {fileID: 195625601585657817}
   rightShieldTransform: {fileID: 1626267763247199809}
   player: {fileID: 433104115950938568}
+  head: {fileID: 0}
+  headcollider: {fileID: 0}
+  hp4psrite: {fileID: 0}
+  hp3psrite: {fileID: 0}
+  hp2psrite: {fileID: 0}
+  hp1psrite: {fileID: 0}
+  hp0psrite: {fileID: 0}
+  radi:
+  - 0.6
+  - 0.7
+  - 0.85
+  - 1.05
+  - 1.2
   curAngle: 0
   leftCollider: {fileID: 0}
   rightCollider: {fileID: 0}
   angle: 0
   health: 0
+  sprites: []
 --- !u!114 &1890530684853703347
 MonoBehaviour:
   m_ObjectHideFlags: 0

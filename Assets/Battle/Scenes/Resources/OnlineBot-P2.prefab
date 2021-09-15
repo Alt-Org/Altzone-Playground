@@ -101,7 +101,7 @@ MonoBehaviour:
   shield: {fileID: 4131342686079256477}
   startPos: {x: 2.27, y: -4}
   isPlayerClamped: 1
-  areaMin: {x: 0, y: -8}
+  areaMin: {x: -5, y: -8}
   areaMax: {x: 5, y: 0}
   _camera: {fileID: 0}
   _transform: {fileID: 0}

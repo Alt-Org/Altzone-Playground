@@ -56,9 +56,9 @@ namespace Altzone.Nelinpeli
             {
                 targetTime = 1.0f;
             }
-            else if((source == 2) && (targetTime <= 0.2f)) 
+            else if((source == 2) && (targetTime <= 0.5f)) 
             {
-                targetTime = 0.2f;
+                targetTime = 0.5f;
             }
             
         }
@@ -132,7 +132,7 @@ namespace Altzone.Nelinpeli
                 rotator = gameObject.GetOrAddComponent<ShieldTurns>();
                 rotator.sqrMinPlayerRotationDistance = 1f * 2f;
                 rotator.sqrMaxPlayerRotationDistance = 3f * 3f;
-                rotator.sqrShieldDissappearDistance = 15f;
+                rotator.sqrShieldDissappearDistance = 5.4f;
                 rotator.shield = shield;
                 rotator.playerRotationZ = playerRotationZ;
             }
