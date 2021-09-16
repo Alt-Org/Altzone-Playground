@@ -80,7 +80,8 @@ namespace Editor
                 };
 
                 Log($"build output: {buildPlayerOptions.locationPathName}");
-                BuildPipeline.BuildPlayer(buildPlayerOptions);
+                var buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
+                Log($"build result: {buildReport.summary.result}");
             }
             finally
             {
