@@ -78,7 +78,7 @@ namespace Prg.Scripts.Common.Util
 #if UNITY_EDITOR
             if (!Debug.isDebugEnabled)
             {
-                UnityEngine.Debug.LogWarning("<b>NOTE!</b> Application logging is totally disabled");
+                UnityEngine.Debug.LogWarning($"<b>NOTE!</b> Application logging is totally disabled on platform: {Application.platform}");
             }
 #endif
         }
