@@ -18,6 +18,27 @@ namespace Editor
             .Select(x => x.path)
             .ToArray();
 
+        [MenuItem("Window/ALT-Zone/Test/Check Android Build")]
+        private static void check_Android_Build()
+        {
+            string getCurrentUser()
+            {
+                var variables = Environment.GetEnvironmentVariables();
+                foreach (var key in variables.Keys)
+                {
+                    if (key.Equals("USERNAME"))
+                    {
+                        return variables[key].ToString();
+                    }
+                }
+                throw new ArgumentException("Environment variable 'USERNAME' not found");
+            }
+
+            var keystore = Path.Combine("..", $"local_{getCurrentUser()}", "altzone.keystore");
+            configure_Android(keystore, isAppBundle: true);
+            Log($"output filename: {getOutputFile(BuildTarget.Android)}");
+        }
+
         internal static void build()
         {
             try
@@ -37,8 +58,7 @@ namespace Editor
                     case BuildTarget.Android:
                         outputDir = Path.Combine("buildAndroid", getOutputFile(args.buildTarget));
                         targetGroup = BuildTargetGroup.Android;
-                        var localFolder = getLocalFolder(args.localUser);
-                        configure_Android(passwordFolder: localFolder, keystoreFolder: localFolder, isAppBundle: true);
+                        configure_Android(args.keystore, isAppBundle: true);
                         break;
                     case BuildTarget.WebGL:
                         outputDir = "buildWebGL";
@@ -74,84 +94,74 @@ namespace Editor
 
         private static string getOutputFile(BuildTarget buildTarget)
         {
-            var filename = sanitizePath($"{Application.productName}_{Application.version}");
+            if (buildTarget == BuildTarget.WebGL)
+            {
+                return "buildWebGL";
+            }
+            var extension = "";
             switch (buildTarget)
             {
                 case BuildTarget.Android:
-                    return Path.ChangeExtension(filename, "aab");
-                case BuildTarget.WebGL:
-                    return "buildWebGL";
+                    extension = "aab";
+                    break;
                 case BuildTarget.StandaloneWindows64:
-                    return Path.ChangeExtension(filename, "exe");
+                    extension = "exe";
+                    break;
                 default:
-                    return "";
+                    throw new UnityException($"getOutputFile: build target '{buildTarget}' not supported");
             }
+            var filename = sanitizePath($"{Application.productName}_{Application.version}_{PlayerSettings.Android.bundleVersionCode}.{extension}");
+            return filename;
         }
 
-        private static string getLocalFolder(string user)
+        private static void configure_Android(string keystore, bool isAppBundle)
         {
-            // For now local folder for passwords etc. should be one level up from current working folder and starting with "local_"
-            return Path.Combine("..", $"local_{user}");
-        }
-
-        private static void configure_Android(string passwordFolder, string keystoreFolder, bool isAppBundle)
-        {
-            string getLocalPasswordFor(string filename)
+            string getLocalPasswordFor(string folder, string filename)
             {
-                var file = Path.Combine(passwordFolder, filename);
+                var file = Path.Combine(folder, filename);
                 if (File.Exists(file))
                 {
                     return File.ReadAllLines(file)[0];
                 }
-                return "--- password file not found ---";
+                throw new UnityException($"getLocalPasswordFor: file '{file}' not found");
             }
 
             void logObfuscated(string name, string value)
             {
-                string result;
-                if (value == null || value.Length < 9)
-                {
-                    result = "******";
-                }
-                else
-                {
-                    result = value.Substring(0, 3) + "******" + value.Substring(value.Length - 3);
-                }
+                var result = (value == null || value.Length < 9)
+                    ? "******"
+                    : value.Substring(0, 3) + "******" + value.Substring(value.Length - 3);
                 Log($"{name}={result}");
             }
 
+            // Enable application signing with a custom keystore!
+            // - Android.keystoreName : as command line parameter
+            // - keystorePass : read from keystore folder
+            // - Android.keyaliasName : product name in lowercase
+            // - keyaliasPass : read from keystore folder
+
             Log("configure_Android");
-            EditorUserBuildSettings.buildAppBundle = isAppBundle;
+            PlayerSettings.Android.keystoreName = keystore;
+            Log($"keystoreName={PlayerSettings.Android.keystoreName}");
+
+            EditorUserBuildSettings.buildAppBundle = isAppBundle; // For Google Play this must be always true!
             Log($"buildAppBundle={EditorUserBuildSettings.buildAppBundle}");
             PlayerSettings.Android.useCustomKeystore = true;
             Log($"useCustomKeystore={PlayerSettings.Android.useCustomKeystore}");
-
-            // Check and configure:
-            // - Android.keystoreName + keystorePass
-            // - Android.keyaliasName + keyaliasPass
-            var keystoreName = Application.productName.ToLower().Replace(" ", "_");
-            if (isAppBundle || string.IsNullOrWhiteSpace(PlayerSettings.Android.keystoreName))
-            {
-                var keystorePath = Path.Combine(keystoreFolder, $"{keystoreName}.keystore");
-                PlayerSettings.Android.keystoreName = keystorePath;
-            }
-            if (isAppBundle || string.IsNullOrWhiteSpace(PlayerSettings.Android.keyaliasName))
-            {
-                PlayerSettings.Android.keyaliasName = Application.productName.ToLower();
-            }
-            Log($"keystoreName={PlayerSettings.Android.keystoreName}");
+            PlayerSettings.Android.keyaliasName = Application.productName.ToLower();
             Log($"keyaliasName={PlayerSettings.Android.keyaliasName}");
-
-            Log($"passwordFolder={passwordFolder}");
-            PlayerSettings.keystorePass = getLocalPasswordFor("keystore_password");
-            logObfuscated("keystorePass", PlayerSettings.keystorePass);
-            PlayerSettings.keyaliasPass = getLocalPasswordFor("alias_password");
-            logObfuscated("keyaliasPass", PlayerSettings.keyaliasPass);
 
             if (!File.Exists(PlayerSettings.Android.keystoreName))
             {
-                throw new UnityException("PlayerSettings.Android.keystoreName must be set (one way or another), can not sign without it");
+                throw new UnityException($"Keystore file '{keystore}' not found, can not sign without it");
             }
+
+            var passwordFolder = Path.GetDirectoryName(keystore);
+            Log($"passwordFolder={passwordFolder}");
+            PlayerSettings.keystorePass = getLocalPasswordFor(passwordFolder, "keystore_password");
+            logObfuscated("keystorePass", PlayerSettings.keystorePass);
+            PlayerSettings.keyaliasPass = getLocalPasswordFor(passwordFolder, "alias_password");
+            logObfuscated("keyaliasPass", PlayerSettings.keyaliasPass);
         }
 
         private static string sanitizePath(string path)
@@ -198,14 +208,14 @@ namespace Editor
 
         private class CommandLine
         {
-            public readonly string localUser;
+            public readonly string keystore;
             public readonly string projectPath;
             public readonly BuildTarget buildTarget;
             public readonly bool isDevelopmentBuild;
 
-            private CommandLine(string localUser, string projectPath, BuildTarget buildTarget, bool isDevelopmentBuild)
+            private CommandLine(string keystore, string projectPath, BuildTarget buildTarget, bool isDevelopmentBuild)
             {
-                this.localUser = localUser;
+                this.keystore = keystore;
                 this.projectPath = projectPath;
                 this.buildTarget = buildTarget;
                 this.isDevelopmentBuild = isDevelopmentBuild;
@@ -213,32 +223,13 @@ namespace Editor
 
             public override string ToString()
             {
-                return $"{nameof(localUser)}: {localUser}, {nameof(projectPath)}: {projectPath}, {nameof(buildTarget)}: {buildTarget}, {nameof(isDevelopmentBuild)}: {isDevelopmentBuild}";
+                return
+                    $"{nameof(keystore)}: {keystore}, {nameof(projectPath)}: {projectPath}, {nameof(buildTarget)}: {buildTarget}, {nameof(isDevelopmentBuild)}: {isDevelopmentBuild}";
             }
 
             public static CommandLine Parse(string[] args)
             {
-                string getCurrentUser()
-                {
-                    var variables = Environment.GetEnvironmentVariables();
-                    foreach (var key in variables.Keys)
-                    {
-                        if (key.Equals("USERNAME"))
-                        {
-                            return variables[key].ToString();
-                        }
-                    }
-                    foreach (var key in variables.Keys)
-                    {
-                        if (key.Equals("COMPUTERNAME"))
-                        {
-                            return variables[key].ToString();
-                        }
-                    }
-                    return "noname";
-                }
-
-                var localUserOverride = "";
+                var keystore = "";
                 var projectPath = "./";
                 var _buildTarget = BuildTarget.StandaloneWindows64.ToString();
                 var isDevelopmentBuild = false;
@@ -248,9 +239,9 @@ namespace Editor
                     var arg = args[i];
                     switch (arg)
                     {
-                        case "-username":
+                        case "-keystore":
                             i += 1;
-                            localUserOverride = args[i];
+                            keystore = args[i];
                             break;
                         case "-buildTarget":
                             i += 1;
@@ -274,8 +265,7 @@ namespace Editor
                         throw new ArgumentException($"Invalid BuildTarget: {_buildTarget}");
                     }
                 }
-                var localUser = !string.IsNullOrEmpty(localUserOverride) ? localUserOverride : getCurrentUser();
-                return new CommandLine(localUser, projectPath, buildTarget, isDevelopmentBuild);
+                return new CommandLine(keystore, projectPath, buildTarget, isDevelopmentBuild);
             }
         }
     }
