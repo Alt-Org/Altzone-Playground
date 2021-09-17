@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -18,6 +19,10 @@ namespace Editor
     {
         private const string LOG_PREFIX = nameof(TeamCity);
 
+        private const string OUTPUT_ANDROID = "buildAndroid";
+        private const string OUTPUT_WEBGL = "buildWebGL";
+        private const string OUTPUT_WIN64 = "buildWin64";
+
         private static readonly List<string> logMessages = new List<string>();
 
         private static string[] _scenes => EditorBuildSettings.scenes
@@ -28,24 +33,68 @@ namespace Editor
         [MenuItem("Window/ALT-Zone/Build/Check Android Build")]
         private static void check_Android_Build()
         {
-            string getCurrentUser()
-            {
-                var variables = Environment.GetEnvironmentVariables();
-                foreach (var key in variables.Keys)
-                {
-                    if (key.Equals("USERNAME"))
-                    {
-                        return variables[key].ToString();
-                    }
-                }
-                throw new ArgumentException("Environment variable 'USERNAME' not found");
-            }
-
             // We assume that local keystore and password folder is one level up from current working directory
             // - that should be UNITY project folder
             var keystore = Path.Combine("..", $"local_{getCurrentUser()}", "altzone.keystore");
             configure_Android(keystore);
             Log($"output filename: {getOutputFile(BuildTarget.Android)}");
+        }
+
+        [MenuItem("Window/ALT-Zone/Build/Android Build Post Processing")]
+        private static void fix_Android_Build()
+        {
+            // TODO: tasks for post processing
+            // - should re-compress Symbols.zip
+            // - select which track to use from command line
+            // - should upload app bundle, mappings and symbols to test track
+        }
+
+        [MenuItem("Window/ALT-Zone/Build/WebGL Build Post Processing")]
+        private static void fix_WebGL_Build()
+        {
+            void patchIndexHtml(string htmlFile, string appName, string appVersion)
+            {
+                var htmlContent = File.ReadAllText(htmlFile);
+                var oldTitleText = $"<div class=\"title\">{appName}</div>";
+                var newTitleText = $"<div class=\"title\">{appName} {appVersion}</div>";
+                var newHtmlContent = htmlContent.Replace(oldTitleText, newTitleText);
+                if (newHtmlContent == htmlContent)
+                {
+                    Log($"COULD NOT update file {htmlFile}, old title should be '{oldTitleText}'");
+                    return;
+                }
+                Log($"update file {htmlFile}");
+                Log($"old html title '{oldTitleText}'");
+                Log($"new html title '{newTitleText}'");
+                File.WriteAllText(htmlFile, newHtmlContent);
+            }
+
+            void copyFilesRecursively(DirectoryInfo source, DirectoryInfo target, ref int copyCount)
+            {
+                foreach (var dir in source.GetDirectories())
+                {
+                    copyFilesRecursively(dir, target.CreateSubdirectory(dir.Name), ref copyCount);
+                }
+                foreach (var file in source.GetFiles())
+                {
+                    file.CopyTo(Path.Combine(target.FullName, file.Name), overwrite: true);
+                    copyCount += 1;
+                }
+            }
+
+            var indexHtml = Path.Combine(OUTPUT_WEBGL, "index.html");
+            var curName = Application.productName;
+            var newVersion = $"{Application.version} {PlayerSettings.Android.bundleVersionCode}";
+            patchIndexHtml(indexHtml, curName, newVersion);
+
+            var dropBoxOut = $@"C:\Users\{getCurrentUser()}\Dropbox\tekstit\altgame\BuildWebGL";
+            if (Directory.Exists(dropBoxOut))
+            {
+                Log($"copy output files to {dropBoxOut}");
+                var fileCount = 0;
+                copyFilesRecursively(new DirectoryInfo(OUTPUT_WEBGL), new DirectoryInfo(dropBoxOut), ref fileCount);
+                Log($"copied file count is {fileCount}");
+            }
         }
 
         [MenuItem("Window/ALT-Zone/Build/Create Build Script")]
@@ -115,16 +164,16 @@ echo *
                 switch (args.buildTarget)
                 {
                     case BuildTarget.Android:
-                        outputDir = Path.Combine("buildAndroid", getOutputFile(args.buildTarget));
+                        outputDir = Path.Combine(OUTPUT_ANDROID, getOutputFile(args.buildTarget));
                         targetGroup = BuildTargetGroup.Android;
                         configure_Android(args.keystoreName);
                         break;
                     case BuildTarget.WebGL:
-                        outputDir = "buildWebGL";
+                        outputDir = OUTPUT_WEBGL;
                         targetGroup = BuildTargetGroup.WebGL;
                         break;
                     case BuildTarget.StandaloneWindows64:
-                        outputDir = Path.Combine("buildWin64", getOutputFile(args.buildTarget));
+                        outputDir = Path.Combine(OUTPUT_WIN64, getOutputFile(args.buildTarget));
                         targetGroup = BuildTargetGroup.Standalone;
                         break;
                     default:
@@ -141,11 +190,25 @@ echo *
                 };
 
                 Log($"build output: {buildPlayerOptions.locationPathName}");
+                if (Directory.Exists(buildPlayerOptions.locationPathName))
+                {
+                    Directory.Delete(buildPlayerOptions.locationPathName, recursive: true);
+                }
                 var buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
-                Log($"build result: {buildReport.summary.result}");
-                if (buildReport.summary.result != BuildResult.Succeeded)
+                var summary = buildReport.summary;
+                Log($"build result: {summary.result}");
+                if (summary.result != BuildResult.Succeeded)
                 {
                     EditorApplication.Exit(1);
+                }
+                // Post processing after successful build
+                if (summary.platform == BuildTarget.Android)
+                {
+                    fix_Android_Build();
+                }
+                else if (summary.platform == BuildTarget.WebGL)
+                {
+                    fix_WebGL_Build();
                 }
             }
             finally
@@ -254,17 +317,31 @@ echo *
             return path;
         }
 
+        private static string getCurrentUser()
+        {
+            var variables = Environment.GetEnvironmentVariables();
+            foreach (var key in variables.Keys)
+            {
+                if (key.Equals("USERNAME"))
+                {
+                    return variables[key].ToString();
+                }
+            }
+            throw new ArgumentException("Environment variable 'USERNAME' not found");
+        }
+
         private static void dumpEnvironment()
         {
             var variables = Environment.GetEnvironmentVariables();
             var keys = variables.Keys.Cast<string>().ToList();
             keys.Sort();
-            Log($"GetEnvironmentVariables: {variables.Count}");
+            var builder = new StringBuilder($"GetEnvironmentVariables: {variables.Count}");
             foreach (var key in keys)
             {
                 var value = variables[key];
-                Log($"{key}={value}");
+                builder.AppendLine().Append($"{key}={value}");
             }
+            Log(builder.ToString());
         }
 
         private static void Log(string message)
