@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
 
 namespace Editor
 {
+    /// <summary>
+    /// Utility class to perform command line builds.
+    /// </summary>
+    /// <remarks>
+    /// Should be compatible with CI systems.
+    /// </remarks>
     internal static class TeamCity
     {
         private const string LOG_PREFIX = nameof(TeamCity);
@@ -18,7 +25,7 @@ namespace Editor
             .Select(x => x.path)
             .ToArray();
 
-        [MenuItem("Window/ALT-Zone/Test/Check Android Build")]
+        [MenuItem("Window/ALT-Zone/Build/Check Android Build")]
         private static void check_Android_Build()
         {
             string getCurrentUser()
@@ -34,9 +41,61 @@ namespace Editor
                 throw new ArgumentException("Environment variable 'USERNAME' not found");
             }
 
+            // We assume that local keystore and password folder is one level up from current working directory
+            // - that should be UNITY project folder
             var keystore = Path.Combine("..", $"local_{getCurrentUser()}", "altzone.keystore");
-            configure_Android(keystore, isAppBundle: true);
+            configure_Android(keystore);
             Log($"output filename: {getOutputFile(BuildTarget.Android)}");
+        }
+
+        [MenuItem("Window/ALT-Zone/Build/Create Build Script")]
+        private static void create_Build_Test_Script()
+        {
+            const string name = "m_BuildScript.bat";
+            const string script = @"@echo off
+set UNITY=C:\Program Files\Unity\Hub\Editor\2019.4.28f1\Editor\Unity.exe
+
+set BUILDTARGET=%1
+if ""%BUILDTARGET%"" == ""Win64"" goto :valid_build
+if ""%BUILDTARGET%"" == ""Android"" goto :valid_build
+if ""%BUILDTARGET%"" == ""WebGL"" goto :valid_build
+echo *
+echo * Can not build: invalid build target '%BUILDTARGET%'
+echo *
+echo * Build target must be one of UNITY command line build target:
+echo *
+echo *	Win64
+echo *	Android
+echo *	WebGL
+echo *
+goto :eof
+
+:valid_build
+
+set PROJECTPATH=./
+set METHOD=Editor.TeamCity.build
+set LOGFILE=m_Build_%BUILDTARGET%.log
+if ""%BUILDTARGET%"" == ""Android"" (
+    set ANDROID_KEYSTORE=-keystore ..\local_%USERNAME%\altzone.keystore
+)
+rem try to simulate TeamCity invocation
+set CUSTOM_OPTIONS=%ANDROID_KEYSTORE%
+set UNITY_OPTIONS=-batchmode -projectPath %PROJECTPATH% -buildTarget %BUILDTARGET% -executeMethod %METHOD% %CUSTOM_OPTIONS% -quit -logFile ""%LOGFILE%""
+
+echo Start build
+echo ""%UNITY%"" %UNITY_OPTIONS%
+""%UNITY%"" %UNITY_OPTIONS%
+set RESULT=%ERRORLEVEL%
+if ""%RESULT%"" == ""0"" (
+    echo Build done, check log for results
+    goto :eof
+)
+echo *
+echo * Build FAILED with %RESULT%, check log for errors
+echo *
+";
+            File.WriteAllText(name, script);
+            UnityEngine.Debug.Log($"Build script '{name}' written");
         }
 
         internal static void build()
@@ -51,23 +110,25 @@ namespace Editor
                 {
                     buildOptions |= BuildOptions.Development;
                 }
-                var outputDir = "";
-                var targetGroup = BuildTargetGroup.Unknown;
+                string outputDir;
+                BuildTargetGroup targetGroup;
                 switch (args.buildTarget)
                 {
                     case BuildTarget.Android:
                         outputDir = Path.Combine("buildAndroid", getOutputFile(args.buildTarget));
                         targetGroup = BuildTargetGroup.Android;
-                        configure_Android(args.keystore, isAppBundle: true);
+                        configure_Android(args.keystoreName);
                         break;
                     case BuildTarget.WebGL:
                         outputDir = "buildWebGL";
                         targetGroup = BuildTargetGroup.WebGL;
                         break;
                     case BuildTarget.StandaloneWindows64:
-                        outputDir = Path.Combine("buildWindows64", getOutputFile(args.buildTarget));
+                        outputDir = Path.Combine("buildWin64", getOutputFile(args.buildTarget));
                         targetGroup = BuildTargetGroup.Standalone;
                         break;
+                    default:
+                        throw new UnityException($"build target '{args.buildTarget}' not supported");
                 }
                 // Output (artifacts) should be inside project folder for CI systems to find them
                 var buildPlayerOptions = new BuildPlayerOptions
@@ -82,6 +143,10 @@ namespace Editor
                 Log($"build output: {buildPlayerOptions.locationPathName}");
                 var buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
                 Log($"build result: {buildReport.summary.result}");
+                if (buildReport.summary.result != BuildResult.Succeeded)
+                {
+                    EditorApplication.Exit(1);
+                }
             }
             finally
             {
@@ -99,7 +164,7 @@ namespace Editor
             {
                 return "buildWebGL";
             }
-            var extension = "";
+            string extension;
             switch (buildTarget)
             {
                 case BuildTarget.Android:
@@ -115,7 +180,7 @@ namespace Editor
             return filename;
         }
 
-        private static void configure_Android(string keystore, bool isAppBundle)
+        private static void configure_Android(string keystore)
         {
             string getLocalPasswordFor(string folder, string filename)
             {
@@ -145,7 +210,7 @@ namespace Editor
             PlayerSettings.Android.keystoreName = keystore;
             Log($"keystoreName={PlayerSettings.Android.keystoreName}");
 
-            EditorUserBuildSettings.buildAppBundle = isAppBundle; // For Google Play this must be always true!
+            EditorUserBuildSettings.buildAppBundle = true; // For Google Play this must be always true!
             Log($"buildAppBundle={EditorUserBuildSettings.buildAppBundle}");
             PlayerSettings.Android.useCustomKeystore = true;
             Log($"useCustomKeystore={PlayerSettings.Android.useCustomKeystore}");
@@ -157,6 +222,7 @@ namespace Editor
                 throw new UnityException($"Keystore file '{keystore}' not found, can not sign without it");
             }
 
+            // Password files must be in same folder where keystore is!
             var passwordFolder = Path.GetDirectoryName(keystore);
             Log($"passwordFolder={passwordFolder}");
             PlayerSettings.keystorePass = getLocalPasswordFor(passwordFolder, "keystore_password");
@@ -207,66 +273,75 @@ namespace Editor
             logMessages.Add(message);
         }
 
+        /// <summary>
+        /// CommandLine class to parse and hold UNITY standard command line parameters and some custom build parameters.
+        /// </summary>
         private class CommandLine
         {
-            public readonly string keystore;
+            // Standard UNITY command line parameters.
             public readonly string projectPath;
             public readonly BuildTarget buildTarget;
+
+            // Custom build parameters.
+            public readonly string keystoreName;
             public readonly bool isDevelopmentBuild;
 
-            private CommandLine(string keystore, string projectPath, BuildTarget buildTarget, bool isDevelopmentBuild)
+            private CommandLine(string projectPath, BuildTarget buildTarget, string keystoreName, bool isDevelopmentBuild)
             {
-                this.keystore = keystore;
                 this.projectPath = projectPath;
                 this.buildTarget = buildTarget;
+                this.keystoreName = keystoreName;
                 this.isDevelopmentBuild = isDevelopmentBuild;
             }
 
             public override string ToString()
             {
                 return
-                    $"{nameof(keystore)}: {keystore}, {nameof(projectPath)}: {projectPath}, {nameof(buildTarget)}: {buildTarget}, {nameof(isDevelopmentBuild)}: {isDevelopmentBuild}";
+                    $"{nameof(projectPath)}: {projectPath}, {nameof(buildTarget)}: {buildTarget}, {nameof(keystoreName)}: {keystoreName}, {nameof(isDevelopmentBuild)}: {isDevelopmentBuild}";
             }
+
+            // Build target parameter mapping
+            // See: https://docs.unity3d.com/Manual/CommandLineArguments.html
+            // See: https://docs.unity3d.com/2019.4/Documentation/ScriptReference/BuildTarget.html
+            private static readonly Dictionary<string, BuildTarget> knownBuildTargets = new Dictionary<string, BuildTarget>
+            {
+                { "Win64", BuildTarget.StandaloneWindows64 },
+                { "Android", BuildTarget.Android },
+                { "WebGL", BuildTarget.WebGL },
+            };
 
             public static CommandLine Parse(string[] args)
             {
-                var keystore = "";
                 var projectPath = "./";
-                var _buildTarget = BuildTarget.StandaloneWindows64.ToString();
+                var buildTarget = BuildTarget.StandaloneWindows64;
+                var keystore = "";
                 var isDevelopmentBuild = false;
-                var iMax = args.Length - 1;
-                for (var i = 0; i <= iMax; ++i)
+                for (var i = 0; i < args.Length; ++i)
                 {
                     var arg = args[i];
                     switch (arg)
                     {
-                        case "-keystore":
+                        case "-projectPath":
                             i += 1;
-                            keystore = args[i];
+                            projectPath = args[i];
                             break;
                         case "-buildTarget":
                             i += 1;
-                            _buildTarget = args[i];
+                            if (!knownBuildTargets.TryGetValue(args[i], out buildTarget))
+                            {
+                                throw new ArgumentException($"BuildTarget '{args[i]}' is invalid or unsupported");
+                            }
+                            break;
+                        case "-keystore":
+                            i += 1;
+                            keystore = args[i];
                             break;
                         case "-DevelopmentBuild":
                             isDevelopmentBuild = true;
                             break;
                     }
                 }
-                // https://docs.unity3d.com/2019.4/Documentation/ScriptReference/BuildTarget.html
-                if (!Enum.TryParse<BuildTarget>(_buildTarget, true, out var buildTarget))
-                {
-                    if (_buildTarget == "Win64")
-                    {
-                        buildTarget = BuildTarget.StandaloneWindows64; // Patch TeamCity predefined "Build target" selection
-                    }
-                    else
-                    {
-                        Log($"Invalid BuildTarget: {_buildTarget}");
-                        throw new ArgumentException($"Invalid BuildTarget: {_buildTarget}");
-                    }
-                }
-                return new CommandLine(keystore, projectPath, buildTarget, isDevelopmentBuild);
+                return new CommandLine(projectPath, buildTarget, keystore, isDevelopmentBuild);
             }
         }
     }
