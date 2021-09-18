@@ -13,7 +13,8 @@ namespace Editor
     /// Utility class to perform command line builds.
     /// </summary>
     /// <remarks>
-    /// Should be compatible with CI systems.
+    /// Should be compatible with CI systems.<br />
+    /// For example TeamCity, Jenkins and CircleCI are some well known CI/CD systems.
     /// </remarks>
     internal static class TeamCity
     {
@@ -24,6 +25,8 @@ namespace Editor
         private const string OUTPUT_WIN64 = "buildWin64";
 
         private static readonly List<string> logMessages = new List<string>();
+
+        private static string outputBaseFilename => $"{Application.productName}_{Application.version}_{PlayerSettings.Android.bundleVersionCode}";
 
         private static string[] _scenes => EditorBuildSettings.scenes
             .Where(x => x.enabled)
@@ -47,16 +50,81 @@ namespace Editor
             // - should re-compress Symbols.zip
             // - select which track to use from command line
             // - should upload app bundle, mappings and symbols to test track
+            const string name = "m_BuildScript_PostProcess.bat";
+            const string script = @"@echo off
+set BUILD_DIR=BuildAndroid
+set DROPBOX_DIR=C:\Users\%USERNAME%\Dropbox\tekstit\altgame\BuildAndroid
+set ZIP=C:\Program Files\7-Zip\7z.exe
+
+echo BUILD_DIR=%BUILD_DIR%
+echo DROPBOX_DIR=%DROPBOX_DIR%
+echo ZIP=%ZIP%
+
+if not exist ""%BUILD_DIR%"" (
+    goto :eof
+)
+
+if not exist ""%ZIP%"" (
+    echo ZIP not found
+    goto :dropbox
+)
+:zip_symbols
+set SYMBOLS_STORED=%BUILD_DIR%\altzone_21.09.17_11-21.09.17-v11.symbols.zip
+set SYMBOLS_DEFLATED=%BUILD_DIR%\altzone_21.09.17_11-21.09.17-v11.symbols.deflate.zip
+if not exist ""%SYMBOLS_STORED%"" (
+    echo No symbols.zip file found
+    goto :dropbox
+)
+
+set TEMP_SYMBOLS=%BUILD_DIR%\temp_symbols
+echo UNZIP symbols to %TEMP_SYMBOLS%
+if exist ""%TEMP_SYMBOLS%"" rmdir /S /Q ""%TEMP_SYMBOLS%""
+""%ZIP%"" x -y -o""%TEMP_SYMBOLS%"" ""%SYMBOLS_STORED%""
+set RESULT=%ERRORLEVEL%
+echo UNZIP result %RESULT%
+if not ""%RESULT%"" == ""0"" (
+    echo UNZIP symbols failed
+    exit /B 1
+)
+
+echo ZIP deflate symbols
+if exist %SYMBOLS_DEFLATED% del /Q %SYMBOLS_DEFLATED%
+""%ZIP%"" a -y -bd ""%SYMBOLS_DEFLATED%"" "".\%TEMP_SYMBOLS%\*""
+set RESULT=%ERRORLEVEL%
+echo ZIP result %RESULT%
+if not ""%RESULT%"" == ""0"" (
+    echo ZIP deflate symbols failed
+    exit /B 1
+)
+echo clean up temp dir
+if exist ""%SYMBOLS_STORED%"" del /Q ""%SYMBOLS_STORED%""
+if exist ""%TEMP_SYMBOLS%"" rmdir /S /Q ""%TEMP_SYMBOLS%""
+goto :dropbox
+
+:dropbox
+if not exist ""%DROPBOX_DIR%"" (
+    goto :eof
+)
+if ""%LOGFILE%""  == """" (
+    set LOGFILE=%0.log
+)
+robocopy ""%BUILD_DIR%"" ""%DROPBOX_DIR%"" /S /E /V /NP /R:0 /W:0 /LOG+:%LOGFILE%
+set RESULT=%ERRORLEVEL%
+echo ROBOCOPY result %RESULT%
+goto :eof
+";
+            File.WriteAllText(name, script);
+            UnityEngine.Debug.Log($"PostProcess script '{name}' written");
         }
 
         [MenuItem("Window/ALT-Zone/Build/WebGL Build Post Processing")]
         private static void fix_WebGL_Build()
         {
-            void patchIndexHtml(string htmlFile, string appName, string appVersion)
+            void patchIndexHtml(string htmlFile, string curTitle, string newTitle)
             {
                 var htmlContent = File.ReadAllText(htmlFile);
-                var oldTitleText = $"<div class=\"title\">{appName}</div>";
-                var newTitleText = $"<div class=\"title\">{appName} {appVersion}</div>";
+                var oldTitleText = $"<div class=\"title\">{curTitle}</div>";
+                var newTitleText = $"<div class=\"title\">{newTitle}</div>";
                 var newHtmlContent = htmlContent.Replace(oldTitleText, newTitleText);
                 if (newHtmlContent == htmlContent)
                 {
@@ -69,32 +137,28 @@ namespace Editor
                 File.WriteAllText(htmlFile, newHtmlContent);
             }
 
-            void copyFilesRecursively(DirectoryInfo source, DirectoryInfo target, ref int copyCount)
-            {
-                foreach (var dir in source.GetDirectories())
-                {
-                    copyFilesRecursively(dir, target.CreateSubdirectory(dir.Name), ref copyCount);
-                }
-                foreach (var file in source.GetFiles())
-                {
-                    file.CopyTo(Path.Combine(target.FullName, file.Name), overwrite: true);
-                    copyCount += 1;
-                }
-            }
-
             var indexHtml = Path.Combine(OUTPUT_WEBGL, "index.html");
             var curName = Application.productName;
-            var newVersion = $"{Application.version} {PlayerSettings.Android.bundleVersionCode}";
-            patchIndexHtml(indexHtml, curName, newVersion);
+            var newName = $"{Application.productName} {Application.version} {PlayerSettings.Android.bundleVersionCode}";
+            patchIndexHtml(indexHtml, curName, newName);
 
-            var dropBoxOut = $@"C:\Users\{getCurrentUser()}\Dropbox\tekstit\altgame\BuildWebGL";
-            if (Directory.Exists(dropBoxOut))
-            {
-                Log($"copy output files to {dropBoxOut}");
-                var fileCount = 0;
-                copyFilesRecursively(new DirectoryInfo(OUTPUT_WEBGL), new DirectoryInfo(dropBoxOut), ref fileCount);
-                Log($"copied file count is {fileCount}");
-            }
+            const string name = "m_BuildScript_PostProcess.bat";
+            const string script = @"@echo off
+set BUILD_DIR=BuildWebGL
+set DROPBOX_DIR=C:\Users\%USERNAME%\Dropbox\tekstit\altgame\BuildWebGL
+echo BUILD_DIR=%BUILD_DIR%
+echo DROPBOX_DIR=%DROPBOX_DIR%
+if not exist %DROPBOX_DIR% (
+    goto :eof
+)
+if ""%LOGFILE%""  == """" (
+    set LOGFILE=%0.log
+)
+robocopy %BUILD_DIR% %DROPBOX_DIR% /S /E /V /NP /R:0 /W:0 /LOG+:%LOGFILE%
+goto :eof
+";
+            File.WriteAllText(name, script);
+            UnityEngine.Debug.Log($"PostProcess script '{name}' written");
         }
 
         [MenuItem("Window/ALT-Zone/Build/Create Build Script")]
@@ -135,13 +199,21 @@ echo Start build
 echo ""%UNITY%"" %UNITY_OPTIONS%
 ""%UNITY%"" %UNITY_OPTIONS%
 set RESULT=%ERRORLEVEL%
-if ""%RESULT%"" == ""0"" (
+if not ""%RESULT%"" == ""0"" (
+    echo *
+    echo * Build FAILED with %RESULT%, check log for errors
+    echo *
+    goto :eof
+)
+if not exist m_BuildScript_PostProcess.bat (
     echo Build done, check log for results
     goto :eof
 )
+echo Build done, start post processing
 echo *
-echo * Build FAILED with %RESULT%, check log for errors
+call m_BuildScript_PostProcess.bat
 echo *
+echo Post processing done
 ";
             File.WriteAllText(name, script);
             UnityEngine.Debug.Log($"Build script '{name}' written");
@@ -239,7 +311,7 @@ echo *
                 default:
                     throw new UnityException($"getOutputFile: build target '{buildTarget}' not supported");
             }
-            var filename = sanitizePath($"{Application.productName}_{Application.version}_{PlayerSettings.Android.bundleVersionCode}.{extension}");
+            var filename = sanitizePath($"{outputBaseFilename}.{extension}");
             return filename;
         }
 
