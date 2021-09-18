@@ -46,73 +46,8 @@ namespace Editor
         [MenuItem("Window/ALT-Zone/Build/Android Build Post Processing")]
         private static void fix_Android_Build()
         {
-            // TODO: tasks for post processing
-            // - should re-compress Symbols.zip
-            // - select which track to use from command line
-            // - should upload app bundle, mappings and symbols to test track
             const string name = "m_BuildScript_PostProcess.bat";
-            const string script = @"@echo off
-set BUILD_DIR=BuildAndroid
-set DROPBOX_DIR=C:\Users\%USERNAME%\Dropbox\tekstit\altgame\BuildAndroid
-set ZIP=C:\Program Files\7-Zip\7z.exe
-
-echo BUILD_DIR=%BUILD_DIR%
-echo DROPBOX_DIR=%DROPBOX_DIR%
-echo ZIP=%ZIP%
-
-if not exist ""%BUILD_DIR%"" (
-    goto :eof
-)
-
-if not exist ""%ZIP%"" (
-    echo ZIP not found
-    goto :dropbox
-)
-:zip_symbols
-set SYMBOLS_STORED=%BUILD_DIR%\altzone_21.09.17_11-21.09.17-v11.symbols.zip
-set SYMBOLS_DEFLATED=%BUILD_DIR%\altzone_21.09.17_11-21.09.17-v11.symbols.deflate.zip
-if not exist ""%SYMBOLS_STORED%"" (
-    echo No symbols.zip file found
-    goto :dropbox
-)
-
-set TEMP_SYMBOLS=%BUILD_DIR%\temp_symbols
-echo UNZIP symbols to %TEMP_SYMBOLS%
-if exist ""%TEMP_SYMBOLS%"" rmdir /S /Q ""%TEMP_SYMBOLS%""
-""%ZIP%"" x -y -o""%TEMP_SYMBOLS%"" ""%SYMBOLS_STORED%""
-set RESULT=%ERRORLEVEL%
-echo UNZIP result %RESULT%
-if not ""%RESULT%"" == ""0"" (
-    echo UNZIP symbols failed
-    exit /B 1
-)
-
-echo ZIP deflate symbols
-if exist %SYMBOLS_DEFLATED% del /Q %SYMBOLS_DEFLATED%
-""%ZIP%"" a -y -bd ""%SYMBOLS_DEFLATED%"" "".\%TEMP_SYMBOLS%\*""
-set RESULT=%ERRORLEVEL%
-echo ZIP result %RESULT%
-if not ""%RESULT%"" == ""0"" (
-    echo ZIP deflate symbols failed
-    exit /B 1
-)
-echo clean up temp dir
-if exist ""%SYMBOLS_STORED%"" del /Q ""%SYMBOLS_STORED%""
-if exist ""%TEMP_SYMBOLS%"" rmdir /S /Q ""%TEMP_SYMBOLS%""
-goto :dropbox
-
-:dropbox
-if not exist ""%DROPBOX_DIR%"" (
-    goto :eof
-)
-if ""%LOGFILE%""  == """" (
-    set LOGFILE=%0.log
-)
-robocopy ""%BUILD_DIR%"" ""%DROPBOX_DIR%"" /S /E /V /NP /R:0 /W:0 /LOG+:%LOGFILE%
-set RESULT=%ERRORLEVEL%
-echo ROBOCOPY result %RESULT%
-goto :eof
-";
+            var script = MyCmdLineScripts.AndroidPostProcessScript.Replace("<<altzone_basename>>", outputBaseFilename);
             File.WriteAllText(name, script);
             UnityEngine.Debug.Log($"PostProcess script '{name}' written");
         }
@@ -143,80 +78,21 @@ goto :eof
             patchIndexHtml(indexHtml, curName, newName);
 
             const string name = "m_BuildScript_PostProcess.bat";
-            const string script = @"@echo off
-set BUILD_DIR=BuildWebGL
-set DROPBOX_DIR=C:\Users\%USERNAME%\Dropbox\tekstit\altgame\BuildWebGL
-echo BUILD_DIR=%BUILD_DIR%
-echo DROPBOX_DIR=%DROPBOX_DIR%
-if not exist %DROPBOX_DIR% (
-    goto :eof
-)
-if ""%LOGFILE%""  == """" (
-    set LOGFILE=%0.log
-)
-robocopy %BUILD_DIR% %DROPBOX_DIR% /S /E /V /NP /R:0 /W:0 /LOG+:%LOGFILE%
-goto :eof
-";
-            File.WriteAllText(name, script);
+            File.WriteAllText(name, MyCmdLineScripts.WebGLPostProcessScript);
             UnityEngine.Debug.Log($"PostProcess script '{name}' written");
         }
 
         [MenuItem("Window/ALT-Zone/Build/Create Build Script")]
-        private static void create_Build_Test_Script()
+        private static void create_Build_Script()
         {
             const string name = "m_BuildScript.bat";
-            const string script = @"@echo off
-set UNITY=C:\Program Files\Unity\Hub\Editor\2019.4.28f1\Editor\Unity.exe
-
-set BUILDTARGET=%1
-if ""%BUILDTARGET%"" == ""Win64"" goto :valid_build
-if ""%BUILDTARGET%"" == ""Android"" goto :valid_build
-if ""%BUILDTARGET%"" == ""WebGL"" goto :valid_build
-echo *
-echo * Can not build: invalid build target '%BUILDTARGET%'
-echo *
-echo * Build target must be one of UNITY command line build target:
-echo *
-echo *	Win64
-echo *	Android
-echo *	WebGL
-echo *
-goto :eof
-
-:valid_build
-
-set PROJECTPATH=./
-set METHOD=Editor.TeamCity.build
-set LOGFILE=m_Build_%BUILDTARGET%.log
-if ""%BUILDTARGET%"" == ""Android"" (
-    set ANDROID_KEYSTORE=-keystore ..\local_%USERNAME%\altzone.keystore
-)
-rem try to simulate TeamCity invocation
-set CUSTOM_OPTIONS=%ANDROID_KEYSTORE%
-set UNITY_OPTIONS=-batchmode -projectPath %PROJECTPATH% -buildTarget %BUILDTARGET% -executeMethod %METHOD% %CUSTOM_OPTIONS% -quit -logFile ""%LOGFILE%""
-
-echo Start build
-echo ""%UNITY%"" %UNITY_OPTIONS%
-""%UNITY%"" %UNITY_OPTIONS%
-set RESULT=%ERRORLEVEL%
-if not ""%RESULT%"" == ""0"" (
-    echo *
-    echo * Build FAILED with %RESULT%, check log for errors
-    echo *
-    goto :eof
-)
-if not exist m_BuildScript_PostProcess.bat (
-    echo Build done, check log for results
-    goto :eof
-)
-echo Build done, start post processing
-echo *
-call m_BuildScript_PostProcess.bat
-echo *
-echo Post processing done
-";
-            File.WriteAllText(name, script);
+            File.WriteAllText(name, MyCmdLineScripts.BuildScript);
             UnityEngine.Debug.Log($"Build script '{name}' written");
+            var buildTargetName = CommandLine.BuildTargetNameFrom(EditorUserBuildSettings.activeBuildTarget);
+            var driverName = $"{Path.GetFileNameWithoutExtension(name)}_{buildTargetName}.bat";
+            var driverScript = $"{name} {buildTargetName} && pause";
+            File.WriteAllText(driverName, driverScript);
+            UnityEngine.Debug.Log($"Build script driver '{driverName}' written");
         }
 
         internal static void build()
@@ -459,6 +335,12 @@ echo Post processing done
                 { "WebGL", BuildTarget.WebGL },
             };
 
+            public static string BuildTargetNameFrom(BuildTarget buildTarget)
+            {
+                var pair = knownBuildTargets.FirstOrDefault(x => x.Value == buildTarget);
+                return !string.IsNullOrEmpty(pair.Key) ? pair.Key : "Unknown";
+            }
+
             public static CommandLine Parse(string[] args)
             {
                 var projectPath = "./";
@@ -492,6 +374,145 @@ echo Post processing done
                 }
                 return new CommandLine(projectPath, buildTarget, keystore, isDevelopmentBuild);
             }
+        }
+
+        /// <summary>
+        /// Collection of command line scripts our build "system".
+        /// </summary>
+        private static class MyCmdLineScripts
+        {
+            public static string BuildScript => _BuildScript;
+            public static string AndroidPostProcessScript => _AndroidPostProcessScript;
+            public static string WebGLPostProcessScript => _WebGLPostProcessScript;
+
+            private const string _BuildScript = @"@echo off
+set UNITY=C:\Program Files\Unity\Hub\Editor\2019.4.28f1\Editor\Unity.exe
+
+set BUILDTARGET=%1
+if ""%BUILDTARGET%"" == ""Win64"" goto :valid_build
+if ""%BUILDTARGET%"" == ""Android"" goto :valid_build
+if ""%BUILDTARGET%"" == ""WebGL"" goto :valid_build
+echo *
+echo * Can not build: invalid build target '%BUILDTARGET%'
+echo *
+echo * Build target must be one of UNITY command line build target:
+echo *
+echo *	Win64
+echo *	Android
+echo *	WebGL
+echo *
+goto :eof
+
+:valid_build
+
+set PROJECTPATH=./
+set METHOD=Editor.TeamCity.build
+set LOGFILE=m_Build_%BUILDTARGET%.log
+if ""%BUILDTARGET%"" == ""Android"" (
+    set ANDROID_KEYSTORE=-keystore ..\local_%USERNAME%\altzone.keystore
+)
+rem try to simulate TeamCity invocation
+set CUSTOM_OPTIONS=%ANDROID_KEYSTORE%
+set UNITY_OPTIONS=-batchmode -projectPath %PROJECTPATH% -buildTarget %BUILDTARGET% -executeMethod %METHOD% %CUSTOM_OPTIONS% -quit -logFile ""%LOGFILE%""
+
+echo Start build
+echo ""%UNITY%"" %UNITY_OPTIONS%
+""%UNITY%"" %UNITY_OPTIONS%
+set RESULT=%ERRORLEVEL%
+if not ""%RESULT%"" == ""0"" (
+    echo *
+    echo * Build FAILED with %RESULT%, check log for errors
+    echo *
+    goto :eof
+)
+if not exist m_BuildScript_PostProcess.bat (
+    echo Build done, check log for results
+    goto :eof
+)
+echo Build done, start post processing
+echo *
+call m_BuildScript_PostProcess.bat
+echo *
+echo Post processing done
+";
+
+            private const string _AndroidPostProcessScript = @"@echo off
+set BUILD_DIR=BuildAndroid
+set DROPBOX_DIR=C:\Users\%USERNAME%\Dropbox\tekstit\altgame\BuildAndroid
+set ZIP=C:\Program Files\7-Zip\7z.exe
+
+echo BUILD_DIR=%BUILD_DIR%
+echo DROPBOX_DIR=%DROPBOX_DIR%
+echo ZIP=%ZIP%
+
+if not exist ""%BUILD_DIR%"" (
+    goto :eof
+)
+
+if not exist ""%ZIP%"" (
+    echo ZIP not found
+    goto :dropbox
+)
+:zip_symbols
+set SYMBOLS_STORED=%BUILD_DIR%\<<altzone_basename>>.symbols.zip
+set SYMBOLS_DEFLATED=%BUILD_DIR%\<<altzone_basename>>.symbols.deflate.zip
+if not exist ""%SYMBOLS_STORED%"" (
+    echo No symbols.zip file found
+    goto :dropbox
+)
+
+set TEMP_SYMBOLS=%BUILD_DIR%\temp_symbols
+echo UNZIP symbols to %TEMP_SYMBOLS%
+if exist ""%TEMP_SYMBOLS%"" rmdir /S /Q ""%TEMP_SYMBOLS%""
+""%ZIP%"" x -y -o""%TEMP_SYMBOLS%"" ""%SYMBOLS_STORED%""
+set RESULT=%ERRORLEVEL%
+echo UNZIP result %RESULT%
+if not ""%RESULT%"" == ""0"" (
+    echo UNZIP symbols failed
+    exit /B 1
+)
+
+echo ZIP deflate symbols
+if exist %SYMBOLS_DEFLATED% del /Q %SYMBOLS_DEFLATED%
+""%ZIP%"" a -y -bd ""%SYMBOLS_DEFLATED%"" "".\%TEMP_SYMBOLS%\*""
+set RESULT=%ERRORLEVEL%
+echo ZIP result %RESULT%
+if not ""%RESULT%"" == ""0"" (
+    echo ZIP deflate symbols failed
+    exit /B 1
+)
+echo clean up temp dir
+if exist ""%SYMBOLS_STORED%"" del /Q ""%SYMBOLS_STORED%""
+if exist ""%TEMP_SYMBOLS%"" rmdir /S /Q ""%TEMP_SYMBOLS%""
+goto :dropbox
+
+:dropbox
+if not exist ""%DROPBOX_DIR%"" (
+    goto :eof
+)
+if ""%LOGFILE%""  == """" (
+    set LOGFILE=%0.log
+)
+robocopy ""%BUILD_DIR%"" ""%DROPBOX_DIR%"" /S /E /V /NP /R:0 /W:0 /LOG+:%LOGFILE%
+set RESULT=%ERRORLEVEL%
+echo ROBOCOPY result %RESULT%
+goto :eof
+";
+
+            private const string _WebGLPostProcessScript = @"@echo off
+set BUILD_DIR=BuildWebGL
+set DROPBOX_DIR=C:\Users\%USERNAME%\Dropbox\tekstit\altgame\BuildWebGL
+echo BUILD_DIR=%BUILD_DIR%
+echo DROPBOX_DIR=%DROPBOX_DIR%
+if not exist %DROPBOX_DIR% (
+    goto :eof
+)
+if ""%LOGFILE%""  == """" (
+    set LOGFILE=%0.log
+)
+robocopy %BUILD_DIR% %DROPBOX_DIR% /S /E /V /NP /R:0 /W:0 /LOG+:%LOGFILE%
+goto :eof
+";
         }
     }
 }
