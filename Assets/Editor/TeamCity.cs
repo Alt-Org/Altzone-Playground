@@ -26,7 +26,7 @@ namespace Editor
 
         private static readonly List<string> logMessages = new List<string>();
 
-        private static string outputBaseFilename => $"{Application.productName}_{Application.version}_{PlayerSettings.Android.bundleVersionCode}";
+        private static string outputBaseFilename => sanitizePath($"{Application.productName}_{Application.version}_{PlayerSettings.Android.bundleVersionCode}");
 
         private static string[] _scenes => EditorBuildSettings.scenes
             .Where(x => x.enabled)
@@ -46,10 +46,11 @@ namespace Editor
         [MenuItem("Window/ALT-Zone/Build/Android Build Post Processing")]
         private static void fix_Android_Build()
         {
-            const string name = "m_BuildScript_PostProcess.bat";
-            var script = MyCmdLineScripts.AndroidPostProcessScript.Replace("<<altzone_basename>>", outputBaseFilename);
-            File.WriteAllText(name, script);
-            UnityEngine.Debug.Log($"PostProcess script '{name}' written");
+            const string scriptName = "m_BuildScript_PostProcess.bat";
+            var symbolsName = $"{outputBaseFilename}-{Application.version}-v{PlayerSettings.Android.bundleVersionCode}.symbols";
+            var script = MyCmdLineScripts.AndroidPostProcessScript.Replace("<<altzone_symbols_name>>", symbolsName);
+            File.WriteAllText(scriptName, script);
+            UnityEngine.Debug.Log($"PostProcess script '{scriptName}' written");
         }
 
         [MenuItem("Window/ALT-Zone/Build/WebGL Build Post Processing")]
@@ -77,20 +78,20 @@ namespace Editor
             var newName = $"{Application.productName} {Application.version} {PlayerSettings.Android.bundleVersionCode}";
             patchIndexHtml(indexHtml, curName, newName);
 
-            const string name = "m_BuildScript_PostProcess.bat";
-            File.WriteAllText(name, MyCmdLineScripts.WebGLPostProcessScript);
-            UnityEngine.Debug.Log($"PostProcess script '{name}' written");
+            const string scriptName = "m_BuildScript_PostProcess.bat";
+            File.WriteAllText(scriptName, MyCmdLineScripts.WebGLPostProcessScript);
+            UnityEngine.Debug.Log($"PostProcess script '{scriptName}' written");
         }
 
         [MenuItem("Window/ALT-Zone/Build/Create Build Script")]
         private static void create_Build_Script()
         {
-            const string name = "m_BuildScript.bat";
-            File.WriteAllText(name, MyCmdLineScripts.BuildScript);
-            UnityEngine.Debug.Log($"Build script '{name}' written");
+            const string scriptName = "m_BuildScript.bat";
+            File.WriteAllText(scriptName, MyCmdLineScripts.BuildScript);
+            UnityEngine.Debug.Log($"Build script '{scriptName}' written");
             var buildTargetName = CommandLine.BuildTargetNameFrom(EditorUserBuildSettings.activeBuildTarget);
-            var driverName = $"{Path.GetFileNameWithoutExtension(name)}_{buildTargetName}.bat";
-            var driverScript = $"{name} {buildTargetName} && pause";
+            var driverName = $"{Path.GetFileNameWithoutExtension(scriptName)}_{buildTargetName}.bat";
+            var driverScript = $"{scriptName} {buildTargetName} && pause";
             File.WriteAllText(driverName, driverScript);
             UnityEngine.Debug.Log($"Build script driver '{driverName}' written");
         }
@@ -187,7 +188,7 @@ namespace Editor
                 default:
                     throw new UnityException($"getOutputFile: build target '{buildTarget}' not supported");
             }
-            var filename = sanitizePath($"{outputBaseFilename}.{extension}");
+            var filename = $"{outputBaseFilename}.{extension}";
             return filename;
         }
 
@@ -221,8 +222,14 @@ namespace Editor
             PlayerSettings.Android.keystoreName = keystore;
             Log($"keystoreName={PlayerSettings.Android.keystoreName}");
 
+            // EditorUserBuildSettings
             EditorUserBuildSettings.buildAppBundle = true; // For Google Play this must be always true!
             Log($"buildAppBundle={EditorUserBuildSettings.buildAppBundle}");
+            EditorUserBuildSettings.androidCreateSymbolsZip = true;
+            Log($"androidCreateSymbolsZip={EditorUserBuildSettings.androidCreateSymbolsZip}");
+            EditorUserBuildSettings.androidReleaseMinification = AndroidMinification.Proguard;
+            Log($"androidReleaseMinification={EditorUserBuildSettings.androidReleaseMinification}");
+
             PlayerSettings.Android.useCustomKeystore = true;
             Log($"useCustomKeystore={PlayerSettings.Android.useCustomKeystore}");
             PlayerSettings.Android.keyaliasName = Application.productName.ToLower();
@@ -454,8 +461,8 @@ if not exist ""%ZIP%"" (
     goto :dropbox
 )
 :zip_symbols
-set SYMBOLS_STORED=%BUILD_DIR%\<<altzone_basename>>.symbols.zip
-set SYMBOLS_DEFLATED=%BUILD_DIR%\<<altzone_basename>>.symbols.deflate.zip
+set SYMBOLS_STORED=%BUILD_DIR%\<<altzone_symbols_name>>.zip
+set SYMBOLS_DEFLATED=%BUILD_DIR%\<<altzone_symbols_name>>.deflated.zip
 if not exist ""%SYMBOLS_STORED%"" (
     echo No symbols.zip file found
     goto :dropbox
