@@ -229,15 +229,19 @@ namespace Altzone.Nelinpeli
         {
             if (stream.IsWriting)
             {
+                // We own this player: send the others our data
                 input = _transform.position;
                 stream.SendNext(input);
+                stream.SendNext(targetTime);
             }
             else
             {
+                // Network player, receive data
                 input = (Vector2) stream.ReceiveNext();
                 mousePosition.x = input.x;
                 mousePosition.y = input.y;
                 mousePosition.z = positionZ;
+                targetTime = (float) stream.ReceiveNext();
                 networkLag = Mathf.Abs((float) (PhotonNetwork.Time - info.SentServerTime));
             }
         }
