@@ -19,12 +19,16 @@ namespace Editor
     internal static class TeamCity
     {
         private const string LOG_PREFIX = nameof(TeamCity);
+        private const string LOG_SEPARATOR = "========================================";
 
         private const string OUTPUT_ANDROID = "buildAndroid";
         private const string OUTPUT_WEBGL = "buildWebGL";
         private const string OUTPUT_WIN64 = "buildWin64";
 
-        private static readonly List<string> logMessages = new List<string>();
+        private static readonly List<string> logMessages = new List<string>
+        {
+            $"{LOG_PREFIX} {LOG_SEPARATOR}",
+        };
 
         private static string outputBaseFilename => sanitizePath($"{Application.productName}_{Application.version}_{PlayerSettings.Android.bundleVersionCode}");
 
@@ -98,6 +102,7 @@ namespace Editor
 
         internal static void build()
         {
+            BuildResult buildResult = BuildResult.Unknown;
             try
             {
                 dumpEnvironment();
@@ -138,35 +143,45 @@ namespace Editor
                     targetGroup = targetGroup,
                 };
 
+                Log($"build productName: {Application.productName}");
+                Log($"build version: {Application.version}");
+                Log($"build bundleVersionCode: {PlayerSettings.Android.bundleVersionCode}");
                 Log($"build output: {buildPlayerOptions.locationPathName}");
                 if (Directory.Exists(buildPlayerOptions.locationPathName))
                 {
                     Directory.Delete(buildPlayerOptions.locationPathName, recursive: true);
                 }
+                var defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup).Split(';');
+                Log($"build defines:\r\n{string.Join("\r\n", defines)}");
                 var buildReport = BuildPipeline.BuildPlayer(buildPlayerOptions);
                 var summary = buildReport.summary;
-                Log($"build result: {summary.result}");
-                if (summary.result != BuildResult.Succeeded)
+                buildResult = summary.result;
+                Log($"build result: {buildResult}");
+                if (buildResult == BuildResult.Succeeded)
                 {
-                    EditorApplication.Exit(1);
-                }
-                // Post processing after successful build
-                if (summary.platform == BuildTarget.Android)
-                {
-                    fix_Android_Build();
-                }
-                else if (summary.platform == BuildTarget.WebGL)
-                {
-                    fix_WebGL_Build();
+                    if (summary.platform == BuildTarget.Android)
+                    {
+                        fix_Android_Build();
+                    }
+                    else if (summary.platform == BuildTarget.WebGL)
+                    {
+                        fix_WebGL_Build();
+                    }
                 }
             }
             finally
             {
                 if (logMessages.Count > 0)
                 {
-                    // Show logged messages without call stack for convenience!
+                    // Show all logged messages together without call stack for convenience!
+                    logMessages.Add($"{LOG_PREFIX} {LOG_SEPARATOR}");
                     UnityEngine.Debug.Log($"{LOG_PREFIX} LOG_MESSAGES:\r\n{string.Join("\r\n", logMessages)}");
                 }
+            }
+            // We must exit outside try-finally block as it seems that EditorApplication.Exit does not allow C# to unwind call stack properly
+            if (buildResult != BuildResult.Succeeded)
+            {
+                EditorApplication.Exit(1);
             }
         }
 
