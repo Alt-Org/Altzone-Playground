@@ -35,12 +35,6 @@ MonoBehaviour:
     windowId: 9100
   - windowName: DAILY QUESTS
     windowId: 12000
-  - windowName: Jarin Game
-    windowId: 123030
-  - windowName: Jarin Lobby
-    windowId: 123020
-  - windowName: Jarin Menu
-    windowId: 123010
   - windowName: KAUPPA
     windowId: 13000
   - windowName: KAUPPA / KIRPPIS
