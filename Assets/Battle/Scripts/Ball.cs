@@ -1,4 +1,3 @@
-using Game.Config;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Unity;
