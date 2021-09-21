@@ -10,7 +10,8 @@ using UnityEngine;
 namespace Editor
 {
     /// <summary>
-    /// Utility class to perform command line builds.
+    /// Utility class to perform command line builds.<br />
+    /// See <c>CommandLine</c> for supported command line options.
     /// </summary>
     /// <remarks>
     /// Should be compatible with CI systems.<br />
@@ -30,7 +31,8 @@ namespace Editor
             $"{LOG_PREFIX} {LOG_SEPARATOR}",
         };
 
-        private static string outputBaseFilename => sanitizePath($"{Application.productName}_{Application.version}_{PlayerSettings.Android.bundleVersionCode}");
+        private static string outputBaseFilename =>
+            sanitizePath($"{Application.productName}_{Application.version}_{PlayerSettings.Android.bundleVersionCode}");
 
         private static string[] _scenes => EditorBuildSettings.scenes
             .Where(x => x.enabled)
@@ -43,8 +45,9 @@ namespace Editor
             // We assume that local keystore and password folder is one level up from current working directory
             // - that should be UNITY project folder
             var keystore = Path.Combine("..", $"local_{getCurrentUser()}", "altzone.keystore");
-            configure_Android(keystore);
-            Log($"output filename: {getOutputFile(BuildTarget.Android)}");
+            var args = CommandLine.Parse(new string[] { "-buildTarget", "Android", "-keystore", keystore });
+            configure_Android(args);
+            Log($"output filename: {getOutputFile(args.buildTarget)}");
         }
 
         [MenuItem("Window/ALT-Zone/Build/Android Build Post Processing")]
@@ -120,7 +123,7 @@ namespace Editor
                     case BuildTarget.Android:
                         outputDir = Path.Combine(OUTPUT_ANDROID, getOutputFile(args.buildTarget));
                         targetGroup = BuildTargetGroup.Android;
-                        configure_Android(args.keystoreName);
+                        configure_Android(args);
                         break;
                     case BuildTarget.WebGL:
                         outputDir = OUTPUT_WEBGL;
@@ -207,7 +210,7 @@ namespace Editor
             return filename;
         }
 
-        private static void configure_Android(string keystore)
+        private static void configure_Android(CommandLine args)
         {
             string getLocalPasswordFor(string folder, string filename)
             {
@@ -234,15 +237,22 @@ namespace Editor
             // - keyaliasPass : read from keystore folder
 
             Log("configure_Android");
-            PlayerSettings.Android.keystoreName = keystore;
+            PlayerSettings.Android.keystoreName = args.keystoreName;
             Log($"keystoreName={PlayerSettings.Android.keystoreName}");
 
             // EditorUserBuildSettings
             EditorUserBuildSettings.buildAppBundle = true; // For Google Play this must be always true!
             Log($"buildAppBundle={EditorUserBuildSettings.buildAppBundle}");
-            EditorUserBuildSettings.androidCreateSymbolsZip = true;
+            if (args.isAndroidFull)
+            {
+                EditorUserBuildSettings.androidCreateSymbolsZip = true;
+                EditorUserBuildSettings.androidReleaseMinification = AndroidMinification.Proguard;
+            }
+            else
+            {
+                // Do not change current settings!
+            }
             Log($"androidCreateSymbolsZip={EditorUserBuildSettings.androidCreateSymbolsZip}");
-            EditorUserBuildSettings.androidReleaseMinification = AndroidMinification.Proguard;
             Log($"androidReleaseMinification={EditorUserBuildSettings.androidReleaseMinification}");
 
             PlayerSettings.Android.useCustomKeystore = true;
@@ -252,11 +262,11 @@ namespace Editor
 
             if (!File.Exists(PlayerSettings.Android.keystoreName))
             {
-                throw new UnityException($"Keystore file '{keystore}' not found, can not sign without it");
+                throw new UnityException($"Keystore file '{PlayerSettings.Android.keystoreName}' not found, can not sign without it");
             }
 
             // Password files must be in same folder where keystore is!
-            var passwordFolder = Path.GetDirectoryName(keystore);
+            var passwordFolder = Path.GetDirectoryName(args.keystoreName);
             Log($"passwordFolder={passwordFolder}");
             PlayerSettings.keystorePass = getLocalPasswordFor(passwordFolder, "keystore_password");
             logObfuscated("keystorePass", PlayerSettings.keystorePass);
@@ -332,19 +342,22 @@ namespace Editor
             // Custom build parameters.
             public readonly string keystoreName;
             public readonly bool isDevelopmentBuild;
+            public readonly bool isAndroidFull;
 
-            private CommandLine(string projectPath, BuildTarget buildTarget, string keystoreName, bool isDevelopmentBuild)
+            private CommandLine(string projectPath, BuildTarget buildTarget, string keystoreName, bool isDevelopmentBuild, bool isAndroidFull)
             {
                 this.projectPath = projectPath;
                 this.buildTarget = buildTarget;
                 this.keystoreName = keystoreName;
                 this.isDevelopmentBuild = isDevelopmentBuild;
+                this.isAndroidFull = isAndroidFull;
             }
 
             public override string ToString()
             {
                 return
-                    $"{nameof(projectPath)}: {projectPath}, {nameof(buildTarget)}: {buildTarget}, {nameof(keystoreName)}: {keystoreName}, {nameof(isDevelopmentBuild)}: {isDevelopmentBuild}";
+                    $"{nameof(projectPath)}: {projectPath}, {nameof(buildTarget)}: {buildTarget}, {nameof(keystoreName)}: {keystoreName}" +
+                    $", {nameof(isDevelopmentBuild)}: {isDevelopmentBuild}, {nameof(isAndroidFull)}: {isAndroidFull}";
             }
 
             // Build target parameter mapping
@@ -369,6 +382,7 @@ namespace Editor
                 var buildTarget = BuildTarget.StandaloneWindows64;
                 var keystore = "";
                 var isDevelopmentBuild = false;
+                var isAndroidFull = false;
                 for (var i = 0; i < args.Length; ++i)
                 {
                     var arg = args[i];
@@ -392,9 +406,12 @@ namespace Editor
                         case "-DevelopmentBuild":
                             isDevelopmentBuild = true;
                             break;
+                        case "-AndroidFull":
+                            isAndroidFull = true;
+                            break;
                     }
                 }
-                return new CommandLine(projectPath, buildTarget, keystore, isDevelopmentBuild);
+                return new CommandLine(projectPath, buildTarget, keystore, isDevelopmentBuild, isAndroidFull);
             }
         }
 
