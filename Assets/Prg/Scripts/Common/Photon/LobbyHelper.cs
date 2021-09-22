@@ -35,6 +35,7 @@ namespace Prg.Scripts.Common.Photon
             Application.quitting += () => isApplicationQuitting = true;
         }
 
+        [Obsolete("This class is obsolete. Use PhotonLobby instead and handle spectators separately.")]
         public static LobbyHelper Get(KeyNames keynames)
         {
             return new LobbyHelper(keynames);
