@@ -2173,7 +2173,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3474856871931266641}
   m_Layer: 14
-  m_Name: ALAmuuri
+  m_Name: BottomWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2214,7 +2214,7 @@ Transform:
   - {fileID: 2163588161424709671}
   - {fileID: 5468882591529144867}
   m_Father: {fileID: 2414136508296000891}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3104715467304390198
 GameObject:
@@ -6179,7 +6179,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5087391143694794983}
   m_Layer: 14
-  m_Name: "YL\xC4muuri"
+  m_Name: TopWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6220,7 +6220,7 @@ Transform:
   - {fileID: 2653754503298958333}
   - {fileID: 113055951595941023}
   m_Father: {fileID: 2414136508296000891}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7933729595887134530
 GameObject:
@@ -6750,8 +6750,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 3474856871931266641}
   - {fileID: 5087391143694794983}
+  - {fileID: 3474856871931266641}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

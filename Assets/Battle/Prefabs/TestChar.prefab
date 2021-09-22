@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 3251194367459130226}
   - component: {fileID: 8125961485795570353}
   m_Layer: 0
-  m_Name: Oikea
+  m_Name: RightHalf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -173,7 +173,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3803063809794064423}
   m_Layer: 0
-  m_Name: Kilpi
+  m_Name: Shield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 564086479810890627}
   - component: {fileID: 3279767524950674503}
   m_Layer: 0
-  m_Name: Korostus
+  m_Name: Highlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -288,7 +288,7 @@ GameObject:
   - component: {fileID: 7426035880709992461}
   - component: {fileID: 2605509452742530808}
   m_Layer: 0
-  m_Name: Vasen
+  m_Name: LeftHalf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -413,7 +413,7 @@ GameObject:
   - component: {fileID: 2470868895122376700}
   - component: {fileID: 721351479766600447}
   m_Layer: 0
-  m_Name: Pelaaja
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
