@@ -1,11 +1,10 @@
 using Photon.Pun;
-using Prg.Scripts.Window;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Prg.Scripts.Common.Unity
+namespace Prg.Scripts.Window
 {
     public class SceneLoader : MonoBehaviour
     {
