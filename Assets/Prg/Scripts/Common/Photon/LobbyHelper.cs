@@ -2,6 +2,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Unity;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

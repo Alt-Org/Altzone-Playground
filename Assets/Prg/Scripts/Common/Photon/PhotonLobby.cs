@@ -2,11 +2,15 @@
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Unity;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Prg.Scripts.Common.Photon
 {
+    /// <summary>
+    /// Convenience class to handle basic <c>PhotonNetwork</c> operations in consistent way.
+    /// </summary>
     public class PhotonLobby
     {
         private const int maxRoomNameLength = 16;
@@ -18,6 +22,13 @@ namespace Prg.Scripts.Common.Photon
         {
             Application.quitting += () => isApplicationQuitting = true;
         }
+
+        /// <summary>
+        /// To override default <c>PhotonNetwork.GameVersion</c> set to <c>Application.version</c>.
+        /// </summary>
+        public static Func<string> gameVersion = () => _gameVersion;
+
+        private static string _gameVersion => Application.version;
 
         public static PhotonLobby Get()
         {
@@ -44,8 +55,7 @@ namespace Prg.Scripts.Common.Photon
             {
                 var photonAppSettings = ResourceLoader.Get().LoadAsset<PhotonAppSettings>(nameof(PhotonAppSettings));
                 var appSettings = photonAppSettings != null ? photonAppSettings.appSettings : null;
-                var gameVersion = Application.version;
-                connectUsingSettings(appSettings, gameVersion, playerName, isAutomaticallySyncScene);
+                connectUsingSettings(appSettings, playerName, isAutomaticallySyncScene);
                 return;
             }
             throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
@@ -175,7 +185,7 @@ namespace Prg.Scripts.Common.Photon
             throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
         }
 
-        private static void connectUsingSettings(AppSettings appSettings, string gameVersion, string playerName, bool isAutomaticallySyncScene)
+        private static void connectUsingSettings(AppSettings appSettings, string playerName, bool isAutomaticallySyncScene)
         {
             if (PhotonNetwork.OfflineMode)
             {
@@ -192,7 +202,7 @@ namespace Prg.Scripts.Common.Photon
                 : PhotonNetwork.ConnectUsingSettings();
             if (started)
             {
-                PhotonNetwork.GameVersion = gameVersion;
+                PhotonNetwork.GameVersion = gameVersion();
                 Debug.Log($"Set GameVersion: {PhotonNetwork.GameVersion}");
             }
         }

@@ -1,3 +1,4 @@
+using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.Unity;
 using Prg.Scripts.Common.Util;
 using Prg.Scripts.Config;
@@ -10,21 +11,9 @@ namespace Prg.Scripts
 {
     public class BootLoader : MonoBehaviour
     {
-        [Conditional("FORCE_LOG"), Conditional("DEVELOPMENT_BUILD")]
-        private static void checkDevelopmentStatus()
-        {
-            // This is just for debugging to get strings (numbers) formatted consistently
-            // - everything that goes to UI should go through Localizer using player's locale preferences
-            var ci = CultureInfo.InvariantCulture;
-            Thread.CurrentThread.CurrentCulture = ci;
-            Thread.CurrentThread.CurrentUICulture = ci;
-        }
-
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void beforeSceneLoad()
         {
-            checkDevelopmentStatus();
-
             var localDevConfig = ResourceLoader.Get().LoadAsset<LocalDevConfig>(nameof(LocalDevConfig));
             LocalDevConfig.Instance = Instantiate(localDevConfig);
 
@@ -33,6 +22,23 @@ namespace Prg.Scripts
 
             var loggerConfig = resourceLoader.LoadAsset<LoggerConfig>(nameof(LoggerConfig));
             LoggerConfig.createLoggerConfig(loggerConfig);
+
+            setDevelopmentStatus();
         }
-  }
+
+        [Conditional("FORCE_LOG"), Conditional("DEVELOPMENT_BUILD")]
+        private static void setDevelopmentStatus()
+        {
+            // This is just for debugging to get strings (numbers) formatted consistently
+            // - everything that goes to UI should go through Localizer using player's locale preferences
+            var ci = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+
+            if (!string.IsNullOrWhiteSpace(LocalDevConfig.Instance.photonVersionPrefix))
+            {
+                PhotonLobby.gameVersion = () => $"{LocalDevConfig.Instance.photonVersionPrefix}{Application.version}";
+            }
+        }
+    }
 }
