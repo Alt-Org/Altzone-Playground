@@ -1,9 +1,10 @@
-﻿using Prg.Scripts.Window;
+﻿using Editor.Prg;
 using System;
+using UiProto.Scripts.Window;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.Prg
+namespace Editor.UiProto
 {
     [CustomEditor(typeof(WindowConfig))]
     public class WindowConfigEditor : UnityEditor.Editor

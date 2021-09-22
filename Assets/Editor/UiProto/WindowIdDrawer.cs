@@ -1,11 +1,11 @@
-﻿using Prg.Scripts.Window;
-using System;
+﻿using Editor.Prg;
 using System.Collections.Generic;
 using System.Linq;
+using UiProto.Scripts.Window;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.Prg
+namespace Editor.UiProto
 {
     [CustomPropertyDrawer(typeof(WindowId), true)]
     public class WindowIdDrawer : PropertyDrawer

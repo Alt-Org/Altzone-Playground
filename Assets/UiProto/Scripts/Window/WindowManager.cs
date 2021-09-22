@@ -1,4 +1,3 @@
-using Altzone.Scripts.Apu;
 using Prg.Scripts.Common.Unity;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Prg.Scripts.Window
+namespace UiProto.Scripts.Window
 {
     public class WindowManager : MonoBehaviour, IWindowManager
     {

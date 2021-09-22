@@ -1,10 +1,9 @@
-﻿using Prg.Scripts.Window;
-using System;
-using System.Collections.Generic;
+﻿using Editor.Prg;
+using UiProto.Scripts.Window;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.Prg
+namespace Editor.UiProto
 {
     [CustomEditor(typeof(WindowNames))]
     public class WindowNamesEditor : UnityEditor.Editor

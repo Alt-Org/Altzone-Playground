@@ -1,8 +1,8 @@
-﻿using Prg.Scripts.Window;
+﻿using UiProto.Scripts.Window;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.Prg
+namespace Editor.UiProto
 {
     [CustomPropertyDrawer(typeof(WindowInstance), true)]
     public class WindowInstanceDrawer : PropertyDrawer

@@ -1,7 +1,7 @@
 using Prg.Scripts.Common.PubSub;
 using UnityEngine;
 
-namespace Prg.Scripts.Window
+namespace UiProto.Scripts.Window
 {
     /// <summary>
     /// Handles ESCAPE key press using default WindowManager functionality.

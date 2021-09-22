@@ -2,7 +2,7 @@ using Prg.Scripts.Common.PubSub;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Prg.Scripts.Window
+namespace UiProto.Scripts.Window
 {
     /// <summary>
     /// Tracks Escape key press so that is must pressed down and released exactly once (on the same level)!

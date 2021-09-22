@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Prg.Scripts.Window
+namespace UiProto.Scripts.Window
 {
     [Serializable]
     public class StackEntry

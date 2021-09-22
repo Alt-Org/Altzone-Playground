@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Prg.Scripts.Window
+namespace UiProto.Scripts.Window
 {
     [RequireComponent(typeof(Button))]
     public class ButtonCompanion : MonoBehaviour, IPointerEnterHandler

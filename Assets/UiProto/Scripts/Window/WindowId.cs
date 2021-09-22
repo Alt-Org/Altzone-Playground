@@ -1,6 +1,6 @@
 using System;
 
-namespace Prg.Scripts.Window
+namespace UiProto.Scripts.Window
 {
     [Serializable]
     public class WindowId // Read only 1 liner for Editor config popups

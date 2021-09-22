@@ -1,6 +1,4 @@
-using UnityEngine;
-
-namespace Prg.Scripts.Window
+namespace UiProto.Scripts.Window
 {
     public interface IWindowManager
     {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Prg.Scripts.Window
+namespace UiProto.Scripts.Window
 {
     [Serializable]
     public class WindowInstance

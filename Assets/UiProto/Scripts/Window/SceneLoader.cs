@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Prg.Scripts.Window
+namespace UiProto.Scripts.Window
 {
     public class SceneLoader : MonoBehaviour
     {

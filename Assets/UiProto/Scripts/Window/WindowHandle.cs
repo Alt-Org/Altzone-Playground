@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Prg.Scripts.Window
+namespace UiProto.Scripts.Window
 {
     /// <summary>
     /// Marker class for "windows"

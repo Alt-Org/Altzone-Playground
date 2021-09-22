@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Prg.Scripts.Window
+namespace UiProto.Scripts.Window
 {
     /// <summary>
     /// Window contract with Window Manager.

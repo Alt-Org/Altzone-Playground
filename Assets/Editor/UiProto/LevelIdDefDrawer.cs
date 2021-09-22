@@ -1,11 +1,11 @@
 ﻿using Editor.Prg.Util;
-using Prg.Scripts.Window;
 using System;
 using System.Linq;
+using UiProto.Scripts.Window;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.Prg
+namespace Editor.UiProto
 {
     [CustomPropertyDrawer(typeof(LevelIdDef), true)]
     public class LevelIdDefDrawer : PropertyDrawer

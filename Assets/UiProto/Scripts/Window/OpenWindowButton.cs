@@ -1,10 +1,9 @@
-using Prg.Scripts.Window;
 using System;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Altzone.Scripts.Apu
+namespace UiProto.Scripts.Window
 {
     [RequireComponent(typeof(Button))]
     public class OpenWindowButton : MonoBehaviour
