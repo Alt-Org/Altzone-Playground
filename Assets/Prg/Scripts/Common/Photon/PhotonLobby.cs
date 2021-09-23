@@ -100,7 +100,7 @@ namespace Prg.Scripts.Common.Photon
             throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
         }
 
-        public void createRoom(string roomName, RoomOptions roomOptions)
+        public void createRoom(string roomName, RoomOptions roomOptions = null)
         {
             if (isApplicationQuitting)
             {
@@ -115,7 +115,11 @@ namespace Prg.Scripts.Common.Photon
             {
                 roomName = roomName.Substring(0, maxRoomNameLength);
             }
-            var options = roomOptions;
+            var options = roomOptions ?? new RoomOptions
+            {
+                IsOpen = true,
+                IsVisible = true,
+            };
             PhotonNetwork.CreateRoom(roomName, options, TypedLobby.Default);
         }
 
