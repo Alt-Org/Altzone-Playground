@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,11 @@ namespace Lobby.Scripts
             title.text = $"Welcome to {Application.productName}";
             templateButton.onClick.AddListener(createRoomForMe);
             buttons = new List<Button>();
-            photonRoomList = FindObjectOfType<PhotonRoomList>();
         }
 
         private void OnEnable()
         {
+            photonRoomList = FindObjectOfType<PhotonRoomList>();
             if (photonRoomList != null)
             {
                 if (PhotonNetwork.InLobby)
@@ -41,6 +42,7 @@ namespace Lobby.Scripts
             if (photonRoomList != null)
             {
                 photonRoomList.roomsUpdated -= updateStatus;
+                photonRoomList = null;
             }
         }
 
@@ -77,9 +79,17 @@ namespace Lobby.Scripts
             PhotonLobby.Get().createRoom($"Room{DateTime.Now.Second:00}");
         }
 
-        private static void joinRoom(string roomName)
+        private void joinRoom(string roomName)
         {
             Debug.Log($"joinRoom '{roomName}'");
+            var rooms = photonRoomList.currentRooms.ToList();
+            foreach (var roomInfo in rooms)
+            {
+                if (roomInfo.Name == roomName)
+                {
+                    PhotonLobby.Get().joinRoom(roomInfo);
+                }
+            }
         }
 
         private static Button duplicate(Button template)
@@ -91,7 +101,7 @@ namespace Lobby.Scripts
             return button;
         }
 
-        private static void update(Button button, string roomName)
+        private void update(Button button, string roomName)
         {
             var text = button.GetComponentInChildren<Text>();
             Debug.Log($"update '{text.text}' -> '{roomName}'");
