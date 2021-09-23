@@ -12,12 +12,15 @@ namespace Lobby.Scripts
     /// </summary>
     public class RoomSetupManager : MonoBehaviour, IInRoomCallbacks
     {
+        private const string playerPositionKey = LobbyManager.playerPositionKey;
+
         [SerializeField] private Button buttonPlayerP0;
         [SerializeField] private Button buttonPlayerP1;
         [SerializeField] private Button buttonPlayerP2;
         [SerializeField] private Button buttonPlayerP3;
         [SerializeField] private Button buttonGuest;
         [SerializeField] private Button buttonSpectator;
+        [SerializeField] private Button buttonStartPlay;
 
         private bool interactablePlayerP0;
         private bool interactablePlayerP1;
@@ -25,6 +28,7 @@ namespace Lobby.Scripts
         private bool interactablePlayerP3;
         private bool interactableGuest;
         private bool interactableSpectator;
+        private bool interactableStartPlay;
 
         private string captionPlayerP0;
         private string captionPlayerP1;
@@ -41,6 +45,7 @@ namespace Lobby.Scripts
             buttonPlayerP3.interactable = false;
             buttonGuest.interactable = false;
             buttonSpectator.interactable = false;
+            buttonStartPlay.interactable = false;
             if (PhotonNetwork.InRoom)
             {
                 updateStatus();
@@ -61,25 +66,92 @@ namespace Lobby.Scripts
             }
             resetState();
             var localPLayer = PhotonNetwork.LocalPlayer;
-            checkPlayer(localPLayer, isLocal: true);
+            // Check other players first is they have reserved some player positions etc. from the room already.
             foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
             {
                 if (!player.Equals(localPLayer))
                 {
-                    checkPlayer(player, isLocal: false);
+                    checkOtherPlayer(player);
                 }
             }
+            checkLocalPlayer(localPLayer);
+
             setButton(buttonPlayerP0, interactablePlayerP0, captionPlayerP0);
             setButton(buttonPlayerP1, interactablePlayerP1, captionPlayerP1);
             setButton(buttonPlayerP2, interactablePlayerP2, captionPlayerP2);
             setButton(buttonPlayerP3, interactablePlayerP3, captionPlayerP3);
             setButton(buttonGuest, interactableGuest, captionGuest);
             setButton(buttonSpectator, interactableSpectator, captionSpectator);
+            setButton(buttonStartPlay, interactableStartPlay, null);
         }
 
-        private void checkPlayer(Player player, bool isLocal)
+        private void checkOtherPlayer(Player player)
         {
-            Debug.Log($"checkPlayer {player.ToStringFull()}");
+            Debug.Log($"checkOtherPlayer {player.ToStringFull()}");
+            if (!player.HasCustomProperty(playerPositionKey))
+            {
+                return;
+            }
+            var curValue = player.GetCustomProperty<int>(playerPositionKey);
+            switch (curValue)
+            {
+                case LobbyManager.playerPosition0:
+                    interactablePlayerP0 = false;
+                    captionPlayerP0 = player.NickName;
+                    break;
+                case LobbyManager.playerPosition1:
+                    interactablePlayerP1 = false;
+                    captionPlayerP1 = player.NickName;
+                    break;
+                case LobbyManager.playerPosition2:
+                    interactablePlayerP2 = false;
+                    captionPlayerP2 = player.NickName;
+                    break;
+                case LobbyManager.playerPosition3:
+                    interactablePlayerP3 = false;
+                    captionPlayerP3 = player.NickName;
+                    break;
+            }
+        }
+
+        private void checkLocalPlayer(Player player)
+        {
+            Debug.Log($"checkLocalPlayer {player.ToStringFull()}");
+            // Start button state!
+            interactableStartPlay = player.IsMasterClient;
+            if (!player.HasCustomProperty(playerPositionKey))
+            {
+                player.SetCustomProperties(new Hashtable { { playerPositionKey, LobbyManager.playerIsGuest } });
+                return;
+            }
+            var curValue = player.GetCustomProperty<int>(playerPositionKey);
+            switch (curValue)
+            {
+                case LobbyManager.playerPosition0:
+                    interactablePlayerP0 = false;
+                    captionPlayerP0 = $"<color=blue>{player.NickName}</color>";
+                    break;
+                case LobbyManager.playerPosition1:
+                    interactablePlayerP1 = false;
+                    captionPlayerP1 = $"<color=blue>{player.NickName}</color>";
+                    break;
+                case LobbyManager.playerPosition2:
+                    interactablePlayerP2 = false;
+                    captionPlayerP2 = $"<color=blue>{player.NickName}</color>";
+                    break;
+                case LobbyManager.playerPosition3:
+                    interactablePlayerP3 = false;
+                    captionPlayerP3 = $"<color=blue>{player.NickName}</color>";
+                    break;
+                case LobbyManager.playerIsGuest:
+                    interactableGuest = false;
+                    captionGuest = $"<color=blue>{player.NickName}</color>";
+                    break;
+                case LobbyManager.playerIsSpectator:
+                    interactableSpectator = false;
+                    captionSpectator = $"<color=blue>{player.NickName}</color>";
+                    break;
+            }
         }
 
         private void resetState()
@@ -90,6 +162,7 @@ namespace Lobby.Scripts
             interactablePlayerP3 = true;
             interactableGuest = true;
             interactableSpectator = true;
+            interactableStartPlay = false;
 
             captionPlayerP0 = "Player 1";
             captionPlayerP1 = "Player 2";
@@ -102,9 +175,12 @@ namespace Lobby.Scripts
         private static void setButton(Button button, bool interactable, string caption)
         {
             button.interactable = interactable;
-            button.GetComponentInChildren<Text>().text = interactable
-                ? $"<b>{caption}</b>"
-                : caption;
+            if (!string.IsNullOrEmpty(caption))
+            {
+                button.GetComponentInChildren<Text>().text = interactable
+                    ? caption
+                    : $"<b>|{caption}|</b>";
+            }
         }
 
         void IInRoomCallbacks.OnPlayerEnteredRoom(Player newPlayer)

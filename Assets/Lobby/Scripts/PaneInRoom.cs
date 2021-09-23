@@ -19,6 +19,7 @@ namespace Lobby.Scripts
         {
             buttons[0].onClick.AddListener(setPlayerAsGuest);
             buttons[1].onClick.AddListener(setPlayerAsSpectator);
+            buttons[2].onClick.AddListener(startPlaying);
         }
 
         private void setPlayerAsGuest()
@@ -32,6 +33,13 @@ namespace Lobby.Scripts
         {
             Debug.Log($"setPlayerAsSpectator {LobbyManager.playerIsSpectator}");
             this.Publish(new LobbyManager.Event(LobbyManager.playerIsSpectator));
+
+        }
+
+        private void startPlaying()
+        {
+            Debug.Log($"startPlaying {LobbyManager.startPlaying}");
+            this.Publish(new LobbyManager.Event(LobbyManager.startPlaying));
 
         }
 
