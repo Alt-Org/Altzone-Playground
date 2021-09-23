@@ -156,7 +156,7 @@ namespace Altzone.Nelinpeli
             {
                 status = PlayerStatus.Playing;
                 myKeyValue = keyValue;
-                player.SetCustomProperty(playerPosKeyName, myKeyName);
+                player.SetCustomProperties(new Hashtable { { playerPosKeyName, myKeyName } });
                 return true;
             }
             return false;

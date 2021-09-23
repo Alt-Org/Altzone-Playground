@@ -1,4 +1,5 @@
-﻿using Photon.Pun;
+﻿using ExitGames.Client.Photon;
+using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
 using System;
@@ -104,14 +105,14 @@ namespace Altzone.Nelinpeli
         {
             status = PlayerStatus.Acquiring;
             Debug.Log($"PLAYER SetCustomProperty {playerStatusKeyName} {(int)status} {status}");
-            player.SetCustomProperty(playerStatusKeyName, (byte) status);
+            player.SetCustomProperties(new Hashtable { { playerStatusKeyName, (byte) status } });
         }
 
         private void releasePlayerPosition(Player player, Room room)
         {
             status = PlayerStatus.Releasing;
             Debug.Log($"PLAYER SetCustomProperty {playerStatusKeyName} {(int)status} {status}");
-            player.SetCustomProperty(playerStatusKeyName, (byte) status);
+            player.SetCustomProperties(new Hashtable { { playerStatusKeyName, (byte) status } });
         }
 
         private void onNetworkEvent(PhotonWatchdog.Notify notify, PhotonWatchdog.Verb verb, Player affectedPlayer)
@@ -199,7 +200,7 @@ namespace Altzone.Nelinpeli
                         // Player position is reserved for us
                         status = PlayerStatus.Playing;
                         Debug.Log($"PLAYER SetCustomProperty {playerStatusKeyName} {(int)status} {status}");
-                        player.SetCustomProperty(playerStatusKeyName, (byte) status);
+                        player.SetCustomProperties(new Hashtable { { playerStatusKeyName, (byte) status } });
                     }
                     else if (keyValue == "0")
                     {
@@ -211,7 +212,7 @@ namespace Altzone.Nelinpeli
                         // Player position is reserved for somebody else
                         status = PlayerStatus.Idle;
                         Debug.Log($"PLAYER SetCustomProperty {playerStatusKeyName} {(int)status} {status}");
-                        player.SetCustomProperty(playerStatusKeyName, (byte) status);
+                        player.SetCustomProperties(new Hashtable { { playerStatusKeyName, (byte) status } });
                     }
                     return;
                 }
@@ -235,7 +236,7 @@ namespace Altzone.Nelinpeli
                         // Player position has been released
                         status = PlayerStatus.Idle;
                         Debug.Log($"PLAYER SetCustomProperty {playerStatusKeyName} {(int)status} {status}");
-                        player.SetCustomProperty(playerStatusKeyName, (byte) status);
+                        player.SetCustomProperties(new Hashtable { { playerStatusKeyName, (byte) status } });
                     }
                     else if (keyValue == actorNumber)
                     {
@@ -247,7 +248,7 @@ namespace Altzone.Nelinpeli
                         // Player position is reserved for somebody else - that's OK for us
                         status = PlayerStatus.Idle;
                         Debug.Log($"PLAYER SetCustomProperty {playerStatusKeyName} {(int)status} {status}");
-                        player.SetCustomProperty(playerStatusKeyName, (byte) status);
+                        player.SetCustomProperties(new Hashtable { { playerStatusKeyName, (byte) status } });
                     }
                     return;
                 }

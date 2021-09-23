@@ -137,7 +137,7 @@ namespace Prg.Scripts.Common.Photon
             }
             SequenceDiagram.receive(nameof(LobbyHelper), SD.JOIN_ROOM);
             var player = PhotonNetwork.LocalPlayer;
-            var isSpectator = player.IsSpectator();
+            var isSpectator = false;//player.IsSpectator();
             countLobbyParticipants(roomInfo, out var playerCount, out var maxPlayerCount, out var spectatorCount);
             if (isSpectator)
             {
@@ -216,7 +216,7 @@ namespace Prg.Scripts.Common.Photon
             if (PhotonNetwork.InRoom)
             {
                 var room = PhotonNetwork.CurrentRoom;
-                spectatorCount = room.CountSpectators();
+                spectatorCount = 0;//room.CountSpectators();
                 playerCount = room.PlayerCount - spectatorCount;
                 maxPlayerCount = room.IsOffline ? 0 : room.MaxPlayers > 0 ? room.MaxPlayers - maxSpectatorsInRoom : 0;
                 return;
@@ -227,7 +227,7 @@ namespace Prg.Scripts.Common.Photon
         private static void countLobbyParticipants(RoomInfo room, out int playerCount, out int maxPlayerCount, out int spectatorCount)
         {
             // This relies that room custom properties are updated correctly!
-            spectatorCount = room.GetSpectatorCount();
+            spectatorCount = 0;//room.GetSpectatorCount();
             playerCount = room.PlayerCount - spectatorCount;
             maxPlayerCount = room.MaxPlayers > 0 ? room.MaxPlayers - maxSpectatorsInRoom : 0;
         }
@@ -251,7 +251,7 @@ namespace Prg.Scripts.Common.Photon
             var players = PhotonNetwork.CurrentRoom.GetSortedPlayerList();
             foreach (var player in players)
             {
-                if (!player.IsMasterClient && !player.IsSpectator())
+                if (!player.IsMasterClient)// && !player.IsSpectator())
                 {
                     // This is new master client that is not spectator
                     if (PhotonNetwork.SetMasterClient(player))
@@ -270,8 +270,8 @@ namespace Prg.Scripts.Common.Photon
                 throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
             }
             var room = PhotonNetwork.CurrentRoom;
-            var spectatorCount = room.CountSpectators();
-            var currentValue = room.GetSpectatorCount();
+            var spectatorCount = 0;//room.CountSpectators();
+            var currentValue = 0;//room.GetSpectatorCount();
             if (spectatorCount != currentValue)
             {
                 SetSpectatorCount(room, spectatorCount, currentValue);
@@ -284,16 +284,16 @@ namespace Prg.Scripts.Common.Photon
             {
                 throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
             }
-            if (player.IsSpectator())
+            /*if (false)//player.IsSpectator())
             {
                 var room = PhotonNetwork.CurrentRoom;
-                var spectatorCount = room.CountSpectators();
-                var currentValue = room.GetSpectatorCount();
+                var spectatorCount = 0;//room.CountSpectators();
+                var currentValue = 0;//room.GetSpectatorCount();
                 if (spectatorCount != currentValue)
                 {
                     SetSpectatorCount(room, spectatorCount, currentValue);
                 }
-            }
+            }*/
         }
 
         public bool IsSpectator(Player player)
@@ -304,13 +304,13 @@ namespace Prg.Scripts.Common.Photon
         public static int CountSpectators(Room room)
         {
             var spectatorCount = 0;
-            foreach (var player in room.Players.Values)
+            /*foreach (var player in room.Players.Values)
             {
-                if (player.IsSpectator())
+                if (false)//player.IsSpectator())
                 {
                     spectatorCount += 1;
                 }
-            }
+            }*/
             return spectatorCount;
         }
 

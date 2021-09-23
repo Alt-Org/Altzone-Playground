@@ -104,7 +104,7 @@ namespace Altzone.Nelinpeli
             otherPlayerActorNumber = -1;
             if (!isBot)
             {
-                foreach (var somePlayer in room.GetPlayerList())
+                foreach (var somePlayer in room.Players.Values)
                 {
                     if (!player.Equals(somePlayer))
                     {
@@ -114,7 +114,7 @@ namespace Altzone.Nelinpeli
             }
             else
             {
-                foreach (var somePlayer in room.GetPlayerList())
+                foreach (var somePlayer in room.Players.Values)
                 {
                     checkBotWithOtherPlayer(player, somePlayer);
                 }
@@ -485,7 +485,7 @@ namespace Altzone.Nelinpeli
                     continue;
                 }
                 var isPlayerPosValid = false;
-                foreach (var player in room.GetPlayerList())
+                foreach (var player in room.Players.Values)
                 {
                     if (player.ActorNumber == actorNUmber)
                     {

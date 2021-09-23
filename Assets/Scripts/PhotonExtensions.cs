@@ -9,168 +9,6 @@ using UnityEngine;
 
 public static class PhotonExtensions
 {
-    #region To be reafactored elsewhere
-
-    public enum CustomPropKey
-    {
-        // Room properties
-        GameMode,
-        WallType,
-        SpectatorCount,
-        RoomSetup,
-
-        // Player properties
-        PlayerSetup,
-        IsSpectator,
-    }
-
-    private static readonly Dictionary<CustomPropKey, string> propKeyNames;
-
-    static PhotonExtensions()
-    {
-        propKeyNames = new Dictionary<CustomPropKey, string>()
-        {
-            // Keep property names short to reduce payload when they are sent over network
-            { CustomPropKey.GameMode, "GM" },
-            { CustomPropKey.WallType, "WT" },
-            { CustomPropKey.SpectatorCount, "SC" },
-            { CustomPropKey.RoomSetup, "RS" },
-            { CustomPropKey.PlayerSetup, "PS" },
-            { CustomPropKey.IsSpectator, "<s>" },
-        };
-    }
-
-    private static string KeyName(this CustomPropKey key)
-    {
-        if (propKeyNames.TryGetValue(key, out var keyName))
-        {
-            return keyName;
-        }
-        throw new UnityException("CustomPropKey not found: " + key);
-    }
-
-    public static string GetStatusText(this ClientState clientState)
-    {
-        // TODO: should be localizable
-        return PhotonNetwork.InRoom
-            ? "Room"
-            : PhotonNetwork.InLobby
-                ? "Lobby"
-                : clientState == ClientState.ConnectedToMasterServer
-                    ? "Master"
-                    : (clientState == ClientState.PeerCreated ||
-                       clientState == ClientState.Disconnected)
-                        ? "Ready"
-                        : "Wait";
-    }
-
-    public static string GetPlayerLabel(this Player player)
-    {
-        var label = player.NickName;
-        var status = $" #{player.ActorNumber}";
-        if (player.CustomProperties.TryGetValue(CustomPropKey.PlayerSetup.KeyName(), out var playerSetup))
-        {
-            status += $":{playerSetup}";
-        }
-        else
-        {
-            status += ":?";
-        }
-        if (player.IsMasterClient)
-        {
-            status += ",m";
-        }
-        if (player.IsSpectator())
-        {
-            status += ",s";
-        }
-        if (player.IsInactive)
-        {
-            status += ",out";
-        }
-        label += status;
-        return label;
-    }
-
-    public static string GetRoomLabel(this RoomInfo room)
-    {
-        string formatRoomLabel(string gameMode, string roomName, int playerCount, int spectatorCount, int maxPlayers)
-        {
-            playerCount -= spectatorCount;
-            var spectatorState = spectatorCount > 0 ? $"+{spectatorCount}" : "";
-            var roomState = playerCount == maxPlayers ? "full" : "open";
-            return $"{gameMode} {roomName} ({playerCount}/{maxPlayers}{spectatorState}) {roomState}";
-        }
-
-        return formatRoomLabel(room.GetGameMode(), room.Name, room.PlayerCount, room.GetSpectatorCount(), room.MaxPlayers);
-    }
-
-    public static string GetSortLabel(this RoomInfo room)
-    {
-        return $"{room.GetGameMode(),12}.{room.Name}"; // make first key part long enough to hold longest game mode name
-    }
-
-    public static int CountAllPlayers(this Room room)
-    {
-        var playerCount = 0;
-        foreach (var player in room.Players.Values)
-        {
-            if (!player.IsSpectator())
-            {
-                playerCount += 1;
-            }
-        }
-        return playerCount;
-    }
-
-    public static ICollection<Player> GetPlayerList(this Room room)
-    {
-        return room.Players.Values;
-    }
-
-    public static void SetSpectatorMode(this Player player, bool value)
-    {
-        player.SetCustomProperty(CustomPropKey.IsSpectator.KeyName(), value);
-    }
-
-    public static int GetSpectatorCount(this RoomInfo room)
-    {
-        return room.GetCustomProperty(CustomPropKey.SpectatorCount.KeyName(), (byte) 0);
-    }
-
-    public static int CountSpectators(this Room room)
-    {
-        var spectatorCount = 0;
-        foreach (var player in room.Players.Values)
-        {
-            if (player.IsSpectator())
-            {
-                spectatorCount += 1;
-            }
-        }
-        return spectatorCount;
-    }
-
-    public static bool IsSpectator(this Player player)
-    {
-        return player.HasCustomProperty(CustomPropKey.IsSpectator.KeyName());
-    }
-
-    public static string GetGameMode(this RoomInfo room)
-    {
-        if (room.CustomProperties.TryGetValue(CustomPropKey.GameMode.KeyName(), out var mode))
-        {
-            return mode.ToString();
-        }
-        if (room.RemovedFromList)
-        {
-            return "";
-        }
-        throw new UnityException("game mode not set in room info");
-    }
-
-    #endregion
-
     #region Player
 
     public static IOrderedEnumerable<Player> GetSortedPlayerList(this Room room)
@@ -219,24 +57,18 @@ public static class PhotonExtensions
         return room.CustomProperties.ContainsKey(key);
     }
 
-    public static void SetCustomProperty(this Player player, string key, bool value)
+    public static void SafeSetCustomProperty(this Player player, string key, byte newValue, byte currentValue)
     {
-        var props = value
-            ? new Hashtable { { key, (byte) 1 } } // Add
-            : new Hashtable { { key, null } }; // Remove
-        player.SetCustomProperties(props);
+        var props = new Hashtable { { key, newValue } };
+        var expectedProps = new Hashtable { { key, currentValue } };
+        player.SetCustomProperties(props, expectedProps);
     }
 
-    public static void SetCustomProperty(this Player player, string key, byte value)
+    public static void SafeSetCustomProperty(this Player player, string key, string newValue, string currentValue)
     {
-        var props = new Hashtable { { key, value } };
-        player.SetCustomProperties(props);
-    }
-
-    public static void SetCustomProperty(this Player player, string key, string value)
-    {
-        var props = new Hashtable { { key, value } };
-        player.SetCustomProperties(props);
+        var props = new Hashtable { { key, newValue } };
+        var expectedProps = new Hashtable { { key, currentValue } };
+        player.SetCustomProperties(props, expectedProps);
     }
 
     public static void RemoveCustomProperty(this Player player, string key)
