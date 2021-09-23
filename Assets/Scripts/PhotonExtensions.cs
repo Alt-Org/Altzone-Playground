@@ -58,11 +58,17 @@ public static class PhotonExtensions
         return room.CustomProperties.ContainsKey(key);
     }
 
-    public static void SafeSetCustomProperty(this Player player, string key, byte newValue, byte currentValue)
+    public static void SafeSetCustomProperty<T>(this Player player, string key, T newValue, T currentValue) where T : struct
     {
-        var props = new Hashtable { { key, newValue } };
-        var expectedProps = new Hashtable { { key, currentValue } };
-        player.SetCustomProperties(props, expectedProps);
+        var isTypeAcceptable = newValue is bool || newValue is int; // T is limited to some "value types" which struct represents!
+        if (isTypeAcceptable)
+        {
+            var props = new Hashtable { { key, newValue } };
+            var expectedProps = new Hashtable { { key, currentValue } };
+            player.SetCustomProperties(props, expectedProps);
+            return;
+        }
+        throw new UnityException("type is not supported: " + typeof(T));
     }
 
     public static void SafeSetCustomProperty(this Player player, string key, string newValue, string currentValue)
