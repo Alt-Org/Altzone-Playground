@@ -90,7 +90,7 @@ namespace Prg.Scripts.Common.Photon
                     label += $"\r\n{key}={propValue}";
                 }
                 label += "\r\nPlayers:";
-                foreach (var player in room.GetSortedPlayerList())
+                foreach (var player in room.GetPlayersByActorNumber())
                 {
                     var text = player.GetDebugLabel(verbose: false);
                     label += $"\r\n{text}";

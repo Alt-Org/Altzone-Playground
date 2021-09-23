@@ -248,7 +248,7 @@ namespace Prg.Scripts.Common.Photon
             }
             // Try to find new master client that is not spectator - not mandatory but maybe good thing to do for the future.
             // - sort players so that everybody tries to set the same player as this runs asynchronously on multiple clients.
-            var players = PhotonNetwork.CurrentRoom.GetSortedPlayerList();
+            var players = PhotonNetwork.CurrentRoom.GetPlayersByActorNumber();
             foreach (var player in players)
             {
                 if (!player.IsMasterClient)// && !player.IsSpectator())

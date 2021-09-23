@@ -9,16 +9,17 @@ using UnityEngine;
 
 public static class PhotonExtensions
 {
-    #region Player
+    #region Room
 
-    public static IOrderedEnumerable<Player> GetSortedPlayerList(this Room room)
+    public static IOrderedEnumerable<Player> GetPlayersByActorNumber(this Room room)
     {
         return room.Players.Values.OrderBy((x) => x.ActorNumber);
     }
 
-    #endregion
-
-    #region Room
+    public static IOrderedEnumerable<Player> GetPlayersByNickName(this Room room)
+    {
+        return room.Players.Values.OrderBy((x) => x.NickName);
+    }
 
     public static bool GetUniquePlayerNameForRoom(this Room room, Player player, string playerName, string separator, out string uniquePlayerName)
     {

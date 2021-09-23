@@ -1,7 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -39,8 +38,7 @@ namespace Lobby.Scripts
                 deleteExtraLines(textLines, 0);
                 return;
             }
-            var players = PhotonNetwork.CurrentRoom.Players.Values.ToList();
-            players.Sort((a,b) => String.Compare(a.NickName, b.NickName, StringComparison.Ordinal));
+            var players = PhotonNetwork.CurrentRoom.GetPlayersByNickName().ToList();
             Debug.Log($"updateStatus {PhotonNetwork.NetworkClientState} lines: {textLines.Count} players: {players.Count}");
 
             // Synchronize line count with player count.
