@@ -26,12 +26,12 @@ namespace Lobby.Scripts
 
         private void OnEnable()
         {
-            if (PhotonNetwork.InLobby)
-            {
-                updateStatus();
-            }
             if (photonRoomList != null)
             {
+                if (PhotonNetwork.InLobby)
+                {
+                    updateStatus();
+                }
                 photonRoomList.roomsUpdated += updateStatus;
             }
         }

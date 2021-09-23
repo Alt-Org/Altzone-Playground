@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Lobby.Scripts
 {
+    /// <summary>
+    /// Helper class to enter Photon lobby.
+    /// </summary>
     public class StartLobby : MonoBehaviour
     {
         [SerializeField] private GameObject inLobby;
