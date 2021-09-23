@@ -184,6 +184,7 @@ RectTransform:
   m_Children:
   - {fileID: 1414993867}
   - {fileID: 932295651}
+  - {fileID: 1545557588}
   m_Father: {fileID: 383953726}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -878,6 +879,7 @@ MonoBehaviour:
   title: {fileID: 1414993868}
   templateButton: {fileID: 932295652}
   buttons: []
+  photonRoomList: {fileID: 0}
 --- !u!1 &396449654
 GameObject:
   m_ObjectHideFlags: 0
@@ -3657,6 +3659,84 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1500443331}
   m_CullTransparentMesh: 0
+--- !u!1 &1545557587
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1545557588}
+  - component: {fileID: 1545557590}
+  - component: {fileID: 1545557589}
+  m_Layer: 5
+  m_Name: Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1545557588
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545557587}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 155199260}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 248.11746, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1545557589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545557587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 48
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 4
+    m_MaxSize: 48
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
+    m_LineSpacing: 1
+  m_Text: Rooms to join
+--- !u!222 &1545557590
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545557587}
+  m_CullTransparentMesh: 0
 --- !u!1 &1549162292
 GameObject:
   m_ObjectHideFlags: 0
@@ -3667,6 +3747,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1549162293}
   - component: {fileID: 1549162294}
+  - component: {fileID: 1549162296}
   - component: {fileID: 1549162295}
   m_Layer: 0
   m_Name: StartLobby
@@ -3717,6 +3798,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Visible: 0
   controlKey: 283
+--- !u!114 &1549162296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1549162292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b37159a29c6a4cecbbb14793611138a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomListCount: 0
 --- !u!1 &1559823056
 GameObject:
   m_ObjectHideFlags: 0
