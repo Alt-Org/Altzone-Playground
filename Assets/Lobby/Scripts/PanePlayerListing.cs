@@ -29,6 +29,12 @@ namespace Lobby.Scripts
             {
                 updateStatus();
             }
+            PhotonNetwork.AddCallbackTarget(this);
+        }
+
+        private void OnDisable()
+        {
+            PhotonNetwork.RemoveCallbackTarget(this);
         }
 
         private void updateStatus()

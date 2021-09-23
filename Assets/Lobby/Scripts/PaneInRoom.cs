@@ -17,12 +17,27 @@ namespace Lobby.Scripts
         private ClientState curClientState;
         private void Start()
         {
-            var room = PhotonNetwork.CurrentRoom;
-            title.text = room?.Name ?? "Not in room";
-            buttons[0].onClick.AddListener(() => this.Publish(new LobbyManager.Event(LobbyManager.playerIsGuest)));
-            buttons[1].onClick.AddListener(() => this.Publish(new LobbyManager.Event(LobbyManager.playerIsSpectator)));
+            buttons[0].onClick.AddListener(setPlayerAsGuest);
+            buttons[1].onClick.AddListener(setPlayerAsSpectator);
         }
 
+        private void setPlayerAsGuest()
+        {
+            Debug.Log($"setPlayerAsGuest {LobbyManager.playerIsGuest}");
+            this.Publish(new LobbyManager.Event(LobbyManager.playerIsGuest));
+
+        }
+
+        private void setPlayerAsSpectator()
+        {
+            Debug.Log($"setPlayerAsSpectator {LobbyManager.playerIsSpectator}");
+            this.Publish(new LobbyManager.Event(LobbyManager.playerIsSpectator));
+
+        }
+
+        /// <summary>
+        /// Stupid way to poll network state changes!
+        /// </summary>
         private void Update()
         {
             if (curClientState == PhotonNetwork.NetworkClientState)

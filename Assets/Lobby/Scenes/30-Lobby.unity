@@ -265,7 +265,6 @@ GameObject:
   m_Component:
   - component: {fileID: 160932571}
   - component: {fileID: 160932572}
-  - component: {fileID: 160932573}
   m_Layer: 5
   m_Name: Panel-for-Lobby
   m_TagString: Untagged
@@ -318,18 +317,6 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
---- !u!114 &160932573
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 160932570}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29bd8cda7d1b4cf5b520a142d730ecd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &238281054
 GameObject:
   m_ObjectHideFlags: 0
@@ -1384,7 +1371,7 @@ GameObject:
   - component: {fileID: 786057006}
   - component: {fileID: 786057005}
   m_Layer: 5
-  m_Name: Button-Game
+  m_Name: Button-Guest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2240,7 +2227,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -532.1553, y: 0}
+  m_AnchoredPosition: {x: -532.1554, y: 0}
   m_SizeDelta: {x: 1064, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1059583873
@@ -2349,8 +2336,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 609486849}
   m_HandleRect: {fileID: 609486848}
   m_Direction: 0
-  m_Value: 0.99941087
-  m_Size: 0.99970573
+  m_Value: 1.0003929
+  m_Size: 0.9996916
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3274,6 +3261,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1549162293}
+  - component: {fileID: 1549162298}
   - component: {fileID: 1549162294}
   - component: {fileID: 1549162297}
   - component: {fileID: 1549162296}
@@ -3354,6 +3342,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inLobby: {fileID: 2065046678}
   inRoom: {fileID: 105784561}
+--- !u!114 &1549162298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1549162292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29bd8cda7d1b4cf5b520a142d730ecd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1610626805
 GameObject:
   m_ObjectHideFlags: 0
@@ -3481,9 +3481,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1690819769}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29bd8cda7d1b4cf5b520a142d730ecd6, type: 3}
+  m_Script: {fileID: 11500000, guid: 16651cc30534406c9bbde87f4237bc4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonPlayerP0: {fileID: 865135154}
+  buttonPlayerP1: {fileID: 270758012}
+  buttonPlayerP2: {fileID: 459976815}
+  buttonPlayerP3: {fileID: 396449656}
+  buttonGuest: {fileID: 786057005}
+  buttonSpectator: {fileID: 1023735842}
 --- !u!114 &1690819772
 MonoBehaviour:
   m_ObjectHideFlags: 0
