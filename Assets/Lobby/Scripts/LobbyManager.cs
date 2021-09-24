@@ -54,10 +54,12 @@ namespace Lobby.Scripts
         {
             if (!player.HasCustomProperty(playerPositionKey))
             {
+                Debug.Log($"setPlayer {playerPositionKey} : {playerPosition}");
                 player.SetCustomProperties(new Hashtable { { playerPositionKey, playerPosition } });
                 return;
             }
             var curValue = player.GetCustomProperty<int>(playerPositionKey);
+            Debug.Log($"setPlayer {playerPositionKey} : {curValue} <- {playerPosition}");
             player.SafeSetCustomProperty(playerPositionKey, playerPosition, curValue);
         }
 

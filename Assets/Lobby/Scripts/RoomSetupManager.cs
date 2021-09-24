@@ -1,7 +1,6 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +12,7 @@ namespace Lobby.Scripts
     public class RoomSetupManager : MonoBehaviour, IInRoomCallbacks
     {
         private const string playerPositionKey = LobbyManager.playerPositionKey;
+        private const int playerIsGuest = LobbyManager.playerIsGuest;
 
         [SerializeField] private Button buttonPlayerP0;
         [SerializeField] private Button buttonPlayerP1;
@@ -21,6 +21,8 @@ namespace Lobby.Scripts
         [SerializeField] private Button buttonGuest;
         [SerializeField] private Button buttonSpectator;
         [SerializeField] private Button buttonStartPlay;
+        [SerializeField] private int localPlayerPosition;
+        [SerializeField] private bool isLocalPlayerPositionUnique;
 
         private bool interactablePlayerP0;
         private bool interactablePlayerP1;
@@ -65,7 +67,11 @@ namespace Lobby.Scripts
                 return;
             }
             resetState();
+            // We need local player to check against other players
             var localPLayer = PhotonNetwork.LocalPlayer;
+            localPlayerPosition = localPLayer.GetCustomProperty(playerPositionKey, playerIsGuest);
+            isLocalPlayerPositionUnique = true;
+
             // Check other players first is they have reserved some player positions etc. from the room already.
             foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
             {
@@ -92,7 +98,15 @@ namespace Lobby.Scripts
             {
                 return;
             }
-            var curValue = player.GetCustomProperty<int>(playerPositionKey);
+            var curValue = player.GetCustomProperty(playerPositionKey, -1);
+            if (isLocalPlayerPositionUnique && curValue >= LobbyManager.playerPosition0 && curValue <= LobbyManager.playerPosition3)
+            {
+                if (curValue == localPlayerPosition)
+                {
+                    Debug.Log("detected conflict");
+                    isLocalPlayerPositionUnique = false; // Conflict with player positions!
+                }
+            }
             switch (curValue)
             {
                 case LobbyManager.playerPosition0:
@@ -116,7 +130,7 @@ namespace Lobby.Scripts
 
         private void checkLocalPlayer(Player player)
         {
-            Debug.Log($"checkLocalPlayer {player.ToStringFull()}");
+            Debug.Log($"checkLocalPlayer {player.ToStringFull()} pos={localPlayerPosition} ok={isLocalPlayerPositionUnique}");
             // Start button state!
             interactableStartPlay = player.IsMasterClient;
             if (!player.HasCustomProperty(playerPositionKey))
@@ -124,7 +138,7 @@ namespace Lobby.Scripts
                 player.SetCustomProperties(new Hashtable { { playerPositionKey, LobbyManager.playerIsGuest } });
                 return;
             }
-            var curValue = player.GetCustomProperty<int>(playerPositionKey);
+            var curValue = player.GetCustomProperty(playerPositionKey, playerIsGuest);
             switch (curValue)
             {
                 case LobbyManager.playerPosition0:

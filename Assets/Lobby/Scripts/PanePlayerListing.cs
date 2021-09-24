@@ -13,6 +13,9 @@ namespace Lobby.Scripts
     /// </summary>
     public class PanePlayerListing : MonoBehaviour, IInRoomCallbacks
     {
+        private const string playerPositionKey = LobbyManager.playerPositionKey;
+        private const int playerIsGuest = LobbyManager.playerIsGuest;
+
         [SerializeField] private GameObject contentRoot;
         [SerializeField] private Text textTemplate;
 
@@ -75,13 +78,15 @@ namespace Lobby.Scripts
         private void update(Text line, Player player)
         {
             var text = line.GetComponent<Text>();
-            var lineContent = player.IsLocal ? $"<b>{player.NickName}</b>" : player.NickName;
+            var name = player.IsLocal ? $"<b>{player.NickName}</b>" : player.NickName;
+            var status = $" {playerPositionKey}={player.GetCustomProperty(playerPositionKey, playerIsGuest)}";
             if (player.IsMasterClient)
             {
-                lineContent += " [M]";
+                status += " [M]";
             }
-            Debug.Log($"update '{text.text}' -> '{lineContent}'");
-            text.text = lineContent;
+            var playerText = $"{name} {status}";
+            Debug.Log($"update '{text.text}' -> '{playerText}'");
+            text.text = playerText;
         }
 
         private static void deleteExtraLines(List<Text> lines, int linesToKeep)
@@ -115,7 +120,7 @@ namespace Lobby.Scripts
 
         void IInRoomCallbacks.OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
-            // NOP
+            updateStatus();
         }
 
         void IInRoomCallbacks.OnMasterClientSwitched(Player newMasterClient)
