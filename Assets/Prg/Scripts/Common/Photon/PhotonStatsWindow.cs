@@ -21,7 +21,7 @@ namespace Prg.Scripts.Common.Photon
         {
             WindowId = (int) DateTime.Now.Ticks;
             WindowRect = new Rect(0, 0, Screen.width, Screen.height);
-            WindowTitle = $"({controlKey}) Photon {PhotonNetwork.GameVersion}";
+            WindowTitle = $"({controlKey}) Photon";
         }
 
         private void Update()
@@ -106,8 +106,9 @@ namespace Prg.Scripts.Common.Photon
                         }
                     }
                 }
-                GUILayout.Label(label, guiLabelStyle);
             }
+            label += $"\r\nPhoton v='{PhotonLobby.gameVersion()}'";
+            GUILayout.Label(label, guiLabelStyle);
         }
     }
 }
