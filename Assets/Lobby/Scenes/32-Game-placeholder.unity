@@ -307,6 +307,7 @@ GameObject:
   - component: {fileID: 2122119609}
   - component: {fileID: 2122119608}
   - component: {fileID: 2122119610}
+  - component: {fileID: 2122119611}
   m_Layer: 0
   m_Name: Game-placeholder-stuff
   m_TagString: Untagged
@@ -360,3 +361,21 @@ MonoBehaviour:
     isNetwork: 0
     isExcluded: 0
     levelId: 0
+--- !u!114 &2122119611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2122119607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec4d991767d7437783a4ff6bc3a2b076, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player1: 
+  player2: 
+  player3: 
+  player4: 
+  spectators: 
+  others: 
