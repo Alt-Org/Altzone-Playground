@@ -13,15 +13,14 @@ namespace Lobby.Scripts
     {
         [SerializeField] private Text title;
         [SerializeField] private Button templateButton;
-        [SerializeField] private List<Button> buttons;
-
         [SerializeField] private PhotonRoomList photonRoomList;
+
+        private readonly List<Button> buttons = new List<Button>();
 
         private void Start()
         {
             title.text = $"Welcome to {Application.productName}";
             templateButton.onClick.AddListener(createRoomForMe);
-            buttons = new List<Button>();
         }
 
         private void OnEnable()
@@ -44,6 +43,7 @@ namespace Lobby.Scripts
                 photonRoomList.roomsUpdated -= updateStatus;
                 photonRoomList = null;
             }
+            buttons.Clear();
         }
 
         private void updateStatus()
@@ -68,7 +68,7 @@ namespace Lobby.Scripts
             {
                 var room = rooms[i];
                 var button = buttons[i];
-                update(button, room.Name);
+                update(button, room);
             }
             Debug.Log($"updateStatus exit {PhotonNetwork.NetworkClientState} buttons: {buttons.Count} rooms: {rooms.Count}");
         }
@@ -85,7 +85,7 @@ namespace Lobby.Scripts
             var rooms = photonRoomList.currentRooms.ToList();
             foreach (var roomInfo in rooms)
             {
-                if (roomInfo.Name == roomName)
+                if (roomInfo.Name == roomName && !roomInfo.RemovedFromList && roomInfo.IsOpen)
                 {
                     PhotonLobby.Get().joinRoom(roomInfo);
                 }
@@ -101,13 +101,27 @@ namespace Lobby.Scripts
             return button;
         }
 
-        private void update(Button button, string roomName)
+        private void update(Button button, RoomInfo room)
         {
             var text = button.GetComponentInChildren<Text>();
-            Debug.Log($"update '{text.text}' -> '{roomName}'");
-            text.text = roomName;
+            var roomText = $"{room.Name}";
+            if (room.IsOpen)
+            {
+                roomText += $" ({room.PlayerCount})";
+                roomText = $"<color=blue>{roomText}</color>";
+            }
+            else
+            {
+                roomText += " (closed)";
+                roomText = $"<color=brown>{roomText}</color>";
+            }
+            Debug.Log($"update '{text.text}' -> '{roomText}'");
+            text.text = roomText;
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => joinRoom(roomName));
+            if (room.IsOpen)
+            {
+                button.onClick.AddListener(() => joinRoom(room.Name));
+            }
         }
 
         private static void deleteExtraButtons(List<Button> buttons, int buttonsToKeep)
