@@ -132,13 +132,14 @@ namespace Lobby.Scripts
         {
             Debug.Log($"checkLocalPlayer {player.ToStringFull()} pos={localPlayerPosition} ok={isLocalPlayerPositionUnique}");
             // Start button state!
-            interactableStartPlay = player.IsMasterClient;
             if (!player.HasCustomProperty(playerPositionKey))
             {
                 player.SetCustomProperties(new Hashtable { { playerPositionKey, LobbyManager.playerIsGuest } });
                 return;
             }
             var curValue = player.GetCustomProperty(playerPositionKey, playerIsGuest);
+            // Master client can *only* start the game when in room as player!
+            interactableStartPlay = player.IsMasterClient && curValue >= LobbyManager.playerPosition0 && curValue <= LobbyManager.playerPosition3;
             switch (curValue)
             {
                 case LobbyManager.playerPosition0:
