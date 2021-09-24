@@ -1,6 +1,7 @@
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.PubSub;
+using System;
 using System.Collections;
 using System.Linq;
 using UiProto.Scripts.Window;
@@ -10,12 +11,12 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 namespace Lobby.Scripts
 {
     /// <summary>
-    /// Manages local player position and setup in a room.
+    /// Manages local player position and setup in a room and controls which level is loaded next.
     /// </summary>
     /// <remarks>
-    /// Settings are saved in player custom properties.
+    /// Game settings are saved in player custom properties for each participating player.
     /// </remarks>
-    public class LobbyManager : MonoBehaviour
+    public class LobbyManager : MonoBehaviourPunCallbacks
     {
         public const string playerPositionKey = "pp";
 
@@ -27,15 +28,18 @@ namespace Lobby.Scripts
         public const int playerIsSpectator = 11;
         public const int startPlaying = 123;
 
+        [SerializeField] private LevelIdDef cancelLevel;
         [SerializeField] private LevelIdDef gameLevel;
 
-       private void OnEnable()
+        public override void OnEnable()
         {
+            base.OnEnable();
             this.Subscribe<Event>(onEvent);
         }
 
-        private void OnDisable()
+        public override void OnDisable()
         {
+            base.OnDisable();
             this.Unsubscribe<Event>(onEvent);
         }
 
@@ -48,6 +52,15 @@ namespace Lobby.Scripts
             else if (PhotonNetwork.InLobby)
             {
                 PhotonNetwork.LeaveLobby();
+            }
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.Escape))
+            {
+                Debug.Log($"Escape {PhotonNetwork.NetworkClientState} {PhotonNetwork.LocalPlayer.NickName}");
+                SceneLoader.LoadScene(cancelLevel.unityName);
             }
         }
 
@@ -103,9 +116,18 @@ namespace Lobby.Scripts
             player.SafeSetCustomProperty(playerPositionKey, playerPosition, curValue);
         }
 
+        public override void OnLeftRoom()
+        {
+            // Goto menu if we left (in)voluntarily any room
+            // - typically master client kicked us off before starting a new game as we did not qualify to participate.
+            Debug.Log($"OnLeftRoom {PhotonNetwork.LocalPlayer.NickName}");
+            SceneLoader.LoadScene(cancelLevel.unityName);
+        }
+
         public class Event
         {
             public readonly int playerPosition;
+
             public Event(int playerPosition)
             {
                 this.playerPosition = playerPosition;

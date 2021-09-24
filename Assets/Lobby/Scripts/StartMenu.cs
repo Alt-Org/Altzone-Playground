@@ -1,4 +1,5 @@
-﻿using UiProto.Scripts.Window;
+﻿using Photon.Pun;
+using UiProto.Scripts.Window;
 using UnityEngine;
 
 namespace Lobby.Scripts
@@ -9,8 +10,9 @@ namespace Lobby.Scripts
 
         private void Update()
         {
-            if (Input.anyKey)
+            if (Input.GetKeyUp(KeyCode.Escape))
             {
+                Debug.Log($"Escape {PhotonNetwork.NetworkClientState} {PhotonNetwork.LocalPlayer.NickName}");
                 SceneLoader.LoadScene(mainMenu.unityName);
                 enabled = false;
             }
