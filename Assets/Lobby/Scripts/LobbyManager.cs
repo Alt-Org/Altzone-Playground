@@ -1,9 +1,11 @@
-using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.PubSub;
+using System.Collections;
+using System.Linq;
 using UiProto.Scripts.Window;
 using UnityEngine;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Lobby.Scripts
 {
@@ -27,7 +29,7 @@ namespace Lobby.Scripts
 
         [SerializeField] private LevelIdDef gameLevel;
 
-        private void OnEnable()
+       private void OnEnable()
         {
             this.Subscribe<Event>(onEvent);
         }
@@ -37,20 +39,54 @@ namespace Lobby.Scripts
             this.Unsubscribe<Event>(onEvent);
         }
 
+        private void OnApplicationQuit()
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                PhotonNetwork.LeaveRoom();
+            }
+            else if (PhotonNetwork.InLobby)
+            {
+                PhotonNetwork.LeaveLobby();
+            }
+        }
+
         private void onEvent(Event data)
         {
             Debug.Log($"onEvent {data}");
             if (data.playerPosition == startPlaying)
             {
-                startTheGameplay(gameLevel.unityName);
+                StartCoroutine(startTheGameplay(gameLevel.unityName));
                 return;
             }
             setPlayer(PhotonNetwork.LocalPlayer, data.playerPosition);
         }
 
-        private static void startTheGameplay(string levelName)
+        private static IEnumerator startTheGameplay(string levelName)
         {
             Debug.Log($"startTheGameplay {levelName}");
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                throw new UnityException("only master client can start the game");
+            }
+            var masterPosition = PhotonNetwork.LocalPlayer.GetCustomProperty(playerPositionKey, -1);
+            if (masterPosition < playerPosition0 || masterPosition > playerPosition3)
+            {
+                throw new UnityException("master client does not have valid player position: " + masterPosition);
+            }
+            // Snapshot player list before iteration because we can change it
+            var players = PhotonNetwork.CurrentRoom.Players.Values.ToList();
+            foreach (var player in players)
+            {
+                var curValue = player.GetCustomProperty(playerPositionKey, -1);
+                if (curValue >= playerPosition0 && curValue <= playerPosition3 || curValue == playerIsSpectator)
+                {
+                    continue;
+                }
+                Debug.Log($"KICK {player.NickName} {playerPositionKey}={curValue}");
+                PhotonNetwork.CloseConnection(player);
+                yield return null;
+            }
             PhotonNetwork.LoadLevel(levelName);
         }
 
@@ -58,12 +94,12 @@ namespace Lobby.Scripts
         {
             if (!player.HasCustomProperty(playerPositionKey))
             {
-                Debug.Log($"setPlayer {playerPositionKey} : {playerPosition}");
+                Debug.Log($"setPlayer {playerPositionKey}={playerPosition}");
                 player.SetCustomProperties(new Hashtable { { playerPositionKey, playerPosition } });
                 return;
             }
             var curValue = player.GetCustomProperty<int>(playerPositionKey);
-            Debug.Log($"setPlayer {playerPositionKey} : {curValue} <- {playerPosition}");
+            Debug.Log($"setPlayer {playerPositionKey}=({curValue}<-){playerPosition}");
             player.SafeSetCustomProperty(playerPositionKey, playerPosition, curValue);
         }
 
