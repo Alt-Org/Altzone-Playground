@@ -2,6 +2,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.PubSub;
+using UiProto.Scripts.Window;
 using UnityEngine;
 
 namespace Lobby.Scripts
@@ -24,6 +25,8 @@ namespace Lobby.Scripts
         public const int playerIsSpectator = 11;
         public const int startPlaying = 123;
 
+        [SerializeField] private LevelIdDef gameLevel;
+
         private void OnEnable()
         {
             this.Subscribe<Event>(onEvent);
@@ -34,20 +37,21 @@ namespace Lobby.Scripts
             this.Unsubscribe<Event>(onEvent);
         }
 
-        private static void onEvent(Event data)
+        private void onEvent(Event data)
         {
             Debug.Log($"onEvent {data}");
             if (data.playerPosition == startPlaying)
             {
-                startTheGameplay();
+                startTheGameplay(gameLevel.unityName);
                 return;
             }
             setPlayer(PhotonNetwork.LocalPlayer, data.playerPosition);
         }
 
-        private static void startTheGameplay()
+        private static void startTheGameplay(string levelName)
         {
-            Debug.Log("startTheGameplay");
+            Debug.Log($"startTheGameplay {levelName}");
+            PhotonNetwork.LoadLevel(levelName);
         }
 
         private static void setPlayer(Player player, int playerPosition)

@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Battle/Scenes/40-Battle.unity
     guid: 7a8d9fd953978cd428ff13df12d5d873
+  - enabled: 1
+    path: Assets/Lobby/Scenes/30-Lobby.unity
+    guid: b06517c9de41d774f8d7769cd74dc14e
   m_configObjects: {}

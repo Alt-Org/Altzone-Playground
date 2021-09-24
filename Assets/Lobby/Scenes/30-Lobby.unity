@@ -2421,7 +2421,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -532.15533, y: 0}
+  m_AnchoredPosition: {x: -616.2186, y: 0}
   m_SizeDelta: {x: 1064, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1059583873
@@ -2530,8 +2530,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 609486849}
   m_HandleRect: {fileID: 609486848}
   m_Direction: 0
-  m_Value: 1.0001965
-  m_Size: 0.9990893
+  m_Value: 271.5881
+  m_Size: 0.73078674
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3628,6 +3628,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29bd8cda7d1b4cf5b520a142d730ecd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameLevel:
+    levelName: 
+    unityName: 40-Battle
+    isNetwork: 0
+    isExcluded: 0
+    levelId: 0
 --- !u!1 &1610626805
 GameObject:
   m_ObjectHideFlags: 0
@@ -3765,6 +3771,8 @@ MonoBehaviour:
   buttonGuest: {fileID: 786057005}
   buttonSpectator: {fileID: 1023735842}
   buttonStartPlay: {fileID: 941218750}
+  localPlayerPosition: 0
+  isLocalPlayerPositionUnique: 0
 --- !u!114 &1690819772
 MonoBehaviour:
   m_ObjectHideFlags: 0
