@@ -2421,7 +2421,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -532.1554, y: 0}
+  m_AnchoredPosition: {x: -532.1616, y: 0}
   m_SizeDelta: {x: 1064, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1059583873
@@ -2530,8 +2530,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 609486849}
   m_HandleRect: {fileID: 609486848}
   m_Direction: 0
-  m_Value: 1.0003929
-  m_Size: 0.999708
+  m_Value: 1.0204322
+  m_Size: 0.8825296
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3541,7 +3541,7 @@ GameObject:
   - component: {fileID: 1549162296}
   - component: {fileID: 1549162295}
   m_Layer: 0
-  m_Name: StartLobby
+  m_Name: LobbyManagement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3628,9 +3628,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29bd8cda7d1b4cf5b520a142d730ecd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainMenu:
+    levelName: 
+    unityName: 10-uiProto
+    isNetwork: 0
+    isExcluded: 0
+    levelId: 0
   gameLevel:
     levelName: 
-    unityName: 40-Battle
+    unityName: 32-Game-placeholder
     isNetwork: 0
     isExcluded: 0
     levelId: 0
