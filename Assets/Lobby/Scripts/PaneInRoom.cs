@@ -44,7 +44,7 @@ namespace Lobby.Scripts
         }
 
         /// <summary>
-        /// Stupid way to poll network state changes!
+        /// Stupid way to poll network state changes on every frame!
         /// </summary>
         private void Update()
         {
@@ -54,7 +54,7 @@ namespace Lobby.Scripts
             }
             curClientState = PhotonNetwork.NetworkClientState;
             var room = PhotonNetwork.CurrentRoom;
-            title.text = room?.Name ?? "Not in room";
+            title.text = room?.Name ?? "<color=red><b>Not in room</b></color>";
         }
     }
 }
