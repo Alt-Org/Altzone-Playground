@@ -333,7 +333,7 @@ namespace Editor
         /// <summary>
         /// CommandLine class to parse and hold UNITY standard command line parameters and some custom build parameters.
         /// </summary>
-        private class CommandLine
+        public class CommandLine
         {
             // Standard UNITY command line parameters.
             public readonly string projectPath;
