@@ -2,7 +2,7 @@ using Photon.Pun;
 using System.Linq;
 using UnityEngine;
 
-namespace Lobby.Scripts
+namespace Lobby.Scripts.Game
 {
     /// <summary>
     /// Example game manager that uses simple <c>LobbyManager</c> player custom properties protocol to communicate player positions for a game room.
@@ -20,6 +20,7 @@ namespace Lobby.Scripts
         {
             if (!PhotonNetwork.InRoom)
             {
+                Debug.LogWarning($"Not in room: {PhotonNetwork.NetworkClientState}");
                 enabled = false;
                 return;
             }
@@ -29,9 +30,12 @@ namespace Lobby.Scripts
                 PhotonNetwork.CurrentRoom.IsOpen = false;
             }
             var players = PhotonNetwork.CurrentRoom.Players.Values.ToList();
+            var countPlayers = 0;
             foreach (var player in players)
             {
+                countPlayers += 1;
                 var playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
+                Debug.Log($"{player.NickName} found in {playerPos}");
                 switch (playerPos)
                 {
                     case LobbyManager.playerPosition0:
@@ -53,6 +57,10 @@ namespace Lobby.Scripts
                         others += $"{player.NickName} ";
                         break;
                 }
+            }
+            if (countPlayers == 0)
+            {
+                Debug.LogWarning($"Room {PhotonNetwork.CurrentRoom.Name} has no identified players");
             }
         }
     }

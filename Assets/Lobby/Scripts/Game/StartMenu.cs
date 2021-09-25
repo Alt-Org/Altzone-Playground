@@ -2,7 +2,7 @@
 using UiProto.Scripts.Window;
 using UnityEngine;
 
-namespace Lobby.Scripts
+namespace Lobby.Scripts.Game
 {
     public class StartMenu : MonoBehaviour
     {
