@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Lobby.Scripts.Game
 {
-    public class CreateBallArea : MonoBehaviour
+    public class CreateBoxCollider : MonoBehaviour
     {
         [Header("Settings"), SerializeField] private SpriteRenderer areaTemplate;
 
@@ -10,6 +10,7 @@ namespace Lobby.Scripts.Game
         [SerializeField] private BoxCollider2D wallBottom;
         [SerializeField] private BoxCollider2D wallLeft;
         [SerializeField] private BoxCollider2D wallRight;
+        [SerializeField] private float wallThickness;
 
         private void Awake()
         {
@@ -27,18 +28,19 @@ namespace Lobby.Scripts.Game
             var size = areaTemplate.size;
             var width = size.x / 2f;
             var height = size.y / 2f;
+            var wallAdjustment = wallThickness / 2f;
 
-            wallTop.offset = new Vector2(0f, height + 0.5f);
-            wallTop.size = new Vector2(size.x, 1f);
+            wallTop.offset = new Vector2(0f, height + wallAdjustment);
+            wallTop.size = new Vector2(size.x, wallThickness);
 
-            wallBottom.offset = new Vector2(0f, -height - 0.5f);
-            wallBottom.size = new Vector2(size.x, 1f);
+            wallBottom.offset = new Vector2(0f, -height - wallAdjustment);
+            wallBottom.size = new Vector2(size.x, wallThickness);
 
-            wallLeft.offset = new Vector2(-width - 0.5f, 0f);
-            wallLeft.size = new Vector2(1f, size.y);
+            wallLeft.offset = new Vector2(-width - wallAdjustment, 0f);
+            wallLeft.size = new Vector2(wallThickness, size.y);
 
-            wallRight.offset = new Vector2(width + 0.5f, 0f);
-            wallRight.size = new Vector2(1f, size.y);
+            wallRight.offset = new Vector2(width + wallAdjustment, 0f);
+            wallRight.size = new Vector2(wallThickness, size.y);
         }
 
         private static GameObject createWall(string name, Transform parent)
