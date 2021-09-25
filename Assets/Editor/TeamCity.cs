@@ -454,6 +454,11 @@ rem try to simulate TeamCity invocation
 set CUSTOM_OPTIONS=%ANDROID_KEYSTORE%
 set UNITY_OPTIONS=-batchmode -projectPath %PROJECTPATH% -buildTarget %BUILDTARGET% -executeMethod %METHOD% %CUSTOM_OPTIONS% -quit -logFile ""%LOGFILE%""
 
+set build_output=build%BUILDTARGET%
+if exist %build_output% (
+    echo Delete folder %build_output%
+    rmdir /S /Q %build_output%
+)
 echo Start build
 echo ""%UNITY%"" %UNITY_OPTIONS%
 ""%UNITY%"" %UNITY_OPTIONS%
