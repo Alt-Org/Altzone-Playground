@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.Prg
+namespace Editor.UiProto
 {
     public class MenuWindowReport : MonoBehaviour
     {
