@@ -39,7 +39,7 @@ namespace Editor
             .Select(x => x.path)
             .ToArray();
 
-        [MenuItem("Window/ALT-Zone/Build/Check Android Build")]
+        [MenuItem("Window/ALT-Zone/Build/Test Android Build Config")]
         private static void check_Android_Build()
         {
             // We assume that local keystore and password folder is one level up from current working directory
@@ -50,8 +50,8 @@ namespace Editor
             Log($"output filename: {getOutputFile(args.buildTarget)}");
         }
 
-        [MenuItem("Window/ALT-Zone/Build/Android Build Post Processing")]
-        private static void fix_Android_Build()
+        //[MenuItem("Window/ALT-Zone/Build/Test/Android Build Post Processing")]
+        private static void do_Android_Build_Post_processing()
         {
             const string scriptName = "m_BuildScript_PostProcess.bat";
             var symbolsName = $"{outputBaseFilename}-{Application.version}-v{PlayerSettings.Android.bundleVersionCode}.symbols";
@@ -60,8 +60,8 @@ namespace Editor
             UnityEngine.Debug.Log($"PostProcess script '{scriptName}' written");
         }
 
-        [MenuItem("Window/ALT-Zone/Build/WebGL Build Post Processing")]
-        private static void fix_WebGL_Build()
+        //[MenuItem("Window/ALT-Zone/Build/Test/WebGL Build Post Processing")]
+        private static void do_WebGL_Build_Post_processing()
         {
             void patchIndexHtml(string htmlFile, string curTitle, string newTitle)
             {
@@ -164,11 +164,11 @@ namespace Editor
                 {
                     if (summary.platform == BuildTarget.Android)
                     {
-                        fix_Android_Build();
+                        do_Android_Build_Post_processing();
                     }
                     else if (summary.platform == BuildTarget.WebGL)
                     {
-                        fix_WebGL_Build();
+                        do_WebGL_Build_Post_processing();
                     }
                 }
             }

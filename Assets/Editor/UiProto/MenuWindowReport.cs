@@ -20,7 +20,7 @@ namespace Editor.Prg
 
         private const string OpenWindowButtonGuid = "a019d4d3f61e52648b2acac7801c5e4b";
 
-        [MenuItem("Window/ALT-Zone/Create Window Report")]
+        [MenuItem("Window/ALT-Zone/Ui Proto/Window Report")]
         private static void WindowReport()
         {
             Debug.Log("*");
@@ -43,7 +43,10 @@ namespace Editor.Prg
             Debug.Log(
                 $"Project contains {context.folderCount} folders and {context.fileCount} files (took {stopWatch.ElapsedMilliseconds} ms). " +
                 $"Excluded {context.excludedColderCount} folders.");
-
+            if (context.unknownFileCount > 0)
+            {
+                Debug.Log($"There is {context.unknownFileCount} unknown files");
+            }
             context.getButtonCount(out var buttonCount, out var prefabCount);
             Debug.Log($"Project has {buttonCount} buttons in {prefabCount} prefabs.");
 
@@ -101,6 +104,10 @@ namespace Editor.Prg
                         assetInfo.checkOpenWindowButton(OpenWindowButtonGuid);
                     }
                     context.add(assetInfo);
+                    if (!assetInfo.isWellKnown)
+                    {
+                        context.unknownFileCount += 1;
+                    }
                 }
             }
         }
@@ -110,6 +117,7 @@ namespace Editor.Prg
             public int folderCount;
             public int excludedColderCount;
             public int fileCount;
+            public int unknownFileCount;
 
             private readonly StringBuilder builder;
             private readonly List<AssetInfo> assets = new List<AssetInfo>();
@@ -189,12 +197,14 @@ namespace Editor.Prg
         private class AssetInfo : IComparable
         {
             private const string PrefabName = "Prefab";
+            private const string UnknownFormat = "<<{0}>>";
 
             private readonly string guid;
             public readonly string path;
             private readonly string id;
             private readonly string typeName;
             public bool isPrefab => typeName == PrefabName;
+            public bool isWellKnown => !typeName.StartsWith("<<");
 
             public int buttonCount => buttons.Count;
             private readonly List<string> buttons = new List<string>();
@@ -203,9 +213,36 @@ namespace Editor.Prg
 
             public AssetInfo(string guid, string path)
             {
+                string getNativeFormat(string assetPath)
+                {
+                    var assetContent = getAssetContent();
+                    if (assetContent.Contains("MonoBehaviour:"))
+                    {
+                        return "ScriptableObject";
+                    }
+                    if (assetContent.Contains("AnimationClip:"))
+                    {
+                        return "Animation";
+                    }
+                    if (assetContent.Contains("Material:"))
+                    {
+                        return "Material";
+                    }
+                    if (assetContent.Contains("PhysicsMaterial2D:"))
+                    {
+                        return "PhysicsMaterial2D";
+                    }
+                    return string.Format(UnknownFormat, Path.GetExtension(path));
+                }
+
                 this.guid = guid;
                 this.path = path;
                 id = $"{guid}:{path}";
+                if (path.EndsWith("LightingData.asset"))
+                {
+                    typeName = "LightingData";
+                    return;
+                }
                 var metaFilePath = AssetDatabase.GetTextMetaFilePathFromAssetPath(path);
                 var metaText = File.ReadAllText(metaFilePath);
                 var hasFeature = metaText.Contains("folderAsset: yes");
@@ -223,7 +260,7 @@ namespace Editor.Prg
                 hasFeature = metaText.Contains("NativeFormatImporter:");
                 if (hasFeature)
                 {
-                    typeName = "ScriptableObject";
+                    typeName = getNativeFormat(path);
                     return;
                 }
                 var importers = new[]
@@ -251,7 +288,12 @@ namespace Editor.Prg
                     typeName = "CSharp";
                     return;
                 }
-                typeName = "?";
+                if (Directory.Exists(path))
+                {
+                    typeName = "Folder"; // meta files without directory "flag"
+                    return;
+                }
+                typeName = string.Format(UnknownFormat, "?");
             }
 
             public void checkOpenWindowButton(string buttonGuid)

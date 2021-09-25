@@ -8,21 +8,17 @@ namespace Editor.Prg.Util
 {
     public class LogWriterMenu : MonoBehaviour
     {
-        [MenuItem("Window/ALT-Zone/Show Editor Log")]
+        [MenuItem("Window/ALT-Zone/Util/Editor Log/Show location")]
         private static void Show()
         {
-            var path = getPath();
-            var isFound = File.Exists(path);
-            Debug.Log($"Editor log {(isFound ? "" : "NOT ")}found in: {path}");
+            getPath();
         }
 
-        [MenuItem("Window/ALT-Zone/Load Editor Log")]
+        [MenuItem("Window/ALT-Zone/Util/Editor Log/Open in text editor")]
         private static void Load()
         {
             var path = getPath();
-            var isFound = File.Exists(path);
-            Debug.Log($"Editor log {(isFound ? "" : "NOT ")}found in: {path}");
-            if (isFound)
+            if (File.Exists(path))
             {
                 InternalEditorUtility.OpenFileAtLineExternal(path, 1);
             }
@@ -35,6 +31,7 @@ namespace Editor.Prg.Util
             {
                 path = path.Replace(Path.AltDirectorySeparatorChar.ToString(), Path.DirectorySeparatorChar.ToString());
             }
+            Debug.Log($"Editor log {(File.Exists(path) ? "is" : "NOT")} found in: {path}");
             return path;
         }
     }

@@ -7,7 +7,7 @@ namespace Editor.Prg.Util
 {
     public static class CheckDependencies
     {
-        [MenuItem("Window/ALT-Zone/Check Dependencies")]
+        [MenuItem("Window/ALT-Zone/Util/Check Dependencies")]
         private static void _CheckDependencies()
         {
             UnityEngine.Debug.Log("*");
@@ -33,7 +33,7 @@ namespace Editor.Prg.Util
                 UnityEngine.Debug.Log($"Selected object is not supported asset: {path}");
                 return;
             }
-            UnityEngine.Debug.Log($"Search dependencies for {selectedGuids.Length} assets");
+            UnityEngine.Debug.Log($"Search dependencies for {selectedGuids.Length} assets (in scenes and prefabs)");
             const string assetRoot = "Assets";
             var foundCount = new int[selectedGuids.Length];
             Array.Clear(foundCount, 0, foundCount.Length);

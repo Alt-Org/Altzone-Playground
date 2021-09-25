@@ -8,7 +8,7 @@ namespace Editor.Prg.Util
 {
     public static class UnityConstantsGenerator
     {
-        [MenuItem("Window/ALT-Zone/Tools/Generate UnityConstants.cs")]
+        [MenuItem("Window/ALT-Zone/Util/Generate UnityConstants.cs")]
         public static void Generate()
         {
             // Try to find an existing file in the project called "UnityConstants.cs"

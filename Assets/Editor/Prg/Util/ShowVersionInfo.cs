@@ -1,17 +1,40 @@
+using System.Globalization;
 using UnityEditor;
 using UnityEngine;
 
 namespace Editor.Prg.Util
 {
     /// <summary>
-    /// Example class to show how to access <c>SerializedObject</c> from code.
+    /// Example class to show how to access <c>SerializedObject</c> and <c>SerializedProperty</c> from code.
     /// </summary>
     public class MenuShowVersionInfo : MonoBehaviour
     {
-        [MenuItem("Window/ALT-Zone/Show Version Info")]
+        [MenuItem("Window/ALT-Zone/Util/Show Version Info")]
         private static void ShowVersionInfo()
         {
-            // Find out what kind of object you have:
+            void printProperty(SerializedObject anObject, string propName)
+            {
+                var _serializedProp = anObject.FindProperty(propName);
+                var propValue = "";
+                switch (_serializedProp.propertyType)
+                {
+                    case SerializedPropertyType.String:
+                        propValue = _serializedProp.stringValue;
+                        break;
+                    case SerializedPropertyType.Integer:
+                        propValue = _serializedProp.intValue.ToString();
+                        break;
+                    case SerializedPropertyType.Float:
+                        propValue = _serializedProp.floatValue.ToString(CultureInfo.InvariantCulture);
+                        break;
+                    default:
+                        propValue = "<unsopported property type>";
+                        break;
+                }
+                Debug.Log($"{_serializedProp.displayName}={propValue} [{_serializedProp.propertyType}]");
+            }
+
+            // Find out what kind of (type of) object you have:
             // var asset0 = AssetDatabase.LoadAssetAtPath<Object>("ProjectSettings/GraphicsSettings.asset");
             // Debug.Log("asset=" + asset0);
 
@@ -22,15 +45,10 @@ namespace Editor.Prg.Util
             var asset = AssetDatabase.LoadAssetAtPath<Object>("ProjectSettings/ProjectSettings.asset");
             Debug.Log("asset=" + asset);
 
-            // Untyped generic access!
             var serializedObject = new SerializedObject(asset);
-
-            var serializedProp = serializedObject.FindProperty("productName");
-            Debug.Log($"{serializedProp.displayName}={serializedProp.stringValue} [{serializedProp.propertyType}]");
-            serializedProp = serializedObject.FindProperty("bundleVersion");
-            Debug.Log($"{serializedProp.displayName}={serializedProp.stringValue} [{serializedProp.propertyType}]");
-            serializedProp = serializedObject.FindProperty("AndroidBundleVersionCode");
-            Debug.Log($"{serializedProp.displayName}={serializedProp.intValue} [{serializedProp.propertyType}]");
+            printProperty(serializedObject, "productName");
+            printProperty(serializedObject, "bundleVersion");
+            printProperty(serializedObject, "AndroidBundleVersionCode");
         }
     }
 }
