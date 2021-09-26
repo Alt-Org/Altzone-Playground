@@ -42,7 +42,6 @@ namespace Lobby.Scripts.Game
             _photonView = PhotonView.Get(this);
             initialPosition = _transform.position;
             canMove = false;
-            PhotonNetwork.SerializationRate = 30;
         }
 
         public override void OnEnable()
