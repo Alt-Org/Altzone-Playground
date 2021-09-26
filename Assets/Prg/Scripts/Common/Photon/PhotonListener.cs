@@ -12,7 +12,7 @@ namespace Prg.Scripts.Common.Photon
     public class PhotonListener : MonoBehaviour,
         IConnectionCallbacks, ILobbyCallbacks, IMatchmakingCallbacks, IInRoomCallbacks, IPunOwnershipCallbacks
     {
-        private static ulong baseServerTimestamp; // set OnConnectedToMaster() to show only relative times on log
+        private static ulong baseServerTimestamp; // set OnConnectedToMaster and OnJoinedRoom to show only relative times on log
 
         private static readonly Dictionary<string, string> photonRoomPropNames;
         private static readonly Dictionary<string, string> photonPlayerPropNames;
@@ -231,6 +231,7 @@ namespace Prg.Scripts.Common.Photon
 
         public void OnJoinedRoom()
         {
+            baseServerTimestamp = 0;
             LogPhotonStatus(PhotonNetwork.CurrentRoom.GetDebugLabel());
         }
 
