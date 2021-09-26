@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 namespace Lobby.Scripts
 {
+    /// <summary>
+    /// Top most pane in lobby while in room to manage player position in the game.
+    /// </summary>
     public class PaneInGame : MonoBehaviour
     {
         [SerializeField] private Button[] buttons;

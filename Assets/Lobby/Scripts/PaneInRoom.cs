@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Lobby.Scripts
 {
     /// <summary>
-    /// Shows current player "state" in a room.
+    /// Middle pane in lobby while in room to manage current player "state".
     /// </summary>
     public class PaneInRoom : MonoBehaviour
     {

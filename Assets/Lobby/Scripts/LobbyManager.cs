@@ -116,7 +116,7 @@ namespace Lobby.Scripts
             player.SafeSetCustomProperty(playerPositionKey, playerPosition, curValue);
         }
 
-        public override void OnLeftRoom()
+        public override void OnLeftRoom() // IMatchmakingCallbacks
         {
             // Goto menu if we left (in)voluntarily any room
             // - typically master client kicked us off before starting a new game as we did not qualify to participate.

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Lobby.Scripts
 {
     /// <summary>
-    /// Shows current players in a room as a list.
+    /// Lowest pane in lobby while in room to show current players list that have joined this room.
     /// </summary>
     public class PanePlayerListing : MonoBehaviour, IInRoomCallbacks
     {
