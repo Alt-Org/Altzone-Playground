@@ -4,7 +4,7 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Lobby.Scripts
+namespace Lobby.Scripts.InRoom
 {
     /// <summary>
     /// Prepares players in a room for the game play.

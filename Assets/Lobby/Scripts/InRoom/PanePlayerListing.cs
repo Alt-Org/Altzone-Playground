@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Lobby.Scripts
+namespace Lobby.Scripts.InRoom
 {
     /// <summary>
     /// Lowest pane in lobby while in room to show current players list that have joined this room.

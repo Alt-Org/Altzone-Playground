@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Lobby.Scripts
+namespace Lobby.Scripts.InRoom
 {
     /// <summary>
     /// Top most pane in lobby while in room to manage player position in the game.

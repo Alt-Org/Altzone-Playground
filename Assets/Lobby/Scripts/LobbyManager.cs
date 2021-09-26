@@ -1,7 +1,6 @@
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.PubSub;
-using System;
 using System.Collections;
 using System.Linq;
 using UiProto.Scripts.Window;
@@ -19,6 +18,7 @@ namespace Lobby.Scripts
     public class LobbyManager : MonoBehaviourPunCallbacks
     {
         public const string playerPositionKey = "pp";
+        public const string playerMainSkillKey = "mk";
 
         public const int playerPosition0 = 0;
         public const int playerPosition1 = 1;

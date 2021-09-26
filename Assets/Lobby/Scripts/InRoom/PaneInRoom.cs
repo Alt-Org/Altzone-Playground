@@ -4,7 +4,7 @@ using Prg.Scripts.Common.PubSub;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Lobby.Scripts
+namespace Lobby.Scripts.InRoom
 {
     /// <summary>
     /// Middle pane in lobby while in room to manage current player "state".

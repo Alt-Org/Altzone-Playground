@@ -7,13 +7,17 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Lobby.Scripts
+namespace Lobby.Scripts.InLobby
 {
+    /// <summary>
+    /// Shows list of (open/closed) rooms and buttons for creating a new room or joining existing one.
+    /// </summary>
     public class PaneRoomListing : MonoBehaviour
     {
         [SerializeField] private Text title;
         [SerializeField] private Button templateButton;
-        [SerializeField] private PhotonRoomList photonRoomList;
+
+        private PhotonRoomList photonRoomList;
 
         private readonly List<Button> buttons = new List<Button>();
 
