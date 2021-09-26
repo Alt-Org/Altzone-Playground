@@ -12,6 +12,7 @@ namespace Lobby.Scripts.InRoom
     public class RoomSetupManager : MonoBehaviour, IInRoomCallbacks
     {
         private const string playerPositionKey = LobbyManager.playerPositionKey;
+        private const string playerMainSkillKey = LobbyManager.playerMainSkillKey;
         private const int playerIsGuest = LobbyManager.playerIsGuest;
 
         [SerializeField] private Button buttonPlayerP0;
@@ -50,6 +51,16 @@ namespace Lobby.Scripts.InRoom
             buttonStartPlay.interactable = false;
             if (PhotonNetwork.InRoom)
             {
+                var player = PhotonNetwork.LocalPlayer;
+                if (!player.HasCustomProperty(playerPositionKey))
+                {
+                    player.SetCustomProperties(new Hashtable { { playerPositionKey, LobbyManager.playerIsGuest } });
+                }
+                if (!player.HasCustomProperty(playerMainSkillKey))
+                {
+                    var mainSKill = Random.Range(1, 7); // Set random main skill
+                    player.SetCustomProperties(new Hashtable { { playerMainSkillKey, mainSKill } });
+                }
                 updateStatus();
             }
             PhotonNetwork.AddCallbackTarget(this);
@@ -131,12 +142,6 @@ namespace Lobby.Scripts.InRoom
         private void checkLocalPlayer(Player player)
         {
             Debug.Log($"checkLocalPlayer {player.ToStringFull()} pos={localPlayerPosition} ok={isLocalPlayerPositionUnique}");
-            // Start button state!
-            if (!player.HasCustomProperty(playerPositionKey))
-            {
-                player.SetCustomProperties(new Hashtable { { playerPositionKey, LobbyManager.playerIsGuest } });
-                return;
-            }
             var curValue = player.GetCustomProperty(playerPositionKey, playerIsGuest);
             // Master client can *only* start the game when in room as player!
             interactableStartPlay = player.IsMasterClient && curValue >= LobbyManager.playerPosition0 && curValue <= LobbyManager.playerPosition3;

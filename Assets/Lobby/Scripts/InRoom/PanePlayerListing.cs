@@ -14,6 +14,7 @@ namespace Lobby.Scripts.InRoom
     public class PanePlayerListing : MonoBehaviour, IInRoomCallbacks
     {
         private const string playerPositionKey = LobbyManager.playerPositionKey;
+        private const string playerMainSkillKey = LobbyManager.playerMainSkillKey;
         private const int playerIsGuest = LobbyManager.playerIsGuest;
 
         [SerializeField] private GameObject contentRoot;
@@ -75,16 +76,20 @@ namespace Lobby.Scripts.InRoom
             return text;
         }
 
+        static readonly string[] skillNames = { "---", "Des", "Def", "Int", "Pro", "Ret", "Ego", "Con" };
         private void update(Text line, Player player)
         {
             var text = line.GetComponent<Text>();
-            var name = player.IsLocal ? $"<b>{player.NickName}</b>" : player.NickName;
-            var status = $" {playerPositionKey}={player.GetCustomProperty(playerPositionKey, playerIsGuest)}";
+            var nickName = player.IsLocal ? $"<b>{player.NickName}</b>" : player.NickName;
+            var pos = player.GetCustomProperty(playerPositionKey, playerIsGuest);
+            var skill = player.GetCustomProperty(playerMainSkillKey, 0);
+            var skillName = skillNames[skill];
+            var status = $" pos={pos} skill={skillName}";
             if (player.IsMasterClient)
             {
                 status += " [M]";
             }
-            var playerText = $"{name} {status}";
+            var playerText = $"{nickName} {status}";
             Debug.Log($"update '{text.text}' -> '{playerText}'");
             text.text = playerText;
         }
