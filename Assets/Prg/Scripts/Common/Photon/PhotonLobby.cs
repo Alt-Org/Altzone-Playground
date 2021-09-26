@@ -198,6 +198,9 @@ namespace Prg.Scripts.Common.Photon
             {
                 throw new UnityException("PhotonNetwork.OfflineMode not allowed here");
             }
+            // https://doc.photonengine.com/en-us/pun/v2/gameplay/optimization
+            // Reuse EventData to decrease garbage collection but EventData will be overwritten for every event!
+            PhotonNetwork.NetworkingClient.LoadBalancingPeer.ReuseEventInstance = true;
             Debug.Log(
                 $"ConnectUsingSettings {PhotonNetwork.NetworkClientState} scene={SceneManager.GetActiveScene().name}" +
                 $" {(appSettings != null ? appSettings.ToStringFull() : "")}");
