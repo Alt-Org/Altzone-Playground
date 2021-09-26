@@ -148,7 +148,10 @@ namespace Prg.Scripts.Common.Photon
             }
             SequenceDiagram.receive(nameof(PhotonLobby), SD.JOIN_ROOM);
             Debug.Log($"joinOrCreateRoom {roomName}");
-
+            if (string.IsNullOrWhiteSpace(roomName))
+            {
+                throw new UnityException("roomName can not be null or empty");
+            }
             var options = new RoomOptions
             {
                 CustomRoomProperties = customRoomProperties,
