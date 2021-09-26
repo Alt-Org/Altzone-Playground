@@ -1025,6 +1025,8 @@ MonoBehaviour:
   canMove: 0
   isUpper: 0
   isLower: 0
+  networkPosition: {x: 0, y: 0}
+  networkLag: 0
 --- !u!58 &1491261278
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1081,7 +1083,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 0
   ObservedComponents:
-  - {fileID: 1491261281}
+  - {fileID: 1491261277}
   sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0

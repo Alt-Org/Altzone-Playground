@@ -1,11 +1,9 @@
 using Photon.Pun;
-using System;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Lobby.Scripts.Game
 {
-    public class BallMovementV1 : MonoBehaviourPunCallbacks
+    public class BallMovementV1 : MonoBehaviourPunCallbacks, IPunObservable
     {
         private const float minStartDirection = 0.2f;
 
@@ -18,6 +16,12 @@ namespace Lobby.Scripts.Game
         public bool canMove;
         public bool isUpper;
         public bool isLower;
+
+        [Header("Photon")] [SerializeField] private Vector2 networkPosition;
+        [SerializeField] private float networkLag;
+        //[SerializeField] private float averageNetworkLag;
+        //private int totalNetworkMessages;
+        //private float totalNetworkLag;
 
         private Transform _transform;
         private Rigidbody2D _rigidbody;
@@ -38,6 +42,7 @@ namespace Lobby.Scripts.Game
             _photonView = PhotonView.Get(this);
             initialPosition = _transform.position;
             canMove = false;
+            PhotonNetwork.SerializationRate = 30;
         }
 
         public override void OnEnable()
@@ -73,7 +78,7 @@ namespace Lobby.Scripts.Game
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log($"OnTriggerEnter2D {other.gameObject.name}");
+            //Debug.Log($"OnTriggerEnter2D {other.gameObject.name}");
             if (other.Equals(upperTeam))
             {
                 isUpper = true;
@@ -86,7 +91,7 @@ namespace Lobby.Scripts.Game
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            Debug.Log($"OnTriggerExit2D {other.gameObject.name}");
+            //Debug.Log($"OnTriggerExit2D {other.gameObject.name}");
             if (other.Equals(upperTeam))
             {
                 isUpper = false;
@@ -94,6 +99,31 @@ namespace Lobby.Scripts.Game
             else if (other.Equals(lowerTeam))
             {
                 isLower = false;
+            }
+        }
+
+        void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            // https://doc.photonengine.com/en-us/pun/v2/gameplay/lagcompensation
+            // Better algo might be:
+            // https://sharpcoderblog.com/blog/pun-2-lag-compensation
+            // See also:
+            // https://forum.unity.com/threads/photon-pun2-non-rigidbody-lag-compensation-and-jittery-cars.912779/
+            if (stream.IsWriting)
+            {
+                stream.SendNext(_rigidbody.position);
+                stream.SendNext(_rigidbody.velocity);
+            }
+            else
+            {
+                networkPosition = (Vector2) stream.ReceiveNext();
+                _rigidbody.velocity = (Vector2) stream.ReceiveNext();
+
+                networkLag = Mathf.Abs((float) (PhotonNetwork.Time - info.SentServerTime));
+                networkPosition += (_rigidbody.velocity * networkLag);
+                //totalNetworkLag += networkLag;
+                //totalNetworkMessages += 1;
+                //averageNetworkLag = totalNetworkLag / totalNetworkMessages;
             }
         }
 
@@ -115,12 +145,13 @@ namespace Lobby.Scripts.Game
 
         private void FixedUpdate()
         {
-            if (!photonView.IsMine)
+            if (!canMove)
             {
                 return;
             }
-            if (!canMove)
+            if (!photonView.IsMine)
             {
+                _rigidbody.position = Vector2.MoveTowards(_rigidbody.position, networkPosition, Time.fixedDeltaTime);
                 return;
             }
             keepConstantVelocity(Time.fixedDeltaTime);
@@ -128,11 +159,11 @@ namespace Lobby.Scripts.Game
 
         private void restart()
         {
-            if (!photonView.IsMine)
+            if (!canMove)
             {
                 return;
             }
-            if (!canMove)
+            if (!photonView.IsMine)
             {
                 return;
             }
