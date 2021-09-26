@@ -1,17 +1,28 @@
 using Photon.Pun;
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Lobby.Scripts.Game
 {
-    public class BallMovementV1 : MonoBehaviour
+    public class BallMovementV1 : MonoBehaviourPunCallbacks
     {
         private const float minStartDirection = 0.2f;
 
         public float speed;
+        public Collider2D upperTeam;
+        public Collider2D lowerTeam;
+        public Color upperColor;
+        public Color lowerColor;
+        public Color originalColor;
+        public bool canMove;
+        public bool isUpper;
+        public bool isLower;
 
         private Transform _transform;
         private Rigidbody2D _rigidbody;
-        private PhotonView photonView;
+        private SpriteRenderer _sprite;
+        private PhotonView _photonView;
         private Vector3 initialPosition;
 
         private float lerpSmoothingFactor => 4f;
@@ -19,20 +30,96 @@ namespace Lobby.Scripts.Game
 
         private void Awake()
         {
+            Debug.Log("Awake");
             _transform = GetComponent<Transform>();
             _rigidbody = GetComponent<Rigidbody2D>();
-            photonView = PhotonView.Get(this);
+            _sprite = GetComponent<SpriteRenderer>();
+            originalColor = _sprite.color;
+            _photonView = PhotonView.Get(this);
             initialPosition = _transform.position;
+            canMove = false;
         }
 
-        private void OnEnable()
+        public override void OnEnable()
         {
+            Debug.Log($"OnEnable IsMine={_photonView.IsMine}");
+            base.OnEnable();
             restart();
+            if (PhotonNetwork.InRoom)
+            {
+                startPlaying();
+            }
+        }
+
+        private void startPlaying()
+        {
+            Debug.Log("*");
+            Debug.Log($"startPlaying IsMine={_photonView.IsMine}");
+            Debug.Log("*");
+            canMove = true;
+        }
+
+        public override void OnDisable()
+        {
+            Debug.Log("OnDisable");
+            base.OnDisable();
+        }
+
+        public override void OnJoinedRoom()
+        {
+            base.OnJoinedRoom();
+            startPlaying();
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            Debug.Log($"OnTriggerEnter2D {other.gameObject.name}");
+            if (other.Equals(upperTeam))
+            {
+                isUpper = true;
+            }
+            else if (other.Equals(lowerTeam))
+            {
+                isLower = true;
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            Debug.Log($"OnTriggerExit2D {other.gameObject.name}");
+            if (other.Equals(upperTeam))
+            {
+                isUpper = false;
+            }
+            else if (other.Equals(lowerTeam))
+            {
+                isLower = false;
+            }
+        }
+
+        private void Update()
+        {
+            if (isUpper && !isLower)
+            {
+                _sprite.color = upperColor;
+            }
+            else if (isLower && !isUpper)
+            {
+                _sprite.color = lowerColor;
+            }
+            else
+            {
+                _sprite.color = originalColor;
+            }
         }
 
         private void FixedUpdate()
         {
             if (!photonView.IsMine)
+            {
+                return;
+            }
+            if (!canMove)
             {
                 return;
             }
@@ -42,6 +129,10 @@ namespace Lobby.Scripts.Game
         private void restart()
         {
             if (!photonView.IsMine)
+            {
+                return;
+            }
+            if (!canMove)
             {
                 return;
             }
