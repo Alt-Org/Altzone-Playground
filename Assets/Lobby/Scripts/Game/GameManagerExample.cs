@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System.Linq;
 using UnityEngine;
 
@@ -9,6 +10,9 @@ namespace Lobby.Scripts.Game
     /// </summary>
     public class GameManagerExample : MonoBehaviour
     {
+        private const string playerPositionKey = LobbyManager.playerPositionKey;
+        private const string playerMainSkillKey = LobbyManager.playerMainSkillKey;
+
         public string player1;
         public string player2;
         public string player3;
@@ -39,22 +43,22 @@ namespace Lobby.Scripts.Game
                 switch (playerPos)
                 {
                     case LobbyManager.playerPosition0:
-                        player1 += $"{player.NickName} ";
+                        player1 += getPlayerInfo(player);
                         break;
                     case LobbyManager.playerPosition1:
-                        player2 += $"{player.NickName} ";
+                        player2 += getPlayerInfo(player);
                         break;
                     case LobbyManager.playerPosition2:
-                        player3 += $"{player.NickName} ";
+                        player3 += getPlayerInfo(player);
                         break;
                     case LobbyManager.playerPosition3:
-                        player4 += $"{player.NickName} ";
+                        player4 += getPlayerInfo(player);
                         break;
                     case LobbyManager.playerIsSpectator:
-                        spectators += $"{player.NickName} ";
+                        spectators += getPlayerInfo(player);
                         break;
                     default:
-                        others += $"{player.NickName} ";
+                        others += getPlayerInfo(player);
                         break;
                 }
             }
@@ -62,6 +66,17 @@ namespace Lobby.Scripts.Game
             {
                 Debug.LogWarning($"Room {PhotonNetwork.CurrentRoom.Name} has no identified players");
             }
+        }
+
+        private static readonly string[] skillNames = { "---", "Des", "Def", "Int", "Pro", "Ret", "Ego", "Con" };
+
+        private static string getPlayerInfo(Player player)
+        {
+            var pos = player.GetCustomProperty(playerPositionKey, -1);
+            var skill = Mathf.Clamp(player.GetCustomProperty(playerMainSkillKey, 0), 0, skillNames.Length - 1);
+            var skillName = skillNames[skill];
+            var info = $"{player.NickName} pos={pos} skill={skillName} ";
+            return info;
         }
     }
 }

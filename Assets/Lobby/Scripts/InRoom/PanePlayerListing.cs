@@ -76,13 +76,14 @@ namespace Lobby.Scripts.InRoom
             return text;
         }
 
-        static readonly string[] skillNames = { "---", "Des", "Def", "Int", "Pro", "Ret", "Ego", "Con" };
+        private static readonly string[] skillNames = { "---", "Des", "Def", "Int", "Pro", "Ret", "Ego", "Con" };
+
         private void update(Text line, Player player)
         {
             var text = line.GetComponent<Text>();
             var nickName = player.IsLocal ? $"<b>{player.NickName}</b>" : player.NickName;
             var pos = player.GetCustomProperty(playerPositionKey, playerIsGuest);
-            var skill = player.GetCustomProperty(playerMainSkillKey, 0);
+            var skill = Mathf.Clamp(player.GetCustomProperty(playerMainSkillKey, 0), 0, skillNames.Length - 1);
             var skillName = skillNames[skill];
             var status = $" pos={pos} skill={skillName}";
             if (player.IsMasterClient)
