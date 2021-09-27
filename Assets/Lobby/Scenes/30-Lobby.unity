@@ -631,8 +631,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: {fileID: 1414993868}
   templateButton: {fileID: 932295652}
-  buttons: []
-  photonRoomList: {fileID: 0}
 --- !u!1 &396449654
 GameObject:
   m_ObjectHideFlags: 0
@@ -2421,7 +2419,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -532.1554, y: 0}
+  m_AnchoredPosition: {x: -532.1553, y: 0}
   m_SizeDelta: {x: 1064, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1059583873
@@ -2530,8 +2528,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 609486849}
   m_HandleRect: {fileID: 609486848}
   m_Direction: 0
-  m_Value: 1.0003929
-  m_Size: 0.999707
+  m_Value: 0.99941087
+  m_Size: 0.99970573
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3630,13 +3628,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cancelLevel:
     levelName: 
-    unityName: 10-uiProto
+    unityName: 33-Game-placeholder2
     isNetwork: 0
     isExcluded: 0
     levelId: 0
   gameLevel:
     levelName: 
-    unityName: 32-Game-placeholder
+    unityName: 33-Game-placeholder2
     isNetwork: 0
     isExcluded: 0
     levelId: 0
