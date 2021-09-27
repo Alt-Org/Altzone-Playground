@@ -49,20 +49,19 @@ namespace Lobby.Scripts.InRoom
             buttonGuest.interactable = false;
             buttonSpectator.interactable = false;
             buttonStartPlay.interactable = false;
-            if (PhotonNetwork.InRoom)
+            if (!PhotonNetwork.InRoom)
             {
-                var player = PhotonNetwork.LocalPlayer;
-                if (!player.HasCustomProperty(playerPositionKey))
-                {
-                    player.SetCustomProperties(new Hashtable { { playerPositionKey, LobbyManager.playerIsGuest } });
-                }
-                if (!player.HasCustomProperty(playerMainSkillKey))
-                {
-                    var mainSKill = Random.Range(1, 7); // Set random main skill
-                    player.SetCustomProperties(new Hashtable { { playerMainSkillKey, mainSKill } });
-                }
-                updateStatus();
+                return;
             }
+            // Reset player custom properties for new game
+            var player = PhotonNetwork.LocalPlayer;
+            player.CustomProperties.Clear();
+            // Guest by default
+            player.SetCustomProperties(new Hashtable { { playerPositionKey, LobbyManager.playerIsGuest } });
+            // Set random main skill
+            var mainSKill = Random.Range(1, 7);
+            player.SetCustomProperties(new Hashtable { { playerMainSkillKey, mainSKill } });
+            updateStatus();
             PhotonNetwork.AddCallbackTarget(this);
         }
 
@@ -70,7 +69,7 @@ namespace Lobby.Scripts.InRoom
         {
             PhotonNetwork.RemoveCallbackTarget(this);
         }
-        
+
         private void updateStatus()
         {
             if (!PhotonNetwork.InRoom)
