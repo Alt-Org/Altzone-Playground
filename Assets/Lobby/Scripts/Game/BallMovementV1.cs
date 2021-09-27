@@ -3,6 +3,12 @@ using UnityEngine;
 
 namespace Lobby.Scripts.Game
 {
+    /// <summary>
+    /// Simple <c>Rigidbody2D</c> ball movement across network clients.
+    /// </summary>
+    /// <remarks>
+    /// <c>Rigidbody2D</c> is kinematic on remote clients and we use <c>OnPhotonSerializeView</c> to transfer our position and velocity.
+    /// </remarks>
     public class BallMovementV1 : MonoBehaviourPunCallbacks, IPunObservable
     {
         private const float minStartDirection = 0.2f;
