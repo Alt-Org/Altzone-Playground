@@ -32,7 +32,15 @@ namespace Lobby.Scripts.Game
 
         private void Awake()
         {
-            PoolManager.AddPrefab(playerPrefab.name, playerPrefab);
+            if (!PoolManager.ContainsPrefab(playerPrefab.name))
+            {
+                PoolManager.AddPrefab(playerPrefab.name, playerPrefab);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            PoolManager.RecycleActiveObjects();
         }
 
         private void Update()
