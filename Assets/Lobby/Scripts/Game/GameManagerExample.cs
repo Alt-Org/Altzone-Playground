@@ -4,8 +4,8 @@ using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace Lobby.Scripts.Game
@@ -24,6 +24,9 @@ namespace Lobby.Scripts.Game
         public Transform[] playerStartPos = new Transform[4];
         public GameObject playerPrefab;
 
+        private bool isDebugSetPlayerPropsSet;
+        private bool isDebugSetPlayerPropsWait;
+
         private void Awake()
         {
             PoolManager.AddPrefab(playerPrefab.name, playerPrefab);
@@ -31,6 +34,23 @@ namespace Lobby.Scripts.Game
 
         private void Update()
         {
+            if (isDebugSetPlayerPropsWait)
+            {
+                if (isDebugSetPlayerPropsSet)
+                {
+                    if (PhotonNetwork.LocalPlayer.GetCustomProperty(LobbyManager.playerPositionKey, -1) != -1)
+                    {
+                        // Player props should be good to go!
+                        isDebugSetPlayerPropsWait = false;
+                    }
+                }
+                else
+                {
+                    setDebugPlayerProps();
+                    isDebugSetPlayerPropsSet = true;
+                }
+                return;
+            }
             if (PhotonNetwork.InRoom)
             {
                 // Fourth (or first, normally) is to close room and show our players as an example
@@ -62,6 +82,7 @@ namespace Lobby.Scripts.Game
             {
                 // First connect
                 PhotonLobby.Get().connect($"Player{DateTime.Now.Second:00}");
+                isDebugSetPlayerPropsWait = true;
             }
         }
 
@@ -86,6 +107,14 @@ namespace Lobby.Scripts.Game
             }
         }
 
+        [Conditional("UNITY_EDITOR")]
+        private static void setDebugPlayerProps()
+        {
+            var player = PhotonNetwork.LocalPlayer;
+            player.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { LobbyManager.playerPositionKey, 0 } });
+            Debug.Log($"setDebugPlayerProps {player.GetDebugLabel()}");
+        }
+
         private void showPlayersInRooms()
         {
             var players = PhotonNetwork.CurrentRoom.Players.Values.ToList();
@@ -93,7 +122,6 @@ namespace Lobby.Scripts.Game
             var localPlayerIndex = -1;
             foreach (var player in players)
             {
-                countPlayers += 1;
                 var playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
                 Debug.Log($"Player {player.NickName} found, pos {playerPos}");
                 switch (playerPos)
@@ -104,21 +132,25 @@ namespace Lobby.Scripts.Game
                     // |  0 |  2 | team 0 lower
                     // | ======= |
                     case LobbyManager.playerPosition0:
+                        countPlayers += 1;
                         playerInfo[0] += getPlayerInfo(player);
                         createPlayer(playerStartPos[0].position, playerPrefab.name, isUpperTeam: false);
                         localPlayerIndex = player.Equals(PhotonNetwork.LocalPlayer) ? 0 : localPlayerIndex;
                         break;
                     case LobbyManager.playerPosition1:
+                        countPlayers += 1;
                         playerInfo[1] += getPlayerInfo(player);
                         createPlayer(playerStartPos[1].position, playerPrefab.name, isUpperTeam: true);
                         localPlayerIndex = player.Equals(PhotonNetwork.LocalPlayer) ? 1 : localPlayerIndex;
                         break;
                     case LobbyManager.playerPosition2:
+                        countPlayers += 1;
                         playerInfo[2] += getPlayerInfo(player);
                         createPlayer(playerStartPos[2].position, playerPrefab.name, isUpperTeam: false);
                         localPlayerIndex = player.Equals(PhotonNetwork.LocalPlayer) ? 2 : localPlayerIndex;
                         break;
                     case LobbyManager.playerPosition3:
+                        countPlayers += 1;
                         playerInfo[3] += getPlayerInfo(player);
                         createPlayer(playerStartPos[3].position, playerPrefab.name, isUpperTeam: true);
                         localPlayerIndex = player.Equals(PhotonNetwork.LocalPlayer) ? 3 : localPlayerIndex;
@@ -131,14 +163,14 @@ namespace Lobby.Scripts.Game
                         break;
                 }
             }
+            if (countPlayers == 0)
+            {
+                Debug.LogError($"Room {PhotonNetwork.CurrentRoom.Name} has no identified players");
+            }
             if (localPlayerIndex == 1 || localPlayerIndex == 3)
             {
                 var cameraTransform = _camera.transform;
                 cameraTransform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
-            }
-            if (countPlayers == 0)
-            {
-                Debug.LogWarning($"Room {PhotonNetwork.CurrentRoom.Name} has no identified players");
             }
         }
 
