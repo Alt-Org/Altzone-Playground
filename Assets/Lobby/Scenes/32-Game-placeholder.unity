@@ -1017,6 +1017,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 7
+  teleportDistance: 1
+  moveDistance: 0.2
   upperTeam: {fileID: 1794610310}
   lowerTeam: {fileID: 1826230731}
   upperColor: {r: 1, g: 0.28773582, b: 0.28773582, a: 1}

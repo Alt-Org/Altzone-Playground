@@ -8,6 +8,8 @@ namespace Lobby.Scripts.Game
         private const float minStartDirection = 0.2f;
 
         public float speed;
+        public float teleportDistance;
+        public float moveDistance;
         public Collider2D upperTeam;
         public Collider2D lowerTeam;
         public Color upperColor;
@@ -19,9 +21,6 @@ namespace Lobby.Scripts.Game
 
         [Header("Photon")] [SerializeField] private Vector2 networkPosition;
         [SerializeField] private float networkLag;
-        //[SerializeField] private float averageNetworkLag;
-        //private int totalNetworkMessages;
-        //private float totalNetworkLag;
 
         private Transform _transform;
         private Rigidbody2D _rigidbody;
@@ -61,6 +60,7 @@ namespace Lobby.Scripts.Game
             Debug.Log($"startPlaying IsMine={_photonView.IsMine}");
             Debug.Log("*");
             canMove = true;
+            _rigidbody.isKinematic = !photonView.IsMine;
         }
 
         public override void OnDisable()
@@ -120,9 +120,6 @@ namespace Lobby.Scripts.Game
 
                 networkLag = Mathf.Abs((float) (PhotonNetwork.Time - info.SentServerTime));
                 networkPosition += (_rigidbody.velocity * networkLag);
-                //totalNetworkLag += networkLag;
-                //totalNetworkMessages += 1;
-                //averageNetworkLag = totalNetworkLag / totalNetworkMessages;
             }
         }
 
@@ -140,17 +137,26 @@ namespace Lobby.Scripts.Game
             {
                 _sprite.color = originalColor;
             }
+            if (!photonView.IsMine)
+            {
+                var curPos = _rigidbody.position;
+                var deltaX = Mathf.Abs(curPos.x - networkPosition.x);
+                var deltaY = Mathf.Abs(curPos.y - networkPosition.y);
+                if (deltaX > teleportDistance || deltaY > teleportDistance)
+                {
+                    _rigidbody.position = networkPosition;
+                }
+                else if (deltaX > moveDistance || deltaY > moveDistance)
+                {
+                    _rigidbody.position = Vector2.MoveTowards(curPos, networkPosition, Time.deltaTime);
+                }
+            }
         }
 
         private void FixedUpdate()
         {
             if (!canMove)
             {
-                return;
-            }
-            if (!photonView.IsMine)
-            {
-                _rigidbody.position = Vector2.MoveTowards(_rigidbody.position, networkPosition, Time.fixedDeltaTime);
                 return;
             }
             keepConstantVelocity(Time.fixedDeltaTime);
