@@ -6,29 +6,36 @@ using UnityEngine;
 
 namespace Prg.Scripts.Common.Photon
 {
-    public class EventDispatcher : MonoBehaviour, IOnEventCallback
+    public class PhotonEventDispatcher : MonoBehaviour, IOnEventCallback
     {
-        private readonly Action<EventData>[] listeners = new Action<EventData>[200];
+        public const int eventCodeBase = 10;
+        private const int eventCodeCount = 10;
+        private const int eventCodeMax = eventCodeBase + eventCodeCount - 1;
+
+        /// <summary>
+        /// Photon event listeners for event codes between <c>eventCodeBase</c> and <c>eventCodeMax</c> inclusive;
+        /// </summary>
+        private readonly Action<EventData>[] listeners = new Action<EventData>[eventCodeCount];
 
         private readonly RaiseEventOptions raiseEventOptions = new RaiseEventOptions
         {
             Receivers = ReceiverGroup.All,
         };
 
-        public static EventDispatcher Get()
+        public static PhotonEventDispatcher Get()
         {
             if (_Instance == null)
             {
-                _Instance = FindObjectOfType<EventDispatcher>();
+                _Instance = FindObjectOfType<PhotonEventDispatcher>();
                 if (_Instance == null)
                 {
-                    UnityExtensions.CreateGameObjectAndComponent<EventDispatcher>(nameof(EventDispatcher), isDontDestroyOnLoad: false);
+                    UnityExtensions.CreateGameObjectAndComponent<PhotonEventDispatcher>(nameof(PhotonEventDispatcher), isDontDestroyOnLoad: false);
                 }
             }
             return _Instance;
         }
 
-        private static EventDispatcher _Instance;
+        private static PhotonEventDispatcher _Instance;
 
         private void Awake()
         {
@@ -51,19 +58,20 @@ namespace Prg.Scripts.Common.Photon
             }
         }
 
-        public void registerEvent(byte eventCode, Action<EventData> callback)
+        public void registerEventListener(byte eventCode, Action<EventData> callback)
         {
-            if (eventCode > 199 || eventCode == 0)
+            if (eventCode < eventCodeBase || eventCode > eventCodeMax)
             {
                 throw new UnityException("invalid event code " + eventCode);
             }
-            if (listeners[eventCode] == null)
+            var index = eventCode - eventCodeBase;
+            if (listeners[index] == null)
             {
-                listeners[eventCode] = callback;
+                listeners[index] = callback;
             }
             else
             {
-                listeners[eventCode] += callback;
+                listeners[index] += callback;
             }
         }
 
@@ -76,11 +84,12 @@ namespace Prg.Scripts.Common.Photon
         {
             // https://doc.photonengine.com/en-us/pun/current/gameplay/rpcsandraiseevent#raiseevent
             var eventCode = photonEvent.Code;
-            if (eventCode > 199 || eventCode == 0)
+            if (eventCode < eventCodeBase || eventCode > eventCodeMax)
             {
-                return; // internal events
+                return; // internal events or not our
             }
-            listeners[eventCode]?.Invoke(photonEvent);
+            var index = eventCode - eventCodeBase;
+            listeners[index]?.Invoke(photonEvent);
         }
     }
 }
