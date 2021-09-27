@@ -30,19 +30,19 @@ namespace Lobby.Scripts
             }
             if (PhotonNetwork.InRoom)
             {
-                PhotonNetwork.LeaveRoom();
+                PhotonLobby.leaveRoom();
                 return;
             }
             var state = PhotonNetwork.NetworkClientState;
             if (state == ClientState.ConnectedToMasterServer)
             {
-                PhotonNetwork.JoinLobby();
+                PhotonLobby.joinLobby();
                 return;
             }
             var isOK = state == ClientState.PeerCreated || state == ClientState.Disconnected;
             if (isOK)
             {
-                PhotonLobby.Get().connect($"Player{DateTime.Now.Second:00}");
+                PhotonLobby.connect($"Player{DateTime.Now.Second:00}");
             }
         }
     }

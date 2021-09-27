@@ -1,5 +1,6 @@
 using Photon.Pun;
 using Photon.Realtime;
+using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
 using System.Collections;
 using System.Linq;
@@ -48,11 +49,11 @@ namespace Lobby.Scripts
         {
             if (PhotonNetwork.InRoom)
             {
-                PhotonNetwork.LeaveRoom();
+                PhotonLobby.leaveRoom();
             }
             else if (PhotonNetwork.InLobby)
             {
-                PhotonNetwork.LeaveLobby();
+                PhotonLobby.leaveLobby();
             }
         }
 

@@ -71,20 +71,20 @@ namespace Lobby.Scripts.Game
             {
                 // Third create a random room
                 var dummy = new Hashtable();
-                PhotonLobby.Get().createRoom(null);
+                PhotonLobby.createRoom(null);
                 return;
             }
             var state = PhotonNetwork.NetworkClientState;
             if (state == ClientState.ConnectedToMasterServer)
             {
                 // Second join lobby
-                PhotonLobby.Get().joinLobby();
+                PhotonLobby.joinLobby();
                 return;
             }
             if (state == ClientState.PeerCreated || state == ClientState.Disconnected)
             {
                 // First connect
-                PhotonLobby.Get().connect($"Player{DateTime.Now.Second:00}");
+                PhotonLobby.connect($"Player{DateTime.Now.Second:00}");
                 isDebugSetPlayerPropsWait = true;
             }
         }

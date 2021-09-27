@@ -9,9 +9,9 @@ using UnityEngine.SceneManagement;
 namespace Prg.Scripts.Common.Photon
 {
     /// <summary>
-    /// Convenience class to handle basic <c>PhotonNetwork</c> operations in consistent way.
+    /// Static helper class to handle basic <c>PhotonNetwork</c> operations in convenient and consistent way.
     /// </summary>
-    public class PhotonLobby
+    public static class PhotonLobby
     {
         private const int maxRoomNameLength = 16;
 
@@ -20,6 +20,7 @@ namespace Prg.Scripts.Common.Photon
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void afterSceneLoad()
         {
+            Debug.Log("afterSceneLoad");
             Application.quitting += () => isApplicationQuitting = true;
         }
 
@@ -30,22 +31,12 @@ namespace Prg.Scripts.Common.Photon
 
         private static string _gameVersion => Application.version;
 
-        public static PhotonLobby Get()
-        {
-            return new PhotonLobby();
-        }
-
-        private PhotonLobby()
-        {
-        }
-
-        public void connect(string playerName, bool isAutomaticallySyncScene = true)
+        public static void connect(string playerName, bool isAutomaticallySyncScene = true)
         {
             if (isApplicationQuitting)
             {
                 return;
             }
-            SequenceDiagram.receive(nameof(PhotonLobby), SD.CONNECT);
             if (PhotonNetwork.OfflineMode)
             {
                 PhotonNetwork.OfflineMode = false;
@@ -61,19 +52,17 @@ namespace Prg.Scripts.Common.Photon
             throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
         }
 
-        public void disconnect()
+        public static void disconnect()
         {
-            SequenceDiagram.receive(nameof(PhotonLobby), SD.DISCONNECT);
             PhotonNetwork.Disconnect();
         }
 
-        public void joinLobby()
+        public static void joinLobby()
         {
             if (isApplicationQuitting)
             {
                 return;
             }
-            SequenceDiagram.receive(nameof(PhotonLobby), SD.JOIN_LOBBY);
             if (PhotonNetwork.OfflineMode)
             {
                 throw new UnityException("PhotonNetwork.OfflineMode not allowed here");
@@ -88,9 +77,8 @@ namespace Prg.Scripts.Common.Photon
             throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
         }
 
-        public void leaveLobby()
+        public static void leaveLobby()
         {
-            SequenceDiagram.receive(nameof(PhotonLobby), SD.LEAVE_LOBBY);
             if (PhotonNetwork.InLobby)
             {
                 Debug.Log("LeaveLobby");
@@ -100,13 +88,12 @@ namespace Prg.Scripts.Common.Photon
             throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
         }
 
-        public void createRoom(string roomName, RoomOptions roomOptions = null)
+        public static void createRoom(string roomName, RoomOptions roomOptions = null)
         {
             if (isApplicationQuitting)
             {
                 return;
             }
-            SequenceDiagram.receive(nameof(PhotonLobby), SD.CREATE_ROOM);
             if (string.IsNullOrWhiteSpace(roomName))
             {
                 roomName = null; // Let Photon generate room name us to ensure that room creation succeeds
@@ -123,13 +110,12 @@ namespace Prg.Scripts.Common.Photon
             PhotonNetwork.CreateRoom(roomName, options, TypedLobby.Default);
         }
 
-        public bool joinRoom(RoomInfo roomInfo)
+        public static bool joinRoom(RoomInfo roomInfo)
         {
             if (isApplicationQuitting)
             {
                 return false;
             }
-            SequenceDiagram.receive(nameof(PhotonLobby), SD.JOIN_ROOM);
             Debug.Log($"JoinRoom {roomInfo.GetDebugLabel()} {PhotonNetwork.LocalPlayer.GetDebugLabel()}");
             var isJoined = PhotonNetwork.JoinRoom(roomInfo.Name);
             if (!isJoined)
@@ -139,14 +125,13 @@ namespace Prg.Scripts.Common.Photon
             return isJoined;
         }
 
-        public void joinOrCreateRoom(string roomName, Hashtable customRoomProperties, string[] lobbyPropertyNames,
+        public static void joinOrCreateRoom(string roomName, Hashtable customRoomProperties, string[] lobbyPropertyNames,
             bool isAutomaticallySyncScene = false)
         {
             if (isApplicationQuitting)
             {
                 return;
             }
-            SequenceDiagram.receive(nameof(PhotonLobby), SD.JOIN_ROOM);
             Debug.Log($"joinOrCreateRoom {roomName}");
             if (string.IsNullOrWhiteSpace(roomName))
             {
@@ -161,9 +146,8 @@ namespace Prg.Scripts.Common.Photon
             PhotonNetwork.JoinOrCreateRoom(roomName, options, TypedLobby.Default);
         }
 
-        public void closeRoom(bool keepVisible = false)
+        public static void closeRoom(bool keepVisible = false)
         {
-            SequenceDiagram.receive(nameof(PhotonLobby), SD.CLOSE_ROOM);
             if (!PhotonNetwork.InRoom)
             {
                 throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
@@ -181,9 +165,8 @@ namespace Prg.Scripts.Common.Photon
             room.IsVisible = keepVisible;
         }
 
-        public void leaveRoom()
+        public static void leaveRoom()
         {
-            SequenceDiagram.receive(nameof(PhotonLobby), SD.LEAVE_ROOM);
             if (PhotonNetwork.InRoom)
             {
                 PhotonNetwork.LeaveRoom();
