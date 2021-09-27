@@ -20,7 +20,6 @@ namespace Prg.Scripts.Common.Photon
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void afterSceneLoad()
         {
-            Debug.Log("afterSceneLoad");
             Application.quitting += () => isApplicationQuitting = true;
         }
 
