@@ -13,6 +13,9 @@ namespace Lobby.Scripts.Game
     /// <summary>
     /// Example game manager that uses simple <c>LobbyManager</c> player custom properties protocol to communicate player positions for a game room.
     /// </summary>
+    /// <remarks>
+    /// Note that we disable us after start as there is no game functionality that goes on after loading this level!
+    /// </remarks>
     public class GameManagerExample : MonoBehaviour
     {
         private const string playerPositionKey = LobbyManager.playerPositionKey;
