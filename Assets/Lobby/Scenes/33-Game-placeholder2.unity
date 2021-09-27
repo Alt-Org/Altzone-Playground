@@ -669,6 +669,7 @@ GameObject:
   m_Component:
   - component: {fileID: 991472593}
   - component: {fileID: 991472592}
+  - component: {fileID: 991472594}
   - component: {fileID: 991472591}
   - component: {fileID: 991472590}
   m_Layer: 0
@@ -735,7 +736,7 @@ MonoBehaviour:
   - {fileID: 1073276108}
   - {fileID: 2050763084}
   - {fileID: 133831672}
-  playerPrefab: {fileID: 626154037994138417, guid: 0751a6a2ff12b674b8875091be968a23,
+  playerPrefab: {fileID: 626154037994138417, guid: d8eb1ecf10e976545b89ae1d64d1a38e,
     type: 3}
 --- !u!4 &991472593
 Transform:
@@ -751,6 +752,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &991472594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991472589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf35e1adc7da45a3a46a95436e0381c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collisionToHeadMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  collisionToHead: 0
+  collisionToWallMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  collisionToWall: 0
+  headCollisionCount: 0
+  wallCollisionCount: 0
 --- !u!1 &1038443105
 GameObject:
   m_ObjectHideFlags: 0
@@ -985,7 +1008,6 @@ GameObject:
   - component: {fileID: 1491261278}
   - component: {fileID: 1491261280}
   - component: {fileID: 1491261277}
-  - component: {fileID: 1491261281}
   m_Layer: 9
   m_Name: Ball
   m_TagString: Ball
@@ -1066,7 +1088,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1491261274}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 280836cb4f77449bac6cf898be471d76, type: 3}
+  m_Script: {fileID: 11500000, guid: 54b3506479cd18149adb1a3dc55306a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 7
@@ -1142,22 +1164,6 @@ MonoBehaviour:
   sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &1491261281
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1491261274}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
 --- !u!1 &1745095400
 GameObject:
   m_ObjectHideFlags: 0
