@@ -678,12 +678,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec4d991767d7437783a4ff6bc3a2b076, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player1: 
-  player2: 
-  player3: 
-  player4: 
-  spectators: 
-  others: 
+  playerInfo:
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  _camera: {fileID: 6780388524306496468}
+  playerStartPos:
+  - {fileID: 14502046}
+  - {fileID: 1073276108}
+  - {fileID: 2050763084}
+  - {fileID: 133831672}
+  playerPrefab: {fileID: 626154037994138417, guid: 0751a6a2ff12b674b8875091be968a23,
+    type: 3}
 --- !u!4 &991472593
 Transform:
   m_ObjectHideFlags: 0
