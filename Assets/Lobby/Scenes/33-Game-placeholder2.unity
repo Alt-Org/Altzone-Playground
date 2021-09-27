@@ -247,11 +247,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   areaTemplate: {fileID: 801765303}
+  wallThickness: 0.25
+  wallTopLayer: 11
+  wallBottomLayer: 11
+  wallLeftLayer: 0
+  wallRightLayer: 0
   wallTop: {fileID: 0}
   wallBottom: {fileID: 0}
   wallLeft: {fileID: 0}
   wallRight: {fileID: 0}
-  wallThickness: 0.25
 --- !u!1 &133831671
 GameObject:
   m_ObjectHideFlags: 0

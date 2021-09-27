@@ -5,12 +5,16 @@ namespace Lobby.Scripts.Game
     public class CreateBoxCollider : MonoBehaviour
     {
         [Header("Settings"), SerializeField] private SpriteRenderer areaTemplate;
+        [SerializeField] private float wallThickness;
+        [SerializeField] private int wallTopLayer;
+        [SerializeField] private int wallBottomLayer;
+        [SerializeField] private int wallLeftLayer;
+        [SerializeField] private int wallRightLayer;
 
         [Header("Live Data"), SerializeField] private BoxCollider2D wallTop;
         [SerializeField] private BoxCollider2D wallBottom;
         [SerializeField] private BoxCollider2D wallLeft;
         [SerializeField] private BoxCollider2D wallRight;
-        [SerializeField] private float wallThickness;
 
         private void Awake()
         {
@@ -24,6 +28,11 @@ namespace Lobby.Scripts.Game
             wallBottom = createWall("wallBottom", _transform).GetComponent<BoxCollider2D>();
             wallLeft = createWall("wallLeft", _transform).GetComponent<BoxCollider2D>();
             wallRight = createWall("wallRight", _transform).GetComponent<BoxCollider2D>();
+
+            wallTop.gameObject.layer = wallTopLayer;
+            wallBottom.gameObject.layer = wallBottomLayer;
+            wallLeft.gameObject.layer = wallLeftLayer;
+            wallRight.gameObject.layer = wallRightLayer;
 
             var size = areaTemplate.size;
             var width = size.x / 2f;

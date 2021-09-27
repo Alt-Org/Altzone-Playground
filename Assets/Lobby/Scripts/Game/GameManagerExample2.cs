@@ -53,7 +53,6 @@ namespace Lobby.Scripts.Game
                 wallCollisionCount += 1;
                 Debug.Log($"wallCollisionCount={wallCollisionCount} {data}");
             }
-            Debug.Log($"collision {data}");
         }
     }
 }
