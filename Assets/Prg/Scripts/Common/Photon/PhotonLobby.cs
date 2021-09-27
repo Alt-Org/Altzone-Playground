@@ -202,9 +202,6 @@ namespace Prg.Scripts.Common.Photon
             // https://documentation.help/Photon-Unity-Networking-2/class_photon_1_1_pun_1_1_photon_network.html#a7b4c9628657402e59fe292502511dcf4
             // - original 10 times per second is way too slow to keep moving objects synchronized properly without glitches!
             PhotonNetwork.SerializationRate = 30;
-            // https://doc.photonengine.com/en-us/pun/v2/gameplay/optimization
-            // Reuse EventData to decrease garbage collection but EventData will be overwritten for every event!
-            PhotonNetwork.NetworkingClient.LoadBalancingPeer.ReuseEventInstance = true;
             Debug.Log(
                 $"ConnectUsingSettings {PhotonNetwork.NetworkClientState} scene={SceneManager.GetActiveScene().name}" +
                 $" {(appSettings != null ? appSettings.ToStringFull() : "")}");
