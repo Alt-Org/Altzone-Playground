@@ -5,6 +5,7 @@ using System.Collections;
 using System.Linq;
 using UiProto.Scripts.Window;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Lobby.Scripts
@@ -60,7 +61,7 @@ namespace Lobby.Scripts
             if (Input.GetKeyUp(KeyCode.Escape))
             {
                 Debug.Log($"Escape {PhotonNetwork.NetworkClientState} {PhotonNetwork.LocalPlayer.NickName}");
-                SceneLoader.LoadScene(cancelLevel.unityName);
+                SceneManager.LoadScene(cancelLevel.unityName);
             }
         }
 
@@ -121,7 +122,7 @@ namespace Lobby.Scripts
             // Goto menu if we left (in)voluntarily any room
             // - typically master client kicked us off before starting a new game as we did not qualify to participate.
             Debug.Log($"OnLeftRoom {PhotonNetwork.LocalPlayer.NickName}");
-            SceneLoader.LoadScene(cancelLevel.unityName);
+            SceneManager.LoadScene(cancelLevel.unityName);
         }
 
         public class Event

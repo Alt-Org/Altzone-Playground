@@ -1,6 +1,7 @@
 ﻿using Photon.Pun;
 using UiProto.Scripts.Window;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Lobby.Scripts.Game
 {
@@ -13,7 +14,7 @@ namespace Lobby.Scripts.Game
             if (Input.GetKeyUp(KeyCode.Escape))
             {
                 Debug.Log($"Escape {PhotonNetwork.NetworkClientState} {PhotonNetwork.LocalPlayer.NickName}");
-                SceneLoader.LoadScene(mainMenu.unityName);
+                SceneManager.LoadScene(mainMenu.unityName);
                 enabled = false;
             }
         }

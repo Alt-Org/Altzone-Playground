@@ -706,7 +706,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenu:
     levelName: 
-    unityName: 10-uiProto
+    unityName: 30-Lobby
     isNetwork: 0
     isExcluded: 0
     levelId: 0
