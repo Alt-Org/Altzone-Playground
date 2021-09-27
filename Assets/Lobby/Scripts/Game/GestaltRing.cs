@@ -1,4 +1,6 @@
-﻿using Prg.Scripts.Common.PubSub;
+﻿using Photon.Pun;
+using Prg.Scripts.Common.Photon;
+using Prg.Scripts.Common.PubSub;
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -22,10 +24,12 @@ namespace Lobby.Scripts.Game
     /// <c>GestaltRing</c> class manages global Gestalt <c>Defence</c> state.
     /// </summary>
     /// <remarks>
-    /// When <c>Defence</c> state changes, a notification is sent.
+    /// When <c>Defence</c> state changes, a notification is sent through network to all players.
     /// </remarks>
     public class GestaltRing : MonoBehaviour
     {
+        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 0;
+
         public static GestaltRing Get()
         {
             if (_Instance == null)
@@ -50,18 +54,28 @@ namespace Lobby.Scripts.Game
         };
 
         [SerializeField] private Defence curDefence;
+        private PhotonEventDispatcher photonEventDispatcher;
 
         public Defence Defence
         {
             get => curDefence;
             set
             {
-                if (value <= Defence.None)
+                if (!PhotonNetwork.IsMasterClient)
                 {
-                    throw new UnityException("invalid Defence state: " + value);
+                    throw new UnityException($"Only Master Client can change {nameof(GestaltRing)} {nameof(Defence)} state");
                 }
-                curDefence = value;
-                this.Publish(new Event(curDefence));
+                byte payload;
+                if (value == Defence.Next)
+                {
+                    payload = (byte) nextDefence[(int) curDefence];
+                }
+                else
+                {
+                    payload = (byte) value;
+                }
+                Debug.Log($"set Defence {(byte)curDefence} <- {payload}");
+                photonEventDispatcher.RaiseEvent(photonEventCode, payload);
             }
         }
 
@@ -77,6 +91,14 @@ namespace Lobby.Scripts.Game
         {
             // Start with some random Defence so that we have a valid state.
             curDefence = nextDefence[Random.Range(1, (int) Defence.Confluence)];
+            photonEventDispatcher = PhotonEventDispatcher.Get();
+            photonEventDispatcher.registerEventListener(photonEventCode, (data) =>
+            {
+                var newDefence = (Defence) Enum.ToObject(typeof(Defence), data.CustomData);
+                Debug.Log($"set Defence {curDefence} <- {newDefence}");
+                curDefence = newDefence;
+                this.Publish(new Event(curDefence));
+            });
         }
 
         private void OnEnable()
@@ -99,7 +121,7 @@ namespace Lobby.Scripts.Game
 
         private void OnDefenceChanged(Event data)
         {
-            Debug.Log($"set Defence {data.Defence}");
+            Debug.Log($"changed Defence {data.Defence}");
         }
 
         public class Event
