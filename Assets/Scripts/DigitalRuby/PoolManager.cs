@@ -10,8 +10,10 @@ namespace DigitalRuby
         {
             // We allow pooled objects to be seen and edited as usual!
             SpawningPool.DefaultHideFlags = HideFlags.None;
+            Application.quitting += () => isApplicationQuitting = true;
         }
 
+        private static bool isApplicationQuitting;
         private static int createCount;
 
         public static bool ContainsPrefab(string key)
@@ -45,6 +47,10 @@ namespace DigitalRuby
 
         public static void RecycleActiveObjects()
         {
+            if (isApplicationQuitting)
+            {
+                return;
+            }
             SpawningPool.RecycleActiveObjects();
         }
     }
