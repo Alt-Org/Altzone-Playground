@@ -109,6 +109,10 @@ namespace Examples.Lobby.Scripts.InLobby
         {
             var text = button.GetComponentInChildren<Text>();
             var roomText = $"{room.Name}";
+            if (roomText.Length > 21)
+            {
+                roomText = roomText.Substring(0, 20) + "…";
+            }
             if (room.IsOpen)
             {
                 roomText += $" ({room.PlayerCount})";
