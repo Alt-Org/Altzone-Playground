@@ -988,7 +988,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenu:
     levelName: 
-    unityName: 30-Lobby
+    unityName: 32-Game-over
     isNetwork: 0
     isExcluded: 0
     levelId: 0
