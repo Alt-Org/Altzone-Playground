@@ -9,13 +9,13 @@ namespace Altzone.NewPlayer
         
         [Header("Player Settings"), SerializeField] private Transform leftShieldTransform;
         [SerializeField] private Transform rightShieldTransform;        
-        [SerializeField] private playerMove player;
+        [SerializeField] private playerManager player;
 
         
         [Header("Live Data"), SerializeField] private Collider2D leftCollider;
         [SerializeField] private Collider2D rightCollider;
         [SerializeField] private float angle = 0f;
-        [SerializeField] private float health = 4f;
+        [SerializeField] private int health = 4;
 
         private Vector3 localEulerAngles = new Vector3(0, 0, 0);
         private bool isInitialized;
@@ -31,7 +31,7 @@ namespace Altzone.NewPlayer
                 rightCollider = rightShieldTransform.GetComponent<Collider2D>();
                 createSlave(leftCollider.gameObject, this, 9);
                 createSlave(rightCollider.gameObject, this, 9);
-                health = 4f;
+                health = 4;
                 hitReady = true;
             }
         }
@@ -47,6 +47,7 @@ namespace Altzone.NewPlayer
                 health -= 1;
                 angle += -15f;
                 hitReady = false;
+                player.squishPlayer(health);
                 StartCoroutine(hitWait());
             }
         }
