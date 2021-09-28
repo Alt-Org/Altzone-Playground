@@ -7,6 +7,35 @@ using UnityEngine;
 namespace Lobby.Scripts.Game
 {
     /// <summary>
+    /// Data holder class for team score.
+    /// </summary>
+    [Serializable]
+    public class TeamScore
+    {
+        public int teamIndex;
+        public int headCollisionCount;
+        public int wallCollisionCount;
+
+        public byte[] ToBytes()
+        {
+            return new[] { (byte) teamIndex, (byte) headCollisionCount, (byte) wallCollisionCount };
+        }
+
+        public static void FromBytes(object data, out int teamIndex, out int headCollisionCount, out int wallCollisionCount)
+        {
+            var payload = (byte[]) data;
+            teamIndex = payload[0];
+            headCollisionCount = payload[1];
+            wallCollisionCount = payload[2];
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(teamIndex)}: {teamIndex}, {nameof(headCollisionCount)}: {headCollisionCount}, {nameof(wallCollisionCount)}: {wallCollisionCount}";
+        }
+    }
+
+    /// <summary>
     /// More game manager example functionality.
     /// </summary>
     public class GameManagerExample2 : MonoBehaviour
@@ -19,14 +48,18 @@ namespace Lobby.Scripts.Game
         public LayerMask collisionToWallMask;
         public int collisionToWall;
 
-        public int headCollisionCount;
-        public int wallCollisionCount;
+        public TeamScore[] scores;
 
         private PhotonEventDispatcher photonEventDispatcher;
 
         private void Awake()
         {
             Debug.Log($"Awake: {PhotonNetwork.NetworkClientState}");
+            scores = new[]
+            {
+                new TeamScore { teamIndex = 0 },
+                new TeamScore { teamIndex = 1 },
+            };
             collisionToHead = collisionToHeadMask.value;
             collisionToWall = collisionToWallMask.value;
             gameObject.SetActive(false); // Wait until we are signalled to go by setting us active again
@@ -38,13 +71,14 @@ namespace Lobby.Scripts.Game
             photonEventDispatcher = PhotonEventDispatcher.Get();
             photonEventDispatcher.registerEventListener(photonEventCode, (data) =>
             {
-                var payload = (byte[]) data.CustomData;
+                TeamScore.FromBytes(data.CustomData, out var _teamIndex, out var _headCollisionCount, out var _wallCollisionCount);
+                var score = scores[_teamIndex];
 
-                Debug.Log($"Synchronize head:{headCollisionCount}<-{payload[0]} wall:{wallCollisionCount}<-{payload[1]}");
-                headCollisionCount = payload[0];
-                wallCollisionCount = payload[1];
+                Debug.Log($"Synchronize head:{score.headCollisionCount}<-{_headCollisionCount} wall:{score.wallCollisionCount}<-{_wallCollisionCount}");
+                score.headCollisionCount = _headCollisionCount;
+                score.wallCollisionCount = _wallCollisionCount;
 
-                this.Publish(new Event(headCollisionCount, wallCollisionCount));
+                this.Publish(new Event(score));
             });
         }
 
@@ -52,6 +86,8 @@ namespace Lobby.Scripts.Game
         {
             Debug.Log($"OnEnable: {PhotonNetwork.NetworkClientState}");
             this.Subscribe<BallMovementV2.Event>(OnBallCollision);
+            this.Publish(new Event(scores[0]));
+            this.Publish(new Event(scores[1]));
         }
 
         private void OnDisable()
@@ -63,6 +99,7 @@ namespace Lobby.Scripts.Game
         {
             // var hasLayer = layerMask == (layerMask | 1 << _layer); // unity3d check if layer mask contains a layer
 
+            var teamIndex = 0;
             var _headCollisionCount = 0;
             var _wallCollisionCount = 0;
             var colliderMask = 1 << data.colliderLayer;
@@ -82,33 +119,32 @@ namespace Lobby.Scripts.Game
             }
             if (PhotonNetwork.IsMasterClient)
             {
-                Debug.Log($"OnBallCollision {headCollisionCount}<-{_headCollisionCount} {wallCollisionCount}<-{_wallCollisionCount}");
+                Debug.Log($"OnBallCollision head {_headCollisionCount} wall {_wallCollisionCount}");
                 if (_headCollisionCount > 0)
                 {
                     GestaltRing.Get().Defence = Defence.Next;
                 }
-                headCollisionCount += _headCollisionCount;
-                wallCollisionCount += _wallCollisionCount;
-                // Synchronize all game managers
-                var payload = new[] { (byte) headCollisionCount, (byte) wallCollisionCount };
+                var score = scores[teamIndex];
+                score.headCollisionCount += _headCollisionCount;
+                score.wallCollisionCount += _wallCollisionCount;
+                // Synchronize to all game managers
+                var payload = score.ToBytes();
                 photonEventDispatcher.RaiseEvent(photonEventCode, payload);
             }
         }
 
         public class Event
         {
-            public readonly int headCollisionCount;
-            public readonly int wallCollisionCount;
+            public readonly TeamScore score;
 
-            public Event(int headCollisionCount, int wallCollisionCount)
+            public Event(TeamScore score)
             {
-                this.headCollisionCount = headCollisionCount;
-                this.wallCollisionCount = wallCollisionCount;
+                this.score = score;
             }
 
             public override string ToString()
             {
-                return $"{nameof(headCollisionCount)}: {headCollisionCount}, {nameof(wallCollisionCount)}: {wallCollisionCount}";
+                return $"{nameof(score)}: {score}";
             }
         }
     }

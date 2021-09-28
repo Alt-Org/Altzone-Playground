@@ -26,8 +26,9 @@ namespace Lobby.Scripts.Game
         private void OnGameDataUpdate(GameManagerExample2.Event data)
         {
             Debug.Log($"OnGameDataUpdate {data}");
-            leftText.text = $"head {data.headCollisionCount} wall {data.wallCollisionCount}";
-            rightText.text = "";
+            var score = data.score;
+            var text = score.teamIndex == 0 ? leftText : rightText;
+            text.text = $"team {score.teamIndex} head {score.headCollisionCount} wall {score.wallCollisionCount}";
         }
     }
 }
