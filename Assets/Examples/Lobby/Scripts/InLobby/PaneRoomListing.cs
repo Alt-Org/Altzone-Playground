@@ -2,7 +2,6 @@
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,10 +15,9 @@ namespace Examples.Lobby.Scripts.InLobby
     {
         [SerializeField] private Text title;
         [SerializeField] private Button templateButton;
+        [SerializeField] private Transform buttonParent;
 
         private PhotonRoomList photonRoomList;
-
-        private readonly List<Button> buttons = new List<Button>();
 
         private void Start()
         {
@@ -47,34 +45,49 @@ namespace Examples.Lobby.Scripts.InLobby
                 photonRoomList.roomsUpdated -= updateStatus;
                 photonRoomList = null;
             }
-            buttons.Clear();
+            deleteExtraButtons(buttonParent);
         }
 
         private void updateStatus()
         {
             if (!PhotonNetwork.InLobby)
             {
-                deleteExtraButtons(buttons, 0);
+                deleteExtraButtons(buttonParent);
                 return;
             }
             var rooms = photonRoomList.currentRooms.ToList();
             rooms.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
-            Debug.Log($"updateStatus enter {PhotonNetwork.NetworkClientState} buttons: {buttons.Count} rooms: {rooms.Count}");
+            Debug.Log($"updateStatus enter {PhotonNetwork.NetworkClientState} buttons: {buttonParent.childCount} rooms: {rooms.Count}");
 
             // Synchronize button count with room count.
-            while (buttons.Count < rooms.Count)
+            while (buttonParent.childCount < rooms.Count)
             {
-                buttons.Add(duplicate(templateButton));
+                addButton(buttonParent, templateButton);
             }
-            deleteExtraButtons(buttons, rooms.Count);
             // Update button captions
             for (var i = 0; i < rooms.Count; ++i)
             {
                 var room = rooms[i];
-                var button = buttons[i];
+                var buttonObject = buttonParent.GetChild(i).gameObject;
+                if (!buttonObject.activeSelf)
+                {
+                    buttonObject.SetActive(true);
+                }
+                var button = buttonObject.GetComponent<Button>();
                 update(button, room);
             }
-            Debug.Log($"updateStatus exit {PhotonNetwork.NetworkClientState} buttons: {buttons.Count} rooms: {rooms.Count}");
+            if (buttonParent.childCount > rooms.Count)
+            {
+                for (var i = rooms.Count; i < buttonParent.childCount; ++i)
+                {
+                    var buttonObject = buttonParent.GetChild(i).gameObject;
+                    if (buttonObject.activeSelf)
+                    {
+                        buttonObject.SetActive(false);
+                    }
+                }
+            }
+            Debug.Log($"updateStatus exit {PhotonNetwork.NetworkClientState} buttons: {buttonParent.childCount} rooms: {rooms.Count}");
         }
 
         private static void createRoomForMe()
@@ -96,13 +109,11 @@ namespace Examples.Lobby.Scripts.InLobby
             }
         }
 
-        private static Button duplicate(Button template)
+        private static void addButton(Transform parent, Button template)
         {
             var templateParent = template.gameObject;
-            var instance = Instantiate(templateParent, templateParent.transform.parent);
-            var button = instance.GetComponent<Button>();
-            Debug.Log("duplicate");
-            return button;
+            var instance = Instantiate(templateParent, parent);
+            Debug.Log($"duplicate {instance.name}");
         }
 
         private void update(Button button, RoomInfo room)
@@ -132,17 +143,14 @@ namespace Examples.Lobby.Scripts.InLobby
             }
         }
 
-        private static void deleteExtraButtons(List<Button> buttons, int buttonsToKeep)
+        private static void deleteExtraButtons(Transform parent)
         {
-            while (buttons.Count > buttonsToKeep)
+            var childCount = parent.childCount;
+            for (var i = childCount - 1; i >= 0; --i)
             {
-                var lastButton = buttons[buttons.Count - 1];
-                if (!buttons.Remove(lastButton))
-                {
-                    throw new UnityException("can not remove button");
-                }
-                Debug.Log($"Destroy '{lastButton.GetComponentInChildren<Text>().text}'");
-                Destroy(lastButton.gameObject);
+                var child = parent.GetChild(i).gameObject;
+                Debug.Log($"Destroy {child.name}");
+                Destroy(child);
             }
         }
     }

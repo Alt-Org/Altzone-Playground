@@ -43,6 +43,7 @@ namespace Examples.Lobby.Scripts.InRoom
 
         private void updateStatus()
         {
+            // Use PaneRoomListing.updateStatus() style to manage dynamic text lines - IMHO is has better implementation!
             if (!PhotonNetwork.InRoom)
             {
                 deleteExtraLines(textLines, 0);
