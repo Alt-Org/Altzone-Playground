@@ -151,11 +151,6 @@ namespace Lobby.Scripts.Game
             // Parent under us!
             var playerTransform = instance.transform;
             playerTransform.parent = transform;
-            // Rotate
-            if (localPlayerIndex == 1 || localPlayerIndex == 3)
-            {
-                playerTransform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
-            }
         }
 
         private static GameObject _instantiateLocalPlayer(string prefabName, Vector3 instantiationPosition, string playerName)

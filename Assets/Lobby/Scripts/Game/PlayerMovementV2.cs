@@ -41,6 +41,13 @@ namespace Lobby.Scripts.Game
         {
             Debug.Log($"startPlaying IsMine={_photonView.IsMine} initialPosition={initialPosition}");
             _transform.position = initialPosition;
+            var player = PhotonNetwork.LocalPlayer;
+            var localPlayerIndex = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
+            // Rotate
+            if (localPlayerIndex == 1 || localPlayerIndex == 3)
+            {
+                _transform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
+            }
         }
     }
 }
