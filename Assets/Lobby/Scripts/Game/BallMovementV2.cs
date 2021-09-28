@@ -98,7 +98,11 @@ namespace Lobby.Scripts.Game
             {
                 return; // SKip default layer
             }
-            var data = new Event(hitObject.name, hitLayer, Time.time);
+            var hitY = hitObject.transform.position.y;
+            var positionY = Mathf.Approximately(hitY, 0f)
+                ? _transform.position.y // Stupid HACK for walls because they are positioned to origo and collider is moved using its offset!
+                : hitY;
+            var data = new Event(hitObject.name, hitLayer, Time.time, positionY);
             this.Publish(data);
         }
 
@@ -240,18 +244,19 @@ namespace Lobby.Scripts.Game
             public readonly string collidedObjectName;
             public readonly int colliderLayer;
             public readonly float collisionTime;
+            public readonly float positionY;
 
-            public Event(string collidedObjectName, int colliderLayer, float collisionTime)
+            public Event(string collidedObjectName, int colliderLayer, float collisionTime, float positionY)
             {
                 this.collidedObjectName = collidedObjectName;
                 this.colliderLayer = colliderLayer;
                 this.collisionTime = collisionTime;
+                this.positionY = positionY;
             }
 
             public override string ToString()
             {
-                return
-                    $"{nameof(collidedObjectName)}: {collidedObjectName}, {nameof(colliderLayer)}: {colliderLayer}, {nameof(collisionTime)}: {collisionTime}";
+                return $"{nameof(collidedObjectName)}: {collidedObjectName}, layer: {colliderLayer}, time: {collisionTime}, y: {positionY}";
             }
         }
     }

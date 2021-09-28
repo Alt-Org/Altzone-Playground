@@ -99,7 +99,6 @@ namespace Lobby.Scripts.Game
         {
             // var hasLayer = layerMask == (layerMask | 1 << _layer); // unity3d check if layer mask contains a layer
 
-            var teamIndex = 0;
             var _headCollisionCount = 0;
             var _wallCollisionCount = 0;
             var colliderMask = 1 << data.colliderLayer;
@@ -119,11 +118,12 @@ namespace Lobby.Scripts.Game
             }
             if (PhotonNetwork.IsMasterClient)
             {
-                Debug.Log($"OnBallCollision head {_headCollisionCount} wall {_wallCollisionCount}");
+                Debug.Log($"OnBallCollision head {_headCollisionCount} wall {_wallCollisionCount} data {data}");
                 if (_headCollisionCount > 0)
                 {
                     GestaltRing.Get().Defence = Defence.Next;
                 }
+                var teamIndex = data.positionY > 0 ? 1 : 0; // Select upper or lower team from Y coord
                 var score = scores[teamIndex];
                 score.headCollisionCount += _headCollisionCount;
                 score.wallCollisionCount += _wallCollisionCount;
