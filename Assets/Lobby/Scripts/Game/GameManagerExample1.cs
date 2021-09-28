@@ -24,6 +24,7 @@ namespace Lobby.Scripts.Game
         public string[] playerInfo = new string[6];
 
         public Camera _camera;
+        public bool isCreatePlayers;
         public Transform[] playerStartPos = new Transform[4];
         public GameObject playerPrefab;
         public GameObject gameManager2;
@@ -33,7 +34,7 @@ namespace Lobby.Scripts.Game
 
         private void Awake()
         {
-            if (!PoolManager.ContainsPrefab(playerPrefab.name))
+            if (isCreatePlayers && !PoolManager.ContainsPrefab(playerPrefab.name))
             {
                 PoolManager.AddPrefab(playerPrefab.name, playerPrefab);
             }
@@ -70,7 +71,10 @@ namespace Lobby.Scripts.Game
                 {
                     makeRoomClosed();
                 }
-                showPlayersInRooms();
+                if (isCreatePlayers)
+                {
+                    showPlayersInRooms();
+                }
                 if (gameManager2 != null)
                 {
                     // Activate "real" game manager when room is up and running.

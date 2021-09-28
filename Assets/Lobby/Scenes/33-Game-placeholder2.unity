@@ -1012,13 +1012,13 @@ MonoBehaviour:
   - 
   - 
   _camera: {fileID: 6780388524306496468}
+  isCreatePlayers: 0
   playerStartPos:
   - {fileID: 14502046}
   - {fileID: 1073276108}
   - {fileID: 2050763084}
   - {fileID: 133831672}
-  playerPrefab: {fileID: 626154037994138417, guid: d8eb1ecf10e976545b89ae1d64d1a38e,
-    type: 3}
+  playerPrefab: {fileID: 0}
   gameManager2: {fileID: 1459799767}
 --- !u!4 &991472593
 Transform:
@@ -1390,8 +1390,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2048
   collisionToWall: 0
-  headCollisionCount: 0
-  wallCollisionCount: 0
+  scores: []
 --- !u!4 &1459799769
 Transform:
   m_ObjectHideFlags: 0

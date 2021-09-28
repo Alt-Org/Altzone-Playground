@@ -247,11 +247,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   areaTemplate: {fileID: 801765303}
+  wallThickness: 0.25
+  wallTopLayer: 0
+  wallBottomLayer: 0
+  wallLeftLayer: 0
+  wallRightLayer: 0
   wallTop: {fileID: 0}
   wallBottom: {fileID: 0}
   wallLeft: {fileID: 0}
   wallRight: {fileID: 0}
-  wallThickness: 0.25
 --- !u!1 &133831671
 GameObject:
   m_ObjectHideFlags: 0
@@ -686,6 +690,7 @@ MonoBehaviour:
   - 
   - 
   _camera: {fileID: 6780388524306496468}
+  isCreatePlayers: 1
   playerStartPos:
   - {fileID: 14502046}
   - {fileID: 1073276108}
@@ -693,6 +698,7 @@ MonoBehaviour:
   - {fileID: 133831672}
   playerPrefab: {fileID: 626154037994138417, guid: 0751a6a2ff12b674b8875091be968a23,
     type: 3}
+  gameManager2: {fileID: 0}
 --- !u!4 &991472593
 Transform:
   m_ObjectHideFlags: 0

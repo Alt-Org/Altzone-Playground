@@ -66,9 +66,7 @@ namespace Lobby.Scripts.Game
 
         private void startPlaying()
         {
-            Debug.Log("*");
             Debug.Log($"startPlaying IsMine={_photonView.IsMine}");
-            Debug.Log("*");
             canMove = true;
             _rigidbody.isKinematic = !_photonView.IsMine;
             _collider.enabled = _photonView.IsMine;
