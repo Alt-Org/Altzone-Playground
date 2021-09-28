@@ -43,6 +43,8 @@ namespace Lobby.Scripts.Game
                 Debug.Log($"Synchronize head:{headCollisionCount}<-{payload[0]} wall:{wallCollisionCount}<-{payload[1]}");
                 headCollisionCount = payload[0];
                 wallCollisionCount = payload[1];
+
+                this.Publish(new Event(headCollisionCount, wallCollisionCount));
             });
         }
 
