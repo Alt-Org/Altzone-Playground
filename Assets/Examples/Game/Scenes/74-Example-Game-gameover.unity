@@ -612,7 +612,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenu:
     levelName: 
-    unityName: 30-Lobby
+    unityName: 70-Example-Lobby
     isNetwork: 0
     isExcluded: 0
     levelId: 0

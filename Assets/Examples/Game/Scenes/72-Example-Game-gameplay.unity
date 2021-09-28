@@ -959,7 +959,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenu:
     levelName: 
-    unityName: 32-Game-over
+    unityName: 74-Example-Game-gameover
     isNetwork: 0
     isExcluded: 0
     levelId: 0
