@@ -1,9 +1,7 @@
 using Photon.Pun;
-using Prg.Scripts.Common.PubSub;
-using UnityConstants;
 using UnityEngine;
 
-namespace Lobby.Scripts.Game
+namespace Examples.Game.Scripts
 {
     /// <summary>
     /// Simple <c>Rigidbody2D</c> ball movement across network clients.
@@ -11,7 +9,7 @@ namespace Lobby.Scripts.Game
     /// <remarks>
     /// <c>Rigidbody2D</c> is kinematic on remote clients and we use <c>OnPhotonSerializeView</c> to transfer our position and velocity.
     /// </remarks>
-    public class BallMovementV2 : MonoBehaviourPunCallbacks, IPunObservable
+    public class BallMovementV1 : MonoBehaviourPunCallbacks, IPunObservable
     {
         private const float minStartDirection = 0.2f;
 
@@ -32,7 +30,6 @@ namespace Lobby.Scripts.Game
 
         private Transform _transform;
         private Rigidbody2D _rigidbody;
-        private Collider2D _collider;
         private SpriteRenderer _sprite;
         private PhotonView _photonView;
         private Vector3 initialPosition;
@@ -45,7 +42,6 @@ namespace Lobby.Scripts.Game
             Debug.Log("Awake");
             _transform = GetComponent<Transform>();
             _rigidbody = GetComponent<Rigidbody2D>();
-            _collider = GetComponent<CircleCollider2D>();
             _sprite = GetComponent<SpriteRenderer>();
             originalColor = _sprite.color;
             _photonView = PhotonView.Get(this);
@@ -66,10 +62,11 @@ namespace Lobby.Scripts.Game
 
         private void startPlaying()
         {
+            Debug.Log("*");
             Debug.Log($"startPlaying IsMine={_photonView.IsMine}");
+            Debug.Log("*");
             canMove = true;
-            _rigidbody.isKinematic = !_photonView.IsMine;
-            _collider.enabled = _photonView.IsMine;
+            _rigidbody.isKinematic = !photonView.IsMine;
         }
 
         public override void OnDisable()
@@ -84,32 +81,8 @@ namespace Lobby.Scripts.Game
             startPlaying();
         }
 
-        private void OnCollisionEnter2D(Collision2D other)
-        {
-            if (!enabled)
-            {
-                return; // Collision events will be sent to disabled MonoBehaviours, to allow enabling Behaviours in response to collisions.
-            }
-            var hitObject = other.gameObject;
-            var hitLayer = hitObject.layer;
-            if (hitObject.layer == Layers.Default)
-            {
-                return; // SKip default layer
-            }
-            var hitY = hitObject.transform.position.y;
-            var positionY = Mathf.Approximately(hitY, 0f)
-                ? _transform.position.y // Stupid HACK for walls because they are positioned to origo and collider is moved using its offset!
-                : hitY;
-            var data = new Event(hitObject.name, hitLayer, Time.time, positionY);
-            this.Publish(data);
-        }
-
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!enabled)
-            {
-                return; // Collision events will be sent to disabled MonoBehaviours, to allow enabling Behaviours in response to collisions.
-            }
             //Debug.Log($"OnTriggerEnter2D {other.gameObject.name}");
             if (other.Equals(upperTeam))
             {
@@ -123,10 +96,6 @@ namespace Lobby.Scripts.Game
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (!enabled)
-            {
-                return; // Collision events will be sent to disabled MonoBehaviours, to allow enabling Behaviours in response to collisions.
-            }
             //Debug.Log($"OnTriggerExit2D {other.gameObject.name}");
             if (other.Equals(upperTeam))
             {
@@ -156,7 +125,7 @@ namespace Lobby.Scripts.Game
                 _rigidbody.velocity = (Vector2) stream.ReceiveNext();
 
                 networkLag = Mathf.Abs((float) (PhotonNetwork.Time - info.SentServerTime));
-                networkPosition += (_rigidbody.velocity * networkLag);
+                networkPosition += _rigidbody.velocity * networkLag;
             }
         }
 
@@ -234,27 +203,6 @@ namespace Lobby.Scripts.Game
                 {
                     return direction;
                 }
-            }
-        }
-
-        public class Event
-        {
-            public readonly string collidedObjectName;
-            public readonly int colliderLayer;
-            public readonly float collisionTime;
-            public readonly float positionY;
-
-            public Event(string collidedObjectName, int colliderLayer, float collisionTime, float positionY)
-            {
-                this.collidedObjectName = collidedObjectName;
-                this.colliderLayer = colliderLayer;
-                this.collisionTime = collisionTime;
-                this.positionY = positionY;
-            }
-
-            public override string ToString()
-            {
-                return $"{nameof(collidedObjectName)}: {collidedObjectName}, layer: {colliderLayer}, time: {collisionTime}, y: {positionY}";
             }
         }
     }

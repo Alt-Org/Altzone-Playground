@@ -5,7 +5,7 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Lobby.Scripts.Game
+namespace Examples.Game.Scripts
 {
     public enum Defence
     {
@@ -92,7 +92,7 @@ namespace Lobby.Scripts.Game
             // Start with some random Defence so that we have a valid state.
             curDefence = nextDefence[Random.Range(1, (int) Defence.Confluence)];
             photonEventDispatcher = PhotonEventDispatcher.Get();
-            photonEventDispatcher.registerEventListener(photonEventCode, (data) =>
+            photonEventDispatcher.registerEventListener(photonEventCode, data =>
             {
                 var newDefence = (Defence) Enum.ToObject(typeof(Defence), data.CustomData);
                 Debug.Log($"set Defence {curDefence} <- {newDefence}");
@@ -119,7 +119,7 @@ namespace Lobby.Scripts.Game
             }
         }
 
-        private void OnDefenceChanged(Event data)
+        private static void OnDefenceChanged(Event data)
         {
             Debug.Log($"changed Defence {data.Defence}");
         }

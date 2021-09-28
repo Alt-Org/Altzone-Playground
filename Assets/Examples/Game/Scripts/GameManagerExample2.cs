@@ -1,10 +1,11 @@
+using Examples.Lobby.Scripts;
 using Photon.Pun;
 using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
 using System;
 using UnityEngine;
 
-namespace Lobby.Scripts.Game
+namespace Examples.Game.Scripts
 {
     /// <summary>
     /// Data holder class for team score.
@@ -72,7 +73,7 @@ namespace Lobby.Scripts.Game
         {
             Debug.Log($"Start: {PhotonNetwork.NetworkClientState}");
             photonEventDispatcher = PhotonEventDispatcher.Get();
-            photonEventDispatcher.registerEventListener(photonEventCode, (data) =>
+            photonEventDispatcher.registerEventListener(photonEventCode, data =>
             {
                 TeamScore.FromBytes(data.CustomData, out var _teamIndex, out var _headCollisionCount, out var _wallCollisionCount);
                 var score = scores[_teamIndex];
@@ -155,7 +156,7 @@ namespace Lobby.Scripts.Game
 
         private static GameObject _instantiateLocalPlayer(string prefabName, Vector3 instantiationPosition, string playerName)
         {
-            var instance = PhotonNetwork.Instantiate(prefabName, instantiationPosition, Quaternion.identity, 0, null);
+            var instance = PhotonNetwork.Instantiate(prefabName, instantiationPosition, Quaternion.identity);
             instance.name = instance.name.Replace("(Clone)", $"({playerName})");
             return instance;
         }

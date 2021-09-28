@@ -4,7 +4,7 @@ using Prg.Scripts.Common.Photon;
 using System;
 using UnityEngine;
 
-namespace Lobby.Scripts
+namespace Examples.Lobby.Scripts
 {
     /// <summary>
     /// Helper class to enter Photon lobby.

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Lobby.Scripts.Game
+namespace Examples.Game.Scripts
 {
     public class DebugCanvasListener : MonoBehaviour
     {

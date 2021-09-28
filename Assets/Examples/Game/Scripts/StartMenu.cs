@@ -3,7 +3,7 @@ using UiProto.Scripts.Window;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Lobby.Scripts.Game
+namespace Examples.Game.Scripts
 {
     public class StartMenu : MonoBehaviour
     {

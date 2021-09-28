@@ -1,7 +1,7 @@
 using Photon.Pun;
 using UnityEngine;
 
-namespace Lobby.Scripts
+namespace Examples.Lobby.Scripts
 {
     /// <summary>
     /// Helper class to switch UI to room view from lobby view.

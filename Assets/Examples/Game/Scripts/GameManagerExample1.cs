@@ -1,4 +1,5 @@
 using DigitalRuby;
+using Examples.Lobby.Scripts;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
@@ -8,7 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 
-namespace Lobby.Scripts.Game
+namespace Examples.Game.Scripts
 {
     /// <summary>
     /// Example game manager that uses simple <c>LobbyManager</c> player custom properties protocol to communicate player positions for a game room.
@@ -71,7 +72,7 @@ namespace Lobby.Scripts.Game
                 {
                     makeRoomClosed();
                 }
-                setupCamera();
+                setupCamera(_camera);
                 if (isCreatePlayers)
                 {
                     showPlayersInRooms();
@@ -108,7 +109,7 @@ namespace Lobby.Scripts.Game
             }
         }
 
-        private void makeRoomClosed()
+        private static void makeRoomClosed()
         {
             if (PhotonNetwork.CurrentRoom.IsOpen)
             {
@@ -117,12 +118,12 @@ namespace Lobby.Scripts.Game
             }
         }
 
-        private void setupCamera()
+        private static void setupCamera(Camera camera)
         {
             var playerPos = PhotonNetwork.LocalPlayer.GetCustomProperty(LobbyManager.playerPositionKey, -1);
             if (playerPos == 1 || playerPos == 3)
             {
-                var cameraTransform = _camera.transform;
+                var cameraTransform = camera.transform;
                 cameraTransform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
             }
         }

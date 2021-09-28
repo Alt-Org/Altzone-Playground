@@ -1,15 +1,15 @@
-﻿using Photon.Pun;
-using System;
+﻿using Examples.Lobby.Scripts;
+using Photon.Pun;
 using UnityEngine;
 
-namespace Lobby.Scripts.Game
+namespace Examples.Game.Scripts
 {
     /// <summary>
     /// Simple player movement across network clients using mouse or touch.
     /// </summary>
     public class PlayerMovementV2 : MonoBehaviourPunCallbacks
     {
-        [Header("Live Data")] [SerializeField] protected PhotonView _photonView;
+        [Header("Live Data"), SerializeField]  protected PhotonView _photonView;
         [SerializeField] protected Transform _transform;
         [SerializeField] private Vector3 initialPosition;
 

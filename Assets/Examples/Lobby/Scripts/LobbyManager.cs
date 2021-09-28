@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-namespace Lobby.Scripts
+namespace Examples.Lobby.Scripts
 {
     /// <summary>
     /// Manages local player position and setup in a room and controls which level is loaded next.

@@ -4,7 +4,7 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Lobby.Scripts.InRoom
+namespace Examples.Lobby.Scripts.InRoom
 {
     /// <summary>
     /// Prepares players in a room for the game play.
@@ -191,12 +191,12 @@ namespace Lobby.Scripts.InRoom
             captionSpectator = "Spectator";
         }
 
-        private static void setButton(Button button, bool interactable, string caption)
+        private static void setButton(Selectable selectable, bool interactable, string caption)
         {
-            button.interactable = interactable;
+            selectable.interactable = interactable;
             if (!string.IsNullOrEmpty(caption))
             {
-                button.GetComponentInChildren<Text>().text = interactable
+                selectable.GetComponentInChildren<Text>().text = interactable
                     ? caption
                     : $"<b>|{caption}|</b>";
             }

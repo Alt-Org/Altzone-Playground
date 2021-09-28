@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Lobby.Scripts.Game
+namespace Examples.Game.Scripts
 {
     public class CreateBoxCollider : MonoBehaviour
     {
