@@ -32,6 +32,7 @@ namespace Lobby.Scripts.Game
 
         private Transform _transform;
         private Rigidbody2D _rigidbody;
+        private Collider2D _collider;
         private SpriteRenderer _sprite;
         private PhotonView _photonView;
         private Vector3 initialPosition;
@@ -44,6 +45,7 @@ namespace Lobby.Scripts.Game
             Debug.Log("Awake");
             _transform = GetComponent<Transform>();
             _rigidbody = GetComponent<Rigidbody2D>();
+            _collider = GetComponent<CircleCollider2D>();
             _sprite = GetComponent<SpriteRenderer>();
             originalColor = _sprite.color;
             _photonView = PhotonView.Get(this);
@@ -68,7 +70,8 @@ namespace Lobby.Scripts.Game
             Debug.Log($"startPlaying IsMine={_photonView.IsMine}");
             Debug.Log("*");
             canMove = true;
-            _rigidbody.isKinematic = !photonView.IsMine;
+            _rigidbody.isKinematic = !_photonView.IsMine;
+            _collider.enabled = _photonView.IsMine;
         }
 
         public override void OnDisable()

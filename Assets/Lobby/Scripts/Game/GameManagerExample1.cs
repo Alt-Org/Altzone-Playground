@@ -16,7 +16,7 @@ namespace Lobby.Scripts.Game
     /// <remarks>
     /// Note that we disable us after start as there is no game functionality that goes on after loading this level!
     /// </remarks>
-    public class GameManagerExample : MonoBehaviour
+    public class GameManagerExample1 : MonoBehaviour
     {
         private const string playerPositionKey = LobbyManager.playerPositionKey;
         private const string playerMainSkillKey = LobbyManager.playerMainSkillKey;
@@ -26,6 +26,7 @@ namespace Lobby.Scripts.Game
         public Camera _camera;
         public Transform[] playerStartPos = new Transform[4];
         public GameObject playerPrefab;
+        public GameObject gameManager2;
 
         private bool isDebugSetPlayerPropsSet;
         private bool isDebugSetPlayerPropsWait;
@@ -70,6 +71,11 @@ namespace Lobby.Scripts.Game
                     makeRoomClosed();
                 }
                 showPlayersInRooms();
+                if (gameManager2 != null)
+                {
+                    // Activate "real" game manager when room is up and running.
+                    gameManager2.SetActive(true);
+                }
                 enabled = false;
                 return;
             }
