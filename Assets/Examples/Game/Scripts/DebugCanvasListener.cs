@@ -6,6 +6,8 @@ namespace Examples.Game.Scripts
 {
     public class DebugCanvasListener : MonoBehaviour
     {
+        private static string[] teamName = { "Blue", "Red" };
+
         public Text leftText;
         public Text rightText;
 
@@ -13,22 +15,22 @@ namespace Examples.Game.Scripts
         {
             leftText.text = "initializing";
             rightText.text = "initializing";
-            this.Subscribe<GameManagerExample2.Event>(OnGameDataUpdate);
+            this.Subscribe<GameManager.Event>(OnGameDataUpdate);
         }
 
         private void OnDisable()
         {
             leftText.text = "";
             rightText.text = "";
-            this.Unsubscribe<GameManagerExample2.Event>(OnGameDataUpdate);
+            this.Unsubscribe<GameManager.Event>(OnGameDataUpdate);
         }
 
-        private void OnGameDataUpdate(GameManagerExample2.Event data)
+        private void OnGameDataUpdate(GameManager.Event data)
         {
             Debug.Log($"OnGameDataUpdate {data}");
             var score = data.score;
             var text = score.teamIndex == 0 ? leftText : rightText;
-            text.text = $"team {score.teamIndex} head {score.headCollisionCount} wall {score.wallCollisionCount}";
+            text.text = $"<b>{teamName[score.teamIndex]}</b> head {score.headCollisionCount} wall {score.wallCollisionCount}";
         }
     }
 }

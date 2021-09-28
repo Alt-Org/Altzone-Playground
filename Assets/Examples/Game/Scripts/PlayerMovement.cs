@@ -7,7 +7,7 @@ namespace Examples.Game.Scripts
     /// <summary>
     /// Simple player movement across network clients using mouse or touch.
     /// </summary>
-    public class PlayerMovementV2 : MonoBehaviourPunCallbacks
+    public class PlayerMovement : MonoBehaviourPunCallbacks
     {
         [Header("Live Data"), SerializeField]  protected PhotonView _photonView;
         [SerializeField] protected Transform _transform;
@@ -39,12 +39,12 @@ namespace Examples.Game.Scripts
 
         private void startPlaying()
         {
-            Debug.Log($"startPlaying IsMine={_photonView.IsMine} initialPosition={initialPosition}");
+            Debug.Log($"startPlaying IsMine={_photonView.IsMine} initialPosition={initialPosition} owner={_photonView.Owner}");
             _transform.position = initialPosition;
-            var player = PhotonNetwork.LocalPlayer;
-            var localPlayerIndex = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
+            var player = _photonView.Owner;
+            var playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
             // Rotate
-            if (localPlayerIndex == 1 || localPlayerIndex == 3)
+            if (playerPos == 1 || playerPos == 3)
             {
                 _transform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
             }

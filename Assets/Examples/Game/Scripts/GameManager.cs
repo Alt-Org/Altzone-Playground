@@ -39,11 +39,11 @@ namespace Examples.Game.Scripts
     /// <summary>
     /// More game manager example functionality.
     /// </summary>
-    public class GameManagerExample2 : MonoBehaviour
+    public class GameManager : MonoBehaviour
     {
         private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 1;
 
-        public GameObject gameManager1;
+        public Transform[] playerStartPos = new Transform[4];
         public GameObject playerPrefab;
 
         public LayerMask collisionToHeadMask;
@@ -66,7 +66,8 @@ namespace Examples.Game.Scripts
             };
             collisionToHead = collisionToHeadMask.value;
             collisionToWall = collisionToWallMask.value;
-            gameObject.SetActive(false); // Wait until we are signalled to go by setting us active again
+            // We are disabled until room is ready to play!
+            enabled = false;
         }
 
         private void Start()
@@ -90,7 +91,7 @@ namespace Examples.Game.Scripts
         private void OnEnable()
         {
             Debug.Log($"OnEnable: {PhotonNetwork.NetworkClientState}");
-            this.Subscribe<BallMovementV2.Event>(OnBallCollision);
+            this.Subscribe<BallMovement.Event>(OnBallCollision);
             this.Publish(new Event(scores[0]));
             this.Publish(new Event(scores[1]));
             instantiateLocalPlayer();
@@ -98,10 +99,10 @@ namespace Examples.Game.Scripts
 
         private void OnDisable()
         {
-            this.Unsubscribe<BallMovementV2.Event>(OnBallCollision);
+            this.Unsubscribe<BallMovement.Event>(OnBallCollision);
         }
 
-        private void OnBallCollision(BallMovementV2.Event data)
+        private void OnBallCollision(BallMovement.Event data)
         {
             // var hasLayer = layerMask == (layerMask | 1 << _layer); // unity3d check if layer mask contains a layer
 
@@ -129,7 +130,8 @@ namespace Examples.Game.Scripts
                 {
                     GestaltRing.Get().Defence = Defence.Next;
                 }
-                var teamIndex = data.positionY > 0 ? 1 : 0; // Select upper or lower team from Y coord
+                var collisionSide = data.positionY > 0 ? 1 : 0; // Select collision side from Y coord
+                var teamIndex = collisionSide == 1 ? 0 : 1; // Scores are awarded to opposite side!
                 var score = scores[teamIndex];
                 score.headCollisionCount += _headCollisionCount;
                 score.wallCollisionCount += _wallCollisionCount;
@@ -142,12 +144,15 @@ namespace Examples.Game.Scripts
         private void instantiateLocalPlayer()
         {
             // Collect parameters for local player instantiation.
-            var manager = gameManager1.GetComponent<GameManagerExample1>();
             var player = PhotonNetwork.LocalPlayer;
-            var localPlayerIndex = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
-            var instantiationPosition = manager.playerStartPos[localPlayerIndex].position;
+            var playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
+            if (playerPos < 0 || playerPos >= playerStartPos.Length)
+            {
+                throw new UnityException($"invalid player position '{playerPos}' for player {player.GetDebugLabel()}");
+            }
+            var instantiationPosition = playerStartPos[playerPos].position;
             var playerName = player.NickName;
-            Debug.Log($"instantiateLocalPlayer i={localPlayerIndex} {playerName} : {playerPrefab.name} {instantiationPosition}");
+            Debug.Log($"instantiateLocalPlayer i={playerPos} {playerName} : {playerPrefab.name} {instantiationPosition}");
             var instance = _instantiateLocalPlayer(playerPrefab.name, instantiationPosition, playerName);
             // Parent under us!
             var playerTransform = instance.transform;
