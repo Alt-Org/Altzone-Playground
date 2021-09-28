@@ -71,6 +71,7 @@ namespace Lobby.Scripts.Game
                 {
                     makeRoomClosed();
                 }
+                setupCamera();
                 if (isCreatePlayers)
                 {
                     showPlayersInRooms();
@@ -113,6 +114,16 @@ namespace Lobby.Scripts.Game
             {
                 Debug.Log($"Close room {PhotonNetwork.CurrentRoom.Name}");
                 PhotonNetwork.CurrentRoom.IsOpen = false;
+            }
+        }
+
+        private void setupCamera()
+        {
+            var playerPos = PhotonNetwork.LocalPlayer.GetCustomProperty(LobbyManager.playerPositionKey, -1);
+            if (playerPos == 1 || playerPos == 3)
+            {
+                var cameraTransform = _camera.transform;
+                cameraTransform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
             }
         }
 
@@ -187,11 +198,6 @@ namespace Lobby.Scripts.Game
             if (countPlayers == 0)
             {
                 Debug.LogError($"Room {PhotonNetwork.CurrentRoom.Name} has no identified players");
-            }
-            if (localPlayerIndex == 1 || localPlayerIndex == 3)
-            {
-                var cameraTransform = _camera.transform;
-                cameraTransform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
             }
         }
 

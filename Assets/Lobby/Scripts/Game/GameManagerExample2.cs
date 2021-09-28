@@ -140,14 +140,22 @@ namespace Lobby.Scripts.Game
 
         private void instantiateLocalPlayer()
         {
-            Debug.Log($"instantiateLocalPlayer: {playerPrefab.name}");
             // Collect parameters for local player instantiation.
             var manager = gameManager1.GetComponent<GameManagerExample1>();
-            var instantiationPosition = manager.playerStartPos[0].position;
-            var playerName = PhotonNetwork.LocalPlayer.NickName;
+            var player = PhotonNetwork.LocalPlayer;
+            var localPlayerIndex = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
+            var instantiationPosition = manager.playerStartPos[localPlayerIndex].position;
+            var playerName = player.NickName;
+            Debug.Log($"instantiateLocalPlayer i={localPlayerIndex} {playerName} : {playerPrefab.name} {instantiationPosition}");
             var instance = _instantiateLocalPlayer(playerPrefab.name, instantiationPosition, playerName);
             // Parent under us!
-            instance.transform.parent = transform;
+            var playerTransform = instance.transform;
+            playerTransform.parent = transform;
+            // Rotate
+            if (localPlayerIndex == 1 || localPlayerIndex == 3)
+            {
+                playerTransform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
+            }
         }
 
         private static GameObject _instantiateLocalPlayer(string prefabName, Vector3 instantiationPosition, string playerName)
