@@ -20,9 +20,14 @@ namespace Examples.Game.Scripts
             if (Input.GetKeyUp(KeyCode.Escape))
             {
                 Debug.Log($"Escape {PhotonNetwork.NetworkClientState} {PhotonNetwork.LocalPlayer.NickName}");
-                SceneManager.LoadScene(mainMenu.unityName);
+                GotoMenu();
                 enabled = false;
             }
+        }
+
+        public void GotoMenu()
+        {
+            SceneManager.LoadScene(mainMenu.unityName);
         }
     }
 }

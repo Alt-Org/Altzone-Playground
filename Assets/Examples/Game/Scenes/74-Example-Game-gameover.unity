@@ -607,7 +607,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 991472589}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c679335e7b0ceda439c3edb2e1ecd68e, type: 3}
+  m_Script: {fileID: 11500000, guid: 543acb88a76a4df5ba9faabcdd92ec6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mainMenu:
@@ -616,6 +616,7 @@ MonoBehaviour:
     isNetwork: 0
     isExcluded: 0
     levelId: 0
+  waitForGracefulExit: 3
 --- !u!4 &991472593
 Transform:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using Examples.Lobby.Scripts;
 using Photon.Pun;
+using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
 using System;
@@ -39,7 +40,7 @@ namespace Examples.Game.Scripts
     /// <summary>
     /// More game manager example functionality.
     /// </summary>
-    public class GameManager : MonoBehaviour
+    public class GameManager : MonoBehaviourPunCallbacks
     {
         private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 1;
 
@@ -88,8 +89,9 @@ namespace Examples.Game.Scripts
             });
         }
 
-        private void OnEnable()
+        public override void OnEnable()
         {
+            base.OnEnable();
             Debug.Log($"OnEnable: {PhotonNetwork.NetworkClientState}");
             this.Subscribe<BallMovement.Event>(OnBallCollision);
             this.Publish(new Event(scores[0]));
@@ -97,9 +99,20 @@ namespace Examples.Game.Scripts
             instantiateLocalPlayer();
         }
 
-        private void OnDisable()
+        public override void OnDisable()
         {
+            base.OnDisable();
             this.Unsubscribe<BallMovement.Event>(OnBallCollision);
+        }
+
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            Debug.Log($"OnPlayerLeftRoom {otherPlayer.GetDebugLabel()}");
+            if (PhotonNetwork.IsMasterClient)
+            {
+                var startMenu = GetComponent<StartMenu>();
+                startMenu.GotoMenu();
+            }
         }
 
         private void OnBallCollision(BallMovement.Event data)
