@@ -1382,6 +1382,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf35e1adc7da45a3a46a95436e0381c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager1: {fileID: 991472589}
+  playerPrefab: {fileID: 626154037994138417, guid: 39ec2ef1312f7794bb694114c27a5699,
+    type: 3}
   collisionToHeadMask:
     serializedVersion: 2
     m_Bits: 1024

@@ -31,7 +31,7 @@ namespace Lobby.Scripts.Game
 
         public override string ToString()
         {
-            return $"{nameof(teamIndex)}: {teamIndex}, {nameof(headCollisionCount)}: {headCollisionCount}, {nameof(wallCollisionCount)}: {wallCollisionCount}";
+            return $"team: {teamIndex}, headCollision: {headCollisionCount}, wallCollision: {wallCollisionCount}";
         }
     }
 
@@ -41,6 +41,9 @@ namespace Lobby.Scripts.Game
     public class GameManagerExample2 : MonoBehaviour
     {
         private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 1;
+
+        public GameObject gameManager1;
+        public GameObject playerPrefab;
 
         public LayerMask collisionToHeadMask;
         public int collisionToHead;
@@ -74,7 +77,8 @@ namespace Lobby.Scripts.Game
                 TeamScore.FromBytes(data.CustomData, out var _teamIndex, out var _headCollisionCount, out var _wallCollisionCount);
                 var score = scores[_teamIndex];
 
-                Debug.Log($"Synchronize head:{score.headCollisionCount}<-{_headCollisionCount} wall:{score.wallCollisionCount}<-{_wallCollisionCount}");
+                Debug.Log(
+                    $"Synchronize head:{score.headCollisionCount}<-{_headCollisionCount} wall:{score.wallCollisionCount}<-{_wallCollisionCount}");
                 score.headCollisionCount = _headCollisionCount;
                 score.wallCollisionCount = _wallCollisionCount;
 
@@ -88,6 +92,7 @@ namespace Lobby.Scripts.Game
             this.Subscribe<BallMovementV2.Event>(OnBallCollision);
             this.Publish(new Event(scores[0]));
             this.Publish(new Event(scores[1]));
+            instantiateLocalPlayer();
         }
 
         private void OnDisable()
@@ -131,6 +136,25 @@ namespace Lobby.Scripts.Game
                 var payload = score.ToBytes();
                 photonEventDispatcher.RaiseEvent(photonEventCode, payload);
             }
+        }
+
+        private void instantiateLocalPlayer()
+        {
+            Debug.Log($"instantiateLocalPlayer: {playerPrefab.name}");
+            // Collect parameters for local player instantiation.
+            var manager = gameManager1.GetComponent<GameManagerExample1>();
+            var instantiationPosition = manager.playerStartPos[0].position;
+            var playerName = PhotonNetwork.LocalPlayer.NickName;
+            var instance = _instantiateLocalPlayer(playerPrefab.name, instantiationPosition, playerName);
+            // Parent under us!
+            instance.transform.parent = transform;
+        }
+
+        private static GameObject _instantiateLocalPlayer(string prefabName, Vector3 instantiationPosition, string playerName)
+        {
+            var instance = PhotonNetwork.Instantiate(prefabName, instantiationPosition, Quaternion.identity, 0, null);
+            instance.name = instance.name.Replace("(Clone)", $"({playerName})");
+            return instance;
         }
 
         public class Event

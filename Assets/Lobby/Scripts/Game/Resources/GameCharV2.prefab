@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4520140118193383674}
   - component: {fileID: 2972943607577269493}
   m_Layer: 0
-  m_Name: GameCharPhoton
+  m_Name: GameCharV2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -439,6 +439,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2470868895122376700}
   - component: {fileID: 721351479766600447}
+  - component: {fileID: 89544025719957667}
   m_Layer: 10
   m_Name: PlayerHead
   m_TagString: Untagged
@@ -510,6 +511,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!58 &89544025719957667
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7415758767160422145}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 1.2
 --- !u!1 &9194605646474614919
 GameObject:
   m_ObjectHideFlags: 0
