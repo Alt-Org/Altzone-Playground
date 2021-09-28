@@ -1,12 +1,15 @@
+using DigitalRuby;
 using Photon.Pun;
 using Prg.Scripts.Common.PubSub;
+using System;
 using UnityConstants;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Examples.Game.Scripts
 {
     /// <summary>
-    /// Simple <c>Rigidbody2D</c> ball movement across network clients.
+    /// Simple <c>Rigidbody2D</c> ball movement across network clients using simplest lag compensation.
     /// </summary>
     /// <remarks>
     /// <c>Rigidbody2D</c> is kinematic on remote clients and we use <c>OnPhotonSerializeView</c> to transfer our position and velocity.
@@ -23,6 +26,7 @@ namespace Examples.Game.Scripts
         public Color upperColor;
         public Color lowerColor;
         public Color originalColor;
+        public GameObject miniBallPrefab;
         public bool canMove;
         public bool isUpper;
         public bool isLower;
@@ -51,6 +55,15 @@ namespace Examples.Game.Scripts
             _photonView = PhotonView.Get(this);
             initialPosition = _transform.position;
             canMove = false;
+            if (!PoolManager.ContainsPrefab(miniBallPrefab.name))
+            {
+                PoolManager.AddPrefab(miniBallPrefab.name, miniBallPrefab);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            PoolManager.RecycleActiveObjects();
         }
 
         public override void OnEnable()
@@ -69,6 +82,7 @@ namespace Examples.Game.Scripts
             canMove = true;
             _rigidbody.isKinematic = !_photonView.IsMine;
             _collider.enabled = _photonView.IsMine;
+            nextSpawnTime = float.MaxValue;
             Debug.Log($"startPlaying IsMine={_photonView.IsMine} isKinematic={_rigidbody.isKinematic} collider={_collider.enabled}");
         }
 
@@ -94,7 +108,9 @@ namespace Examples.Game.Scripts
             var hitLayer = hitObject.layer;
             if (hitObject.layer == Layers.Default)
             {
-                return; // SKip default layer
+                // SKip default layer but set info about latest collision for mini ball spawner
+                nextSpawnTime = Time.time + nextSpawnDelay;
+                return;
             }
             var hitY = hitObject.transform.position.y;
             var positionY = Mathf.Approximately(hitY, 0f)
@@ -162,6 +178,10 @@ namespace Examples.Game.Scripts
 
         private void Update()
         {
+            if (!canMove)
+            {
+                return;
+            }
             if (isUpper && !isLower)
             {
                 _sprite.color = upperColor;
@@ -187,6 +207,23 @@ namespace Examples.Game.Scripts
                 {
                     _rigidbody.position = Vector2.MoveTowards(curPos, networkPosition, Time.deltaTime);
                 }
+                return;
+            }
+            updateForMiniBall();
+        }
+
+        public float nextSpawnTime;
+        public float nextSpawnDelay = 0.5f;
+
+        private void updateForMiniBall()
+        {
+            // Manage ball spawning defence points here!
+            if (Time.time > nextSpawnTime)
+            {
+                Debug.Log($"SPAWN MINI BALL NOW {Time.time}");
+                var miniBall = PoolManager.CreateFromCache(miniBallPrefab.name);
+                miniBall.transform.position = _transform.position;
+                nextSpawnTime = Time.time + nextSpawnDelay;
             }
         }
 

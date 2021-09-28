@@ -1443,11 +1443,15 @@ MonoBehaviour:
   upperColor: {r: 0.2028302, g: 0.60297817, b: 1, a: 1}
   lowerColor: {r: 1, g: 0.28773582, b: 0.28773582, a: 1}
   originalColor: {r: 0, g: 0, b: 0, a: 0}
+  miniBallPrefab: {fileID: 804911187961457918, guid: 1442c81311dd7e04ca1011a5f9d7be36,
+    type: 3}
   canMove: 0
   isUpper: 0
   isLower: 0
   networkPosition: {x: 0, y: 0}
   networkLag: 0
+  nextSpawnTime: 0
+  nextSpawnDelay: 0.5
 --- !u!58 &1491261278
 CircleCollider2D:
   m_ObjectHideFlags: 0
