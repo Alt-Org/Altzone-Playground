@@ -44,12 +44,30 @@ namespace Altzone.NewPlayer
         private Vector2 direction;
         // Players original movement speed.
         private float orgPlMvSp;
+        // A float that is used to count down time.
+        public float targetTime = 0.0f;
 
-        // Creating a thing that changes the players sprite as it gets squished between the shields.
+        // A function that changes the players sprite as it gets squished between the shields.
         public void squishPlayer(int health)
         {            
             head.sprite = sprites[health];
             headcollider.radius = radi[health];
+        }
+
+        // A function that stops the player and changes its head color for a certain time.
+        // Source = 1 is a ball hitting the shield at 0 health.
+        // Source = 2 is the ball being on the players side. (playerSideStopper)
+        public void playerStop(int source) {
+            if(source == 1)
+            // If a 0hp shield has been hit.
+            {
+                targetTime = 1.0f;
+            }
+            // If ball is on the players side and it isn't already stunned by something more long lasting.
+            else if((source == 2) && (targetTime <= 0.5f)) 
+            {
+                targetTime = 0.5f;
+            }            
         }
         
         // Doing some prepping things as the player is enabled.
@@ -65,6 +83,19 @@ namespace Altzone.NewPlayer
         // Update is called once per frame
         void Update()
         {
+            //Counting down the player stopping timer.            
+            targetTime -= Time.deltaTime;
+
+            // Recoloring the players head to black if there is target time left, otherwise leave it at the green.
+            if (targetTime > 0.0f)
+            {                
+                head.color = Color.black;
+            }
+            else
+            { 
+                head.color = new Color(0.0f, 0.5f, 0.0f, 1f);
+            }
+
             // If the mouse is pressed down.
             if (Input.GetButton("Fire1"))
             {
@@ -75,9 +106,15 @@ namespace Altzone.NewPlayer
                 direction = (mousePosition - temp).normalized;
                 rb.velocity = new Vector2(direction.x * playerMoveSpeed, direction.y * playerMoveSpeed);
                 //Acquiring the distance between player and mouse for the following 'if, esle if' chain.
-                dist = Vector2.Distance(mousePosition, playerTrans.position);
+                dist = Vector2.Distance(mousePosition, playerTrans.position);    
+
+                // Stopping the player if there is targetTime left
+                if (targetTime > 0.0f)
+                {
+                    playerMoveSpeed = 0;
+                } 
                 // Teleporting player if distance is less then teleport Distance.
-                if (dist < teleDist)
+                else if (dist < teleDist)
                 {
                     playerTrans.position = mousePosition;
                 }
