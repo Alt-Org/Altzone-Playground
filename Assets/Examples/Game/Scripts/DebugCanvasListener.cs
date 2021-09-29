@@ -6,7 +6,7 @@ namespace Examples.Game.Scripts
 {
     public class DebugCanvasListener : MonoBehaviour
     {
-        private static string[] teamName = { "Blue", "Red" };
+        private static readonly string[] teamName = { "Blue", "Red" };
 
         public Text leftText;
         public Text rightText;

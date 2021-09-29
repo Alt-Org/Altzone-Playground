@@ -53,7 +53,6 @@ namespace Examples.Game.Scripts
                     PhotonLobby.leaveRoom();
                     return;
                 }
-
             }
             var state = PhotonNetwork.NetworkClientState;
             if (state == ClientState.PeerCreated || state == ClientState.Disconnected || state == ClientState.ConnectedToMasterServer)
@@ -62,6 +61,6 @@ namespace Examples.Game.Scripts
                 SceneManager.LoadScene(mainMenu.unityName);
                 enabled = false;
             }
-       }
+        }
     }
 }

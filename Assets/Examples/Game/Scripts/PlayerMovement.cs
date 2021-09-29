@@ -1,6 +1,5 @@
 ﻿using Examples.Lobby.Scripts;
 using Photon.Pun;
-using System;
 using UnityEngine;
 
 namespace Examples.Game.Scripts
@@ -18,7 +17,7 @@ namespace Examples.Game.Scripts
         [SerializeField] private Vector3 validTarget;
         [SerializeField] private Rect playArea;
 
-        private float playerMoveSpeed => 5;
+        private static float playerMoveSpeed => 5;
 
         private void Awake()
         {

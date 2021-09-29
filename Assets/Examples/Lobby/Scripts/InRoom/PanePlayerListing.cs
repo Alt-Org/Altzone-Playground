@@ -79,7 +79,7 @@ namespace Examples.Lobby.Scripts.InRoom
 
         private static readonly string[] skillNames = { "---", "Des", "Def", "Int", "Pro", "Ret", "Ego", "Con" };
 
-        private void update(Text line, Player player)
+        private static void update(Text line, Player player)
         {
             var text = line.GetComponent<Text>();
             var nickName = player.IsLocal ? $"<b>{player.NickName}</b>" : player.NickName;
