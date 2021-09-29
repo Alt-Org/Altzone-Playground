@@ -48,6 +48,7 @@ namespace Examples.Game.Scripts
                 }
                 setupCamera(_camera);
                 enabled = false;
+                gameManager.Camera = _camera;
                 gameManager.enabled = true;
                 return;
             }

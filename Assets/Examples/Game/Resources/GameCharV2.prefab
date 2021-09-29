@@ -50,6 +50,7 @@ MonoBehaviour:
   _photonView: {fileID: 0}
   _transform: {fileID: 0}
   initialPosition: {x: 0, y: 0, z: 0}
+  targetPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &2972943607577269493
 MonoBehaviour:
   m_ObjectHideFlags: 0

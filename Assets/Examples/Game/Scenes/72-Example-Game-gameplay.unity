@@ -920,10 +920,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 991472593}
-  - component: {fileID: 991472592}
   - component: {fileID: 991472591}
   - component: {fileID: 991472590}
+  - component: {fileID: 991472592}
   - component: {fileID: 991472594}
+  - component: {fileID: 991472595}
   m_Layer: 0
   m_Name: GameControl
   m_TagString: Untagged
@@ -1019,6 +1020,35 @@ MonoBehaviour:
     m_Bits: 2048
   collisionToWall: 0
   scores: []
+  _camera: {fileID: 0}
+--- !u!114 &991472595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991472589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 646714739964ecd4f8f3eae4d3813191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _config: {fileID: 0}
+  _mouse:
+    zoomSpeed: 0
+    minZoomSpeed: 0
+    maxZoomSpeed: 0
+    panSpeed: 0
+    minPanSpeed: 0
+    maxPanSpeed: 0
+  _touch:
+    zoomSpeed: 0
+    minZoomSpeed: 0
+    maxZoomSpeed: 0
+    panSpeed: 0
+    minPanSpeed: 0
+    maxPanSpeed: 0
+  _handler: {fileID: 0}
 --- !u!1 &1038443105
 GameObject:
   m_ObjectHideFlags: 0
@@ -1451,6 +1481,7 @@ MonoBehaviour:
   networkPosition: {x: 0, y: 0}
   networkLag: 0
   nextSpawnTime: 0
+  firstBall: 0
   nextSpawnDelay: 0.5
 --- !u!58 &1491261278
 CircleCollider2D:

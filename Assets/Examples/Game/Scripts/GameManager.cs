@@ -55,7 +55,15 @@ namespace Examples.Game.Scripts
 
         public TeamScore[] scores;
 
+        [SerializeField] private Camera _camera;
+
         private PhotonEventDispatcher photonEventDispatcher;
+
+        public Camera Camera
+        {
+            get => _camera;
+            set => _camera = value;
+        }
 
         private void Awake()
         {
@@ -170,6 +178,10 @@ namespace Examples.Game.Scripts
             // Parent under us!
             var playerTransform = instance.transform;
             playerTransform.parent = transform;
+            // Add input system to move player.
+            var playerInput = instance.AddComponent<PlayerInput>();
+            playerInput.Camera = Camera;
+            playerInput.PlayerMovement = instance.GetComponent<PlayerMovement>();
         }
 
         private static GameObject _instantiateLocalPlayer(string prefabName, Vector3 instantiationPosition, string playerName)

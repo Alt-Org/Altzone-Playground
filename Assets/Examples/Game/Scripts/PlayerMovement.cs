@@ -9,9 +9,10 @@ namespace Examples.Game.Scripts
     /// </summary>
     public class PlayerMovement : MonoBehaviourPunCallbacks
     {
-        [Header("Live Data"), SerializeField]  protected PhotonView _photonView;
+        [Header("Live Data"), SerializeField] protected PhotonView _photonView;
         [SerializeField] protected Transform _transform;
         [SerializeField] private Vector3 initialPosition;
+        [SerializeField] private Vector3 targetPosition;
 
         private void Awake()
         {
@@ -35,6 +36,17 @@ namespace Examples.Game.Scripts
         {
             base.OnJoinedRoom();
             startPlaying();
+        }
+
+        public void moveTo(Vector3 position)
+        {
+            if (position.Equals(targetPosition))
+            {
+                return;
+            }
+            targetPosition = position;
+            var curPos = _transform.position;
+            Debug.Log($"moveTo {targetPosition} <- {curPos} delta {curPos - targetPosition}");
         }
 
         private void startPlaying()
