@@ -110,6 +110,7 @@ namespace Examples.Game.Scripts
             Debug.Log($"startPlaying IsMine={_photonView.IsMine} initialPosition={initialPosition} owner={_photonView.Owner}");
             _transform.position = initialPosition;
             validTarget = initialPosition;
+            canMove = true; // assume we can move on start
             var player = _photonView.Owner;
             playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
             // Rotate
@@ -121,6 +122,10 @@ namespace Examples.Game.Scripts
             else
             {
                 teamIndex = 0;
+            }
+            if (_photonView.Owner.IsLocal)
+            {
+                playerColor.setHighLightColor(Color.yellow);
             }
         }
 

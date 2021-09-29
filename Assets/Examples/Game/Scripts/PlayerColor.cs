@@ -7,6 +7,7 @@ namespace Examples.Game.Scripts
         [Header("Settings"), SerializeField] private SpriteRenderer _sprite;
         [SerializeField] private Color normalColor;
         [SerializeField] private Color disabledColor;
+        [SerializeField] private SpriteRenderer _highLightSprite;
 
         public void setNormalColor()
         {
@@ -16,6 +17,15 @@ namespace Examples.Game.Scripts
         public void setDisabledColor()
         {
             _sprite.color = disabledColor;
+        }
+
+        public void setHighLightColor(Color color)
+        {
+            if (color.a == 0)
+            {
+                color.a = 1;
+            }
+            _highLightSprite.color = color;
         }
     }
 }

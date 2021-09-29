@@ -102,6 +102,7 @@ MonoBehaviour:
   _sprite: {fileID: 721351479766600447}
   normalColor: {r: 0, g: 0.49803925, b: 0, a: 1}
   disabledColor: {r: 0.3936009, g: 0.5754717, b: 0.3936009, a: 1}
+  _highLightSprite: {fileID: 3279767524950674503}
 --- !u!1 &1595488501015423818
 GameObject:
   m_ObjectHideFlags: 0

@@ -26,6 +26,7 @@ namespace Examples.Game.Scripts
         public Color lowerColor;
         public Color originalColor;
         public bool isSPawnMiniBall;
+        public bool isSendActiveTeamEvent;
         public GameObject miniBallPrefab;
         public bool canMove;
         public bool isUpper;
@@ -142,6 +143,10 @@ namespace Examples.Game.Scripts
             {
                 isLower = true;
             }
+            if (isSendActiveTeamEvent)
+            {
+                checkBallAndTeam();
+            }
         }
 
         private void OnTriggerExit2D(Collider2D other)
@@ -158,6 +163,10 @@ namespace Examples.Game.Scripts
             else if (other.Equals(lowerTeam))
             {
                 isLower = false;
+            }
+            if (isSendActiveTeamEvent)
+            {
+                checkBallAndTeam();
             }
         }
 
@@ -188,26 +197,6 @@ namespace Examples.Game.Scripts
             if (!canMove)
             {
                 return;
-            }
-            if (isUpper && !isLower)
-            {
-                if (_sprite.color != upperColor)
-                {
-                    this.Publish(new ActiveTeamEvent(0));
-                }
-                _sprite.color = upperColor;
-            }
-            else if (isLower && !isUpper)
-            {
-                if (_sprite.color != upperColor)
-                {
-                    this.Publish(new ActiveTeamEvent(1));
-                }
-                _sprite.color = lowerColor;
-            }
-            else
-            {
-                _sprite.color = originalColor;
             }
             if (!photonView.IsMine)
             {
@@ -270,6 +259,30 @@ namespace Examples.Game.Scripts
             }
             _transform.position = initialPosition;
             _rigidbody.velocity = getStartDirection() * ballMoveSpeed;
+        }
+
+        private void checkBallAndTeam()
+        {
+            if (isUpper && !isLower)
+            {
+                if (_sprite.color != upperColor)
+                {
+                    this.Publish(new ActiveTeamEvent(0));
+                }
+                _sprite.color = upperColor;
+            }
+            else if (isLower && !isUpper)
+            {
+                if (_sprite.color != upperColor)
+                {
+                    this.Publish(new ActiveTeamEvent(1));
+                }
+                _sprite.color = lowerColor;
+            }
+            else
+            {
+                _sprite.color = originalColor;
+            }
         }
 
         private void keepConstantVelocity(float deltaTime)
