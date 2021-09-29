@@ -40,6 +40,11 @@ namespace DigitalRuby
             return pooledObject;
         }
 
+        public static bool ReturnToCache(GameObject pooledObject)
+        {
+            return SpawningPool.ReturnToCache(pooledObject);
+        }
+
         public static bool ReturnToCache(GameObject pooledObject, string key)
         {
             return pooledObject.ReturnToCache(key);
