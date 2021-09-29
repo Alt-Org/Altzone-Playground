@@ -32,7 +32,8 @@ MonoBehaviour:
   EnableSupportLogger: 0
   RunInBackground: 1
   StartInOfflineMode: 0
-  RpcList: []
+  RpcList:
+  - MoveTowardsRpc
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

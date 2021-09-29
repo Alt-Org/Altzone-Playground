@@ -1,5 +1,6 @@
 ﻿using Examples.Lobby.Scripts;
 using Photon.Pun;
+using System;
 using UnityEngine;
 
 namespace Examples.Game.Scripts
@@ -12,13 +13,19 @@ namespace Examples.Game.Scripts
         [Header("Live Data"), SerializeField] protected PhotonView _photonView;
         [SerializeField] protected Transform _transform;
         [SerializeField] private Vector3 initialPosition;
-        [SerializeField] private Vector3 targetPosition;
+        [SerializeField] private Vector3 inputTarget;
+        [SerializeField] private bool isMoving;
+        [SerializeField] private Vector3 validTarget;
+        [SerializeField] private Rect playArea;
+
+        private float playerMoveSpeed => 5;
 
         private void Awake()
         {
-            _photonView = PhotonView.Get(this);
+            _photonView = photonView;
             _transform = GetComponent<Transform>();
             initialPosition = _transform.position;
+            validTarget = initialPosition;
             Debug.Log($"Awake IsMine={_photonView.IsMine} initialPosition={initialPosition}");
         }
 
@@ -32,27 +39,48 @@ namespace Examples.Game.Scripts
             }
         }
 
+        private void Update()
+        {
+            if (!isMoving)
+            {
+                return;
+            }
+            var speed = playerMoveSpeed * Time.deltaTime;
+            var newPosition = Vector3.MoveTowards(_transform.position, validTarget, speed);
+            isMoving = newPosition != validTarget;
+            _transform.position = newPosition;
+        }
+
         public override void OnJoinedRoom()
         {
             base.OnJoinedRoom();
             startPlaying();
         }
 
+        public void setPlayArea(Rect area)
+        {
+            Debug.Log($"setPlayArea {area}");
+            playArea = area;
+        }
+
         public void moveTo(Vector3 position)
         {
-            if (position.Equals(targetPosition))
+            if (position.Equals(inputTarget))
             {
                 return;
             }
-            targetPosition = position;
-            var curPos = _transform.position;
-            Debug.Log($"moveTo {targetPosition} <- {curPos} delta {curPos - targetPosition}");
+            inputTarget = position;
+            position.x = Mathf.Clamp(inputTarget.x, playArea.xMin, playArea.xMax);
+            position.y = Mathf.Clamp(inputTarget.y, playArea.yMin, playArea.yMax);
+            // Send position to all players
+            _photonView.RPC(nameof(MoveTowardsRpc), RpcTarget.All, position);
         }
 
         private void startPlaying()
         {
             Debug.Log($"startPlaying IsMine={_photonView.IsMine} initialPosition={initialPosition} owner={_photonView.Owner}");
             _transform.position = initialPosition;
+            validTarget = initialPosition;
             var player = _photonView.Owner;
             var playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
             // Rotate
@@ -60,6 +88,13 @@ namespace Examples.Game.Scripts
             {
                 _transform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
             }
+        }
+
+        [PunRPC]
+        private void MoveTowardsRpc(Vector3 targetPosition)
+        {
+            validTarget = targetPosition;
+            isMoving = true;
         }
     }
 }

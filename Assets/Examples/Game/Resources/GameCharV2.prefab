@@ -50,7 +50,15 @@ MonoBehaviour:
   _photonView: {fileID: 0}
   _transform: {fileID: 0}
   initialPosition: {x: 0, y: 0, z: 0}
-  targetPosition: {x: 0, y: 0, z: 0}
+  inputTarget: {x: 0, y: 0, z: 0}
+  isMoving: 0
+  validTarget: {x: 0, y: 0, z: 0}
+  playArea:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
 --- !u!114 &2972943607577269493
 MonoBehaviour:
   m_ObjectHideFlags: 0

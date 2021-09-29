@@ -4,6 +4,8 @@ using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Examples.Game.Scripts
@@ -45,6 +47,7 @@ namespace Examples.Game.Scripts
         private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 1;
 
         public Transform[] playerStartPos = new Transform[4];
+        public Rect[] playerPlayArea = new Rect[4];
         public GameObject playerPrefab;
 
         public LayerMask collisionToHeadMask;
@@ -178,10 +181,22 @@ namespace Examples.Game.Scripts
             // Parent under us!
             var playerTransform = instance.transform;
             playerTransform.parent = transform;
-            // Add input system to move player.
+            // Calculate player area
+            if (playerPlayArea[playerPos].width == 0)
+            {
+                // For convenience player start positions are kept under corresponding play area.
+                // - play area is marked by collider to get its bounds for player area calculation
+                var playAreaTransform = playerStartPos[playerPos].parent;
+                var center = playAreaTransform.position;
+                var bounds = playAreaTransform.GetComponent<Collider2D>().bounds;
+                playerPlayArea[playerPos] = calculateRectFrom(center, bounds);
+            }
+            // Add input system to move player around
+            var playerMovement = instance.GetComponent<PlayerMovement>();
+            playerMovement.setPlayArea(playerPlayArea[playerPos]);
             var playerInput = instance.AddComponent<PlayerInput>();
             playerInput.Camera = Camera;
-            playerInput.PlayerMovement = instance.GetComponent<PlayerMovement>();
+            playerInput.PlayerMovement = playerMovement;
         }
 
         private static GameObject _instantiateLocalPlayer(string prefabName, Vector3 instantiationPosition, string playerName)
@@ -189,6 +204,17 @@ namespace Examples.Game.Scripts
             var instance = PhotonNetwork.Instantiate(prefabName, instantiationPosition, Quaternion.identity);
             instance.name = instance.name.Replace("(Clone)", $"({playerName})");
             return instance;
+        }
+
+        private static Rect calculateRectFrom(Vector3 center, Bounds bounds)
+        {
+            var extents = bounds.extents;
+            var size = bounds.size;
+            var x = center.x - extents.x;
+            var y = center.y - extents.y;
+            var width = size.x;
+            var height = size.y;
+            return new Rect(x, y, width, height);
         }
 
         public class Event
