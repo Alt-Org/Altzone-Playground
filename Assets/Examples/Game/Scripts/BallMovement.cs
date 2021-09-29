@@ -1,7 +1,6 @@
 using DigitalRuby;
 using Photon.Pun;
 using Prg.Scripts.Common.PubSub;
-using System;
 using UnityConstants;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -31,8 +30,12 @@ namespace Examples.Game.Scripts
         public bool isUpper;
         public bool isLower;
 
-        [Header("Photon"), SerializeField]  private Vector2 networkPosition;
+        [Header("Photon"), SerializeField] private Vector2 networkPosition;
         [SerializeField] private float networkLag;
+
+        [Header("Mini Ball"), SerializeField] private float nextSpawnTime;
+        [SerializeField] private bool firstBall;
+        [SerializeField] private float nextSpawnDelay = 0.5f;
 
         private Transform _transform;
         private Rigidbody2D _rigidbody;
@@ -104,12 +107,15 @@ namespace Examples.Game.Scripts
             {
                 return; // Collision events will be sent to disabled MonoBehaviours, to allow enabling Behaviours in response to collisions.
             }
+            // Set info about latest collision for mini ball spawner
+            nextSpawnTime = Time.time + nextSpawnDelay;
+            firstBall = true;
+
             var hitObject = other.gameObject;
             var hitLayer = hitObject.layer;
             if (hitObject.layer == Layers.Default)
             {
-                // SKip default layer but set info about latest collision for mini ball spawner
-                nextSpawnTime = Time.time + nextSpawnDelay;
+                // SKip default layer
                 return;
             }
             var hitY = hitObject.transform.position.y;
@@ -212,18 +218,22 @@ namespace Examples.Game.Scripts
             updateForMiniBall();
         }
 
-        public float nextSpawnTime;
-        public float nextSpawnDelay = 0.5f;
-
         private void updateForMiniBall()
         {
             // Manage ball spawning defence points here!
             if (Time.time > nextSpawnTime)
             {
-                Debug.Log($"SPAWN MINI BALL NOW {Time.time}");
+                nextSpawnTime = Time.time + nextSpawnDelay;
                 var miniBall = PoolManager.CreateFromCache(miniBallPrefab.name);
                 miniBall.transform.position = _transform.position;
-                nextSpawnTime = Time.time + nextSpawnDelay;
+                var _renderer = miniBall.GetComponent<SpriteRenderer>();
+                _renderer.color = firstBall ? Color.yellow : Color.white;
+                if (firstBall)
+                {
+                    firstBall = false;
+                }
+                var timer = miniBall.GetOrAddComponent<TimedReturnToPool>();
+                timer.TimeToLive = 5;
             }
         }
 
