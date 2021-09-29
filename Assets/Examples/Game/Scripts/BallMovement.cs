@@ -25,6 +25,7 @@ namespace Examples.Game.Scripts
         public Color upperColor;
         public Color lowerColor;
         public Color originalColor;
+        public bool isSPawnMiniBall;
         public GameObject miniBallPrefab;
         public bool canMove;
         public bool isUpper;
@@ -223,7 +224,10 @@ namespace Examples.Game.Scripts
                 }
                 return;
             }
-            updateForMiniBall();
+            if (isSPawnMiniBall)
+            {
+                updateForMiniBall();
+            }
         }
 
         private void updateForMiniBall()

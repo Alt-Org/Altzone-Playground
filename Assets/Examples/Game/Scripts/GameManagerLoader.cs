@@ -15,6 +15,7 @@ namespace Examples.Game.Scripts
     public class GameManagerLoader : MonoBehaviour
     {
         public Camera _camera;
+        public bool isSetupCamera;
         public GameManager gameManager;
 
         private bool isDebugSetPlayerPropsSet;
@@ -46,7 +47,10 @@ namespace Examples.Game.Scripts
                 {
                     makeRoomClosed();
                 }
-                setupCamera(_camera);
+                if (isSetupCamera)
+                {
+                    setupCamera(_camera);
+                }
                 enabled = false;
                 gameManager.Camera = _camera;
                 gameManager.enabled = true;
