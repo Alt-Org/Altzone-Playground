@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 626154037994138428}
   - component: {fileID: 4520140118193383674}
   - component: {fileID: 2972943607577269493}
+  - component: {fileID: 2972312603799007176}
   m_Layer: 0
   m_Name: GameCharV2
   m_TagString: Untagged
@@ -52,13 +53,17 @@ MonoBehaviour:
   initialPosition: {x: 0, y: 0, z: 0}
   inputTarget: {x: 0, y: 0, z: 0}
   isMoving: 0
+  canMove: 0
   validTarget: {x: 0, y: 0, z: 0}
+  playerPos: 0
+  teamIndex: 0
   playArea:
     serializedVersion: 2
     x: 0
     y: 0
     width: 0
     height: 0
+  playerColor: {fileID: 0}
 --- !u!114 &2972943607577269493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,6 +87,21 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &2972312603799007176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 626154037994138417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e885827001b84e47ae5419f7ccab14a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sprite: {fileID: 721351479766600447}
+  normalColor: {r: 0, g: 0.49803925, b: 0, a: 1}
+  disabledColor: {r: 0.3936009, g: 0.5754717, b: 0.3936009, a: 1}
 --- !u!1 &1595488501015423818
 GameObject:
   m_ObjectHideFlags: 0

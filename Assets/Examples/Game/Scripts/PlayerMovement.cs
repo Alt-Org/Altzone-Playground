@@ -20,6 +20,7 @@ namespace Examples.Game.Scripts
         [SerializeField] private int playerPos;
         [SerializeField] private int teamIndex;
         [SerializeField] private Rect playArea;
+        [SerializeField] private PlayerColor playerColor;
 
         private static float playerMoveSpeed => 5;
 
@@ -29,6 +30,7 @@ namespace Examples.Game.Scripts
             _transform = GetComponent<Transform>();
             initialPosition = _transform.position;
             validTarget = initialPosition;
+            playerColor = GetComponent<PlayerColor>();
             Debug.Log($"Awake IsMine={_photonView.IsMine} initialPosition={initialPosition}");
         }
 
@@ -52,6 +54,14 @@ namespace Examples.Game.Scripts
         private void OnActiveTeam(BallMovement.ActiveTeamEvent data)
         {
             canMove = data.teamIndex == teamIndex;
+            if (canMove)
+            {
+                playerColor.setNormalColor();
+            }
+            else
+            {
+                playerColor.setDisabledColor();
+            }
         }
 
         private void Update()
