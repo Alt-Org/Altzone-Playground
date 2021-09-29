@@ -1,5 +1,6 @@
 ﻿using Examples.Lobby.Scripts;
 using Photon.Pun;
+using Prg.Scripts.Common.PubSub;
 using UnityEngine;
 
 namespace Examples.Game.Scripts
@@ -14,7 +15,10 @@ namespace Examples.Game.Scripts
         [SerializeField] private Vector3 initialPosition;
         [SerializeField] private Vector3 inputTarget;
         [SerializeField] private bool isMoving;
+        [SerializeField] private bool canMove;
         [SerializeField] private Vector3 validTarget;
+        [SerializeField] private int playerPos;
+        [SerializeField] private int teamIndex;
         [SerializeField] private Rect playArea;
 
         private static float playerMoveSpeed => 5;
@@ -32,15 +36,31 @@ namespace Examples.Game.Scripts
         {
             Debug.Log($"OnEnable IsMine={_photonView.IsMine} initialPosition={initialPosition}");
             base.OnEnable();
+            this.Subscribe<BallMovement.ActiveTeamEvent>(OnActiveTeam);
             if (PhotonNetwork.InRoom)
             {
                 startPlaying();
             }
         }
 
+        public override void OnDisable()
+        {
+            base.OnDisable();
+            this.Unsubscribe<BallMovement.ActiveTeamEvent>(OnActiveTeam);
+        }
+
+        private void OnActiveTeam(BallMovement.ActiveTeamEvent data)
+        {
+            canMove = data.teamIndex == teamIndex;
+        }
+
         private void Update()
         {
             if (!isMoving)
+            {
+                return;
+            }
+            if (!canMove)
             {
                 return;
             }
@@ -81,11 +101,16 @@ namespace Examples.Game.Scripts
             _transform.position = initialPosition;
             validTarget = initialPosition;
             var player = _photonView.Owner;
-            var playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
+            playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
             // Rotate
             if (playerPos == 1 || playerPos == 3)
             {
                 _transform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
+                teamIndex = 1;
+            }
+            else
+            {
+                teamIndex = 0;
             }
         }
 

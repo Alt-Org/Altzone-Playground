@@ -102,7 +102,7 @@ namespace Examples.Game.Scripts
         {
             base.OnEnable();
             Debug.Log($"OnEnable: {PhotonNetwork.NetworkClientState}");
-            this.Subscribe<BallMovement.Event>(OnBallCollision);
+            this.Subscribe<BallMovement.CollisionEvent>(OnBallCollision);
             this.Publish(new Event(scores[0]));
             this.Publish(new Event(scores[1]));
             instantiateLocalPlayer();
@@ -111,7 +111,7 @@ namespace Examples.Game.Scripts
         public override void OnDisable()
         {
             base.OnDisable();
-            this.Unsubscribe<BallMovement.Event>(OnBallCollision);
+            this.Unsubscribe<BallMovement.CollisionEvent>(OnBallCollision);
         }
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -124,7 +124,7 @@ namespace Examples.Game.Scripts
             }
         }
 
-        private void OnBallCollision(BallMovement.Event data)
+        private void OnBallCollision(BallMovement.CollisionEvent data)
         {
             // var hasLayer = layerMask == (layerMask | 1 << _layer); // unity3d check if layer mask contains a layer
 

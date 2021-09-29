@@ -122,7 +122,7 @@ namespace Examples.Game.Scripts
             var positionY = Mathf.Approximately(hitY, 0f)
                 ? _transform.position.y // Stupid HACK for walls because they are positioned to origo and collider is moved using its offset!
                 : hitY;
-            var data = new Event(hitObject.name, hitLayer, Time.time, positionY);
+            var data = new CollisionEvent(hitObject.name, hitLayer, Time.time, positionY);
             this.Publish(data);
         }
 
@@ -190,10 +190,18 @@ namespace Examples.Game.Scripts
             }
             if (isUpper && !isLower)
             {
+                if (_sprite.color != upperColor)
+                {
+                    this.Publish(new ActiveTeamEvent(0));
+                }
                 _sprite.color = upperColor;
             }
             else if (isLower && !isUpper)
             {
+                if (_sprite.color != upperColor)
+                {
+                    this.Publish(new ActiveTeamEvent(1));
+                }
                 _sprite.color = lowerColor;
             }
             else
@@ -284,14 +292,14 @@ namespace Examples.Game.Scripts
             }
         }
 
-        public class Event
+        public class CollisionEvent
         {
             public readonly string collidedObjectName;
             public readonly int colliderLayer;
             public readonly float collisionTime;
             public readonly float positionY;
 
-            public Event(string collidedObjectName, int colliderLayer, float collisionTime, float positionY)
+            public CollisionEvent(string collidedObjectName, int colliderLayer, float collisionTime, float positionY)
             {
                 this.collidedObjectName = collidedObjectName;
                 this.colliderLayer = colliderLayer;
@@ -302,6 +310,21 @@ namespace Examples.Game.Scripts
             public override string ToString()
             {
                 return $"{nameof(collidedObjectName)}: {collidedObjectName}, layer: {colliderLayer}, time: {collisionTime}, y: {positionY}";
+            }
+        }
+
+        public class ActiveTeamEvent
+        {
+            public readonly int teamIndex;
+
+            public ActiveTeamEvent(int teamIndex)
+            {
+                this.teamIndex = teamIndex;
+            }
+
+            public override string ToString()
+            {
+                return $"{nameof(teamIndex)}: {teamIndex}";
             }
         }
     }
