@@ -1,5 +1,6 @@
 using DigitalRuby;
 using Photon.Pun;
+using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
 using UnityConstants;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace Examples.Game.Scripts
     /// </remarks>
     public class BallMovement : MonoBehaviourPunCallbacks, IPunObservable
     {
+        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 2; // Switch active team
         private const float minStartDirection = 0.2f;
 
         public float speed;
@@ -45,6 +47,7 @@ namespace Examples.Game.Scripts
         private SpriteRenderer _sprite;
         private PhotonView _photonView;
         private Vector3 initialPosition;
+        private PhotonEventDispatcher photonEventDispatcher;
 
         private float lerpSmoothingFactor => 4f;
         private float ballMoveSpeed => speed;
@@ -59,6 +62,12 @@ namespace Examples.Game.Scripts
             originalColor = _sprite.color;
             _photonView = PhotonView.Get(this);
             initialPosition = _transform.position;
+            photonEventDispatcher = PhotonEventDispatcher.Get();
+            photonEventDispatcher.registerEventListener(photonEventCode, data =>
+            {
+                var teamIndex = (int) (byte) data.CustomData;
+                this.Publish(new ActiveTeamEvent(teamIndex));
+            });
             canMove = false;
             if (!PoolManager.ContainsPrefab(miniBallPrefab.name))
             {
@@ -267,7 +276,7 @@ namespace Examples.Game.Scripts
             {
                 if (_sprite.color != upperColor)
                 {
-                    this.Publish(new ActiveTeamEvent(0));
+                    photonEventDispatcher.RaiseEvent(photonEventCode, (byte) 0);
                 }
                 _sprite.color = upperColor;
             }
@@ -275,7 +284,7 @@ namespace Examples.Game.Scripts
             {
                 if (_sprite.color != upperColor)
                 {
-                    this.Publish(new ActiveTeamEvent(1));
+                    photonEventDispatcher.RaiseEvent(photonEventCode, (byte) 1);
                 }
                 _sprite.color = lowerColor;
             }
