@@ -19,6 +19,7 @@ namespace Prg.Scripts.Common.Unity.Input
             {
                 if (UnityEngine.Input.GetMouseButtonDown(0))
                 {
+                    // Start mouse down
                     clickCount = 1;
                     curPanPosition = UnityEngine.Input.mousePosition;
                     SendMouseDown(curPanPosition, clickCount);
@@ -26,6 +27,7 @@ namespace Prg.Scripts.Common.Unity.Input
                 }
                 else if (UnityEngine.Input.GetMouseButton(0))
                 {
+                    // Continue mouse down
                     clickCount += 1;
                     curPanPosition = UnityEngine.Input.mousePosition;
                     SendMouseDown(curPanPosition, clickCount);
@@ -37,10 +39,11 @@ namespace Prg.Scripts.Common.Unity.Input
                 }
                 else if (UnityEngine.Input.GetMouseButtonUp(0))
                 {
+                    // End mouse down, report last mouse position
                     clickCount = 0;
                     curPanPosition = Vector3.zero;
                     prevPanPosition = Vector3.zero;
-                    SendMouseUp();
+                    SendMouseUp(UnityEngine.Input.mousePosition);
                 }
             }
             // Zoom can be done even mouse is over UI element!

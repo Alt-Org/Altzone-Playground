@@ -68,8 +68,9 @@ namespace Prg.Scripts.Common.Unity.Input
                     zoomActive = false;
                     if (isFingerDown)
                     {
+                        // Report last known touch position
                         isFingerDown = false;
-                        SendMouseUp();
+                        SendMouseUp(touchCount == 1 ? firstPanPosition : lastPanPosition);
                     }
                     break;
             }

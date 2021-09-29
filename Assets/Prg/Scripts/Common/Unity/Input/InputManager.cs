@@ -81,8 +81,11 @@ namespace Prg.Scripts.Common.Unity.Input
             }
         }
 
-        public class ClickUpEvent
+        public class ClickUpEvent : ClickDownEvent
         {
+            public ClickUpEvent(Vector3 screenPosition, int clickCount) : base(screenPosition, clickCount)
+            {
+            }
         }
 
         public class ZoomEvent // Aka scroll

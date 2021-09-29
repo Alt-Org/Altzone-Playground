@@ -32,9 +32,9 @@ namespace Prg.Scripts.Common.Unity.Input
             this.Publish(new InputManager.ClickDownEvent(screenPosition, clickCount));
         }
 
-        protected void SendMouseUp()
+        protected void SendMouseUp(Vector3 screenPosition)
         {
-            this.Publish(new InputManager.ClickUpEvent());
+            this.Publish(new InputManager.ClickUpEvent(screenPosition, 0));
         }
 
         protected void ZoomCamera(float delta)
