@@ -124,7 +124,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 21.09.17
+  bundleVersion: 21.09.30
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -172,7 +172,7 @@ PlayerSettings:
     Standalone: eu.altgame.altzone
   buildNumber:
     Standalone: 8
-  AndroidBundleVersionCode: 11
+  AndroidBundleVersionCode: 14
   AndroidMinSdkVersion: 25
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
