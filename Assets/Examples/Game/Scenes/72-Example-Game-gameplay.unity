@@ -955,7 +955,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &781129962
 Transform:
   m_ObjectHideFlags: 0
@@ -1175,6 +1175,7 @@ MonoBehaviour:
     height: 0
   playerPrefab: {fileID: 626154037994138417, guid: 39ec2ef1312f7794bb694114c27a5699,
     type: 3}
+  brickManager: {fileID: 8687149556316865208}
   collisionToHeadMask:
     serializedVersion: 2
     m_Bits: 1024
@@ -1183,6 +1184,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2048
   collisionToWall: 0
+  collisionToBrickMask:
+    serializedVersion: 2
+    m_Bits: 16384
+  collisionToBrick: 0
   scores: []
   _camera: {fileID: 0}
 --- !u!114 &991472595
@@ -9222,13 +9227,29 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2414136508821493998}
+  - component: {fileID: 8687149556316865208}
   m_Layer: 14
-  m_Name: TileProps
+  m_Name: BrickProps
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 0
+  m_IsActive: 1
+--- !u!114 &8687149556316865208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8687149556316865207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46bb90543eab496bb6527d2a6c699861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upperBricks: {fileID: 7854303782684922245}
+  lowerBricks: {fileID: 2850825117160176794}
+  brickCount: 0
 --- !u!1 &8699244999118141167
 GameObject:
   m_ObjectHideFlags: 0

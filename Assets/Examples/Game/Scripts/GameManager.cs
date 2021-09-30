@@ -43,16 +43,21 @@ namespace Examples.Game.Scripts
     public class GameManager : MonoBehaviourPunCallbacks
     {
         private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 1;
+        private const int photonEventCodeBrick = PhotonEventDispatcher.eventCodeBase + 3;
 
         public Transform[] playerStartPos = new Transform[4];
         public Rect[] playerPlayArea = new Rect[4];
         public GameObject playerPrefab;
+        public BrickManager brickManager;
 
         public LayerMask collisionToHeadMask;
         public int collisionToHead;
 
         public LayerMask collisionToWallMask;
         public int collisionToWall;
+
+        public LayerMask collisionToBrickMask;
+        public int collisionToBrick;
 
         public TeamScore[] scores;
 
@@ -76,6 +81,7 @@ namespace Examples.Game.Scripts
             };
             collisionToHead = collisionToHeadMask.value;
             collisionToWall = collisionToWallMask.value;
+            collisionToBrick = collisionToBrickMask.value;
             // We are disabled until room is ready to play!
             enabled = false;
         }
@@ -95,6 +101,11 @@ namespace Examples.Game.Scripts
                 score.wallCollisionCount = _wallCollisionCount;
 
                 this.Publish(new Event(score));
+            });
+            photonEventDispatcher.registerEventListener(photonEventCodeBrick, data =>
+            {
+                var brickId = (short) data.CustomData;
+                brickManager.deleteBrick(brickId);
             });
         }
 
@@ -128,9 +139,13 @@ namespace Examples.Game.Scripts
         {
             // var hasLayer = layerMask == (layerMask | 1 << _layer); // unity3d check if layer mask contains a layer
 
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                return; // Only mast client handles these and forwards to all players
+            }
             var _headCollisionCount = 0;
             var _wallCollisionCount = 0;
-            var colliderMask = 1 << data.colliderLayer;
+            var colliderMask = 1 << data.layer;
             var hasLayer = collisionToHead == (collisionToHead | colliderMask);
             if (hasLayer)
             {
@@ -141,26 +156,40 @@ namespace Examples.Game.Scripts
             {
                 _wallCollisionCount += 1;
             }
-            if (_headCollisionCount == 0 && _wallCollisionCount == 0)
+            if (_headCollisionCount > 0 || _wallCollisionCount > 0)
             {
-                return; // Nothing we care about
+                headOrWallCollision(_headCollisionCount, _wallCollisionCount, data.positionY);
             }
-            if (PhotonNetwork.IsMasterClient)
+            hasLayer = collisionToBrick == (collisionToBrick | colliderMask);
+            if (hasLayer)
             {
-                Debug.Log($"OnBallCollision head {_headCollisionCount} wall {_wallCollisionCount} data {data}");
-                if (_headCollisionCount > 0)
-                {
-                    GestaltRing.Get().Defence = Defence.Next;
-                }
-                var collisionSide = data.positionY > 0 ? 1 : 0; // Select collision side from Y coord
-                var teamIndex = collisionSide == 1 ? 0 : 1; // Scores are awarded to opposite side!
-                var score = scores[teamIndex];
-                score.headCollisionCount += _headCollisionCount;
-                score.wallCollisionCount += _wallCollisionCount;
-                // Synchronize to all game managers
-                var payload = score.ToBytes();
-                photonEventDispatcher.RaiseEvent(photonEventCode, payload);
+                brickCollision(data.hitObject);
             }
+        }
+
+        private void brickCollision(GameObject brickObject)
+        {
+            var brickMarker = brickObject.GetComponent<BrickMarker>();
+            Debug.Log($"brickCollision {brickMarker} layer {brickObject.layer}");
+            var payload = (short) brickMarker.BrickId;
+            photonEventDispatcher.RaiseEvent(photonEventCodeBrick, payload);
+        }
+
+        private void headOrWallCollision(int _headCollisionCount, int _wallCollisionCount, float positionY)
+        {
+            Debug.Log($"headOrWallCollision head {_headCollisionCount} wall {_wallCollisionCount} positionY {positionY}");
+            if (_headCollisionCount > 0)
+            {
+                GestaltRing.Get().Defence = Defence.Next;
+            }
+            var collisionSide = positionY > 0 ? 1 : 0; // Select collision side from Y coord
+            var teamIndex = collisionSide == 1 ? 0 : 1; // Scores are awarded to opposite side!
+            var score = scores[teamIndex];
+            score.headCollisionCount += _headCollisionCount;
+            score.wallCollisionCount += _wallCollisionCount;
+            // Synchronize to all game managers
+            var payload = score.ToBytes();
+            photonEventDispatcher.RaiseEvent(photonEventCode, payload);
         }
 
         private void instantiateLocalPlayer()

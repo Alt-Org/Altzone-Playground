@@ -124,7 +124,7 @@ namespace Examples.Game.Scripts
 
             var hitObject = other.gameObject;
             var hitLayer = hitObject.layer;
-            if (hitObject.layer == Layers.Default)
+            if (hitLayer == Layers.Default)
             {
                 // SKip default layer
                 return;
@@ -133,7 +133,7 @@ namespace Examples.Game.Scripts
             var positionY = Mathf.Approximately(hitY, 0f)
                 ? _transform.position.y // Stupid HACK for walls because they are positioned to origo and collider is moved using its offset!
                 : hitY;
-            var data = new CollisionEvent(hitObject.name, hitLayer, Time.time, positionY);
+            var data = new CollisionEvent(hitObject, hitLayer, Time.time, positionY);
             this.Publish(data);
         }
 
@@ -320,22 +320,22 @@ namespace Examples.Game.Scripts
 
         public class CollisionEvent
         {
-            public readonly string collidedObjectName;
-            public readonly int colliderLayer;
+            public readonly GameObject hitObject;
+            public readonly int layer;
             public readonly float collisionTime;
             public readonly float positionY;
 
-            public CollisionEvent(string collidedObjectName, int colliderLayer, float collisionTime, float positionY)
+            public CollisionEvent(GameObject hitObject, int layer, float collisionTime, float positionY)
             {
-                this.collidedObjectName = collidedObjectName;
-                this.colliderLayer = colliderLayer;
+                this.hitObject = hitObject;
+                this.layer = layer;
                 this.collisionTime = collisionTime;
                 this.positionY = positionY;
             }
 
             public override string ToString()
             {
-                return $"{nameof(collidedObjectName)}: {collidedObjectName}, layer: {colliderLayer}, time: {collisionTime}, y: {positionY}";
+                return $"CollisionEvent: {hitObject.name}, layer: {layer}, time: {collisionTime}, y: {positionY}";
             }
         }
 
