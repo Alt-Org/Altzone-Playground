@@ -192,6 +192,11 @@ namespace Examples.Game.Scripts
             var playerInput = instance.AddComponent<PlayerInput>();
             playerInput.Camera = Camera;
             playerInput.PlayerMovement = playerMovement;
+            if (!Application.isMobilePlatform)
+            {
+                var keyboardInput = instance.AddComponent<PlayerInputKeyboard>();
+                keyboardInput.PlayerMovement = playerMovement;
+            }
         }
 
         private static GameObject _instantiateLocalPlayer(string prefabName, Vector3 instantiationPosition, string playerName)
