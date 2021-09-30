@@ -325,6 +325,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   areaTemplate: {fileID: 801765303}
+  colliderParent: {fileID: 78196425}
   wallThickness: 0.25
   wallTopLayer: 11
   wallBottomLayer: 11

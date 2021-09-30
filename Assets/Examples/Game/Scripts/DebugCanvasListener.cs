@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 namespace Examples.Game.Scripts
 {
+    /// <summary>
+    /// Simple temporary UI for debugging.
+    /// </summary>
     public class DebugCanvasListener : MonoBehaviour
     {
         private static readonly string[] teamName = { "Blue", "Red" };

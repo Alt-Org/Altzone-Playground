@@ -10,8 +10,11 @@ using UnityEngine;
 namespace Examples.Game.Scripts
 {
     /// <summary>
-    /// Game manager loader to establish well known state before entering actual game manager.
+    /// Game manager loader to establish well known state before starting actual game manager.
     /// </summary>
+    /// <remarks>
+    /// Creates a random room and default player properties if there is no room when level is loaded - for simple one player testing.
+    /// </remarks>
     public class GameManagerLoader : MonoBehaviour
     {
         public Camera _camera;
@@ -62,7 +65,7 @@ namespace Examples.Game.Scripts
             {
                 // Third create a random room
                 var dummy = new Hashtable();
-                PhotonLobby.createRoom(null);
+                PhotonLobby.createRoom("testing");
                 return;
             }
             var state = PhotonNetwork.NetworkClientState;

@@ -2,28 +2,31 @@ using UnityEngine;
 
 namespace Examples.Game.Scripts
 {
+    /// <summary>
+    /// Manages some player colors during a game.
+    /// </summary>
     public class PlayerColor : MonoBehaviour
     {
-        [Header("Settings"), SerializeField] private SpriteRenderer _sprite;
+        [Header("Settings"), SerializeField] private SpriteRenderer headSprite;
         [SerializeField] private Color normalColor;
         [SerializeField] private Color disabledColor;
         [SerializeField] private SpriteRenderer _highLightSprite;
 
         public void setNormalColor()
         {
-            _sprite.color = normalColor;
+            headSprite.color = normalColor;
         }
 
         public void setDisabledColor()
         {
-            _sprite.color = disabledColor;
+            headSprite.color = disabledColor;
         }
 
         public void setHighLightColor(Color color)
         {
             if (color.a == 0)
             {
-                color.a = 1;
+                Debug.LogWarning("setHighLightColor is fully transparent, alpha is zero: " + gameObject.name);
             }
             _highLightSprite.color = color;
         }

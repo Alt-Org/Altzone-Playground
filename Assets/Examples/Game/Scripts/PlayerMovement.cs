@@ -8,6 +8,9 @@ namespace Examples.Game.Scripts
     /// <summary>
     /// Simple player movement across network clients using mouse or touch.
     /// </summary>
+    /// <remarks>
+    /// Listens input events that control movement to given position and team activation events that control if player can move.
+    /// </remarks>
     public class PlayerMovement : MonoBehaviourPunCallbacks
     {
         [Header("Live Data"), SerializeField] protected PhotonView _photonView;

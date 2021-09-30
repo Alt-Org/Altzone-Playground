@@ -2,9 +2,16 @@ using UnityEngine;
 
 namespace Examples.Game.Scripts
 {
-    public class CreateBoxCollider : MonoBehaviour
+    /// <summary>
+    /// Creates reversed box collider around given sprite that provides the area to be "boxed" by colliders.
+    /// </summary>
+    /// <remarks>
+    /// Collider "wall" thickness and layers are configurable.
+    /// </remarks>
+    public class CreateReversedBoxCollider : MonoBehaviour
     {
         [Header("Settings"), SerializeField] private SpriteRenderer areaTemplate;
+        [SerializeField] private Transform colliderParent;
         [SerializeField] private float wallThickness;
         [SerializeField] private int wallTopLayer;
         [SerializeField] private int wallBottomLayer;
@@ -23,11 +30,10 @@ namespace Examples.Game.Scripts
 
         private void makeWalls()
         {
-            var _transform = transform;
-            wallTop = createWall("wallTop", _transform).GetComponent<BoxCollider2D>();
-            wallBottom = createWall("wallBottom", _transform).GetComponent<BoxCollider2D>();
-            wallLeft = createWall("wallLeft", _transform).GetComponent<BoxCollider2D>();
-            wallRight = createWall("wallRight", _transform).GetComponent<BoxCollider2D>();
+            wallTop = createWall("wallTop", colliderParent).GetComponent<BoxCollider2D>();
+            wallBottom = createWall("wallBottom", colliderParent).GetComponent<BoxCollider2D>();
+            wallLeft = createWall("wallLeft", colliderParent).GetComponent<BoxCollider2D>();
+            wallRight = createWall("wallRight", colliderParent).GetComponent<BoxCollider2D>();
 
             wallTop.gameObject.layer = wallTopLayer;
             wallBottom.gameObject.layer = wallBottomLayer;

@@ -99,8 +99,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e885827001b84e47ae5419f7ccab14a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 721351479766600447}
-  normalColor: {r: 0, g: 0.49803925, b: 0, a: 1}
+  headSprite: {fileID: 721351479766600447}
+  normalColor: {r: 0.007843138, g: 0.6039216, b: 0.007843138, a: 1}
   disabledColor: {r: 0.3936009, g: 0.5754717, b: 0.3936009, a: 1}
   _highLightSprite: {fileID: 3279767524950674503}
 --- !u!1 &1595488501015423818
@@ -531,7 +531,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 60
   m_Sprite: {fileID: 21300000, guid: 8d6947ea8a84ae242ba488ee5c990812, type: 3}
-  m_Color: {r: 0, g: 0.49803922, b: 0, a: 1}
+  m_Color: {r: 0.007843138, g: 0.6039216, b: 0.007843138, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

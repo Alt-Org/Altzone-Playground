@@ -8,11 +8,8 @@ using UnityEngine.SceneManagement;
 namespace Examples.Game.Scripts
 {
     /// <summary>
-    /// Dedicated helper to exit from game play to game over.
+    /// Utility to close this room properly before allowing to exit to main menu!
     /// </summary>
-    /// <remarks>
-    /// Closes room properly before allowing to exit from here!
-    /// </remarks>
     public class GameOverMenu : MonoBehaviour
     {
         [SerializeField] private LevelIdDef mainMenu;
@@ -34,7 +31,7 @@ namespace Examples.Game.Scripts
             }
         }
 
-        public void GotoMenu()
+        private void GotoMenu()
         {
             // This is not perfect but will do!
             if (PhotonNetwork.InRoom)

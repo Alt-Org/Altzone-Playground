@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Examples.Game.Scripts
 {
+    /// <summary>
+    /// Listens <c>InputManager</c> click down and up events and forwards them to player for processing.
+    /// </summary>
     public class PlayerInput : MonoBehaviour
     {
         [Header("Live Data"), SerializeField] private PlayerMovement playerMovement;
