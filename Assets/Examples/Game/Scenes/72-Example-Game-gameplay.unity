@@ -1119,7 +1119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 6780388524306496468}
-  isSetupCamera: 0
+  isSetupCamera: 1
   gameManager: {fileID: 991472594}
 --- !u!4 &991472593
 Transform:
@@ -1637,7 +1637,7 @@ MonoBehaviour:
   upperColor: {r: 0.2028302, g: 0.60297817, b: 1, a: 1}
   lowerColor: {r: 1, g: 0.28773582, b: 0.28773582, a: 1}
   originalColor: {r: 0, g: 0, b: 0, a: 0}
-  isSPawnMiniBall: 0
+  isSPawnMiniBall: 1
   isSendActiveTeamEvent: 1
   miniBallPrefab: {fileID: 804911187961457918, guid: 1442c81311dd7e04ca1011a5f9d7be36,
     type: 3}
