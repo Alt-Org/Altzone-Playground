@@ -8,7 +8,7 @@ namespace Altzone.NewPlayer
     {
         // Player movement settings.
         // Speed at which the player moves.
-        [Header("Player Move Settings"), SerializeField, Min(float.Epsilon)] private float playerMoveSpeed;
+        [Header("Player Move Settings"), SerializeField] private float playerMoveSpeed;
         // Distance from mouse at which the player teleports to the mouse position to avoid constant overshooting. Should be short.
         [SerializeField] private float teleDist;
         // Distance from mouse at which the player moves at half speed to avoid constant overshooting. Should be short, but not as short as teleDist.
