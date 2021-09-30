@@ -176,9 +176,6 @@ namespace Examples.Game.Scripts
             var playerName = player.NickName;
             Debug.Log($"instantiateLocalPlayer i={playerPos} {playerName} : {playerPrefab.name} {instantiationPosition}");
             var instance = _instantiateLocalPlayer(playerPrefab.name, instantiationPosition, playerName);
-            // Parent under us!
-            var playerTransform = instance.transform;
-            playerTransform.parent = transform;
             // Calculate player area
             if (playerPlayArea[playerPos].width == 0)
             {
@@ -200,7 +197,6 @@ namespace Examples.Game.Scripts
         private static GameObject _instantiateLocalPlayer(string prefabName, Vector3 instantiationPosition, string playerName)
         {
             var instance = PhotonNetwork.Instantiate(prefabName, instantiationPosition, Quaternion.identity);
-            instance.name = instance.name.Replace("(Clone)", $"({playerName})");
             return instance;
         }
 

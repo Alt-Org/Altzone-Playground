@@ -1,5 +1,6 @@
 ﻿using Examples.Lobby.Scripts;
 using Photon.Pun;
+using Photon.Realtime;
 using Prg.Scripts.Common.PubSub;
 using UnityEngine;
 
@@ -34,7 +35,9 @@ namespace Examples.Game.Scripts
             initialPosition = _transform.position;
             validTarget = initialPosition;
             playerColor = GetComponent<PlayerColor>();
-            Debug.Log($"Awake IsMine={_photonView.IsMine} initialPosition={initialPosition}");
+            var playerName = _photonView.Owner.NickName;
+            name = name.Replace("(Clone)", $"({playerName})");
+            Debug.Log($"Awake {playerName} IsMine={_photonView.IsMine} initialPosition={initialPosition}");
         }
 
         public override void OnEnable()
@@ -91,6 +94,11 @@ namespace Examples.Game.Scripts
         {
             base.OnJoinedRoom();
             startPlaying();
+        }
+
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            enabled = false; // game play is over when one player leaves room
         }
 
         public void setPlayArea(Rect area)
