@@ -61,6 +61,10 @@ namespace Examples.Game.Scripts
             else
             {
                 playerColor.setDisabledColor();
+                if (isMoving)
+                {
+                    stopMoving();
+                }
             }
         }
 
@@ -94,6 +98,10 @@ namespace Examples.Game.Scripts
 
         public void moveTo(Vector3 position)
         {
+            if (!canMove)
+            {
+                return;
+            }
             if (position.Equals(inputTarget))
             {
                 return;
@@ -110,7 +118,8 @@ namespace Examples.Game.Scripts
             Debug.Log($"startPlaying IsMine={_photonView.IsMine} initialPosition={initialPosition} owner={_photonView.Owner}");
             _transform.position = initialPosition;
             validTarget = initialPosition;
-            canMove = true; // assume we can move on start
+            canMove = true; // assume we can move on start but are stationary
+            isMoving = false;
             var player = _photonView.Owner;
             playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
             // Rotate
@@ -127,6 +136,12 @@ namespace Examples.Game.Scripts
             {
                 playerColor.setHighLightColor(Color.yellow);
             }
+        }
+
+        private void stopMoving()
+        {
+            validTarget = _transform.position;
+            isMoving = false;
         }
 
         [PunRPC]
