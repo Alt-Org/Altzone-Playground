@@ -7,7 +7,8 @@ using UnityEngine;
 namespace Examples.Game.Scripts
 {
     /// <summary>
-    /// Manages player rotation when an other team player is near.
+    /// Manages player rotation when an other team player is near.<br />
+    /// All calculation is done using local players and nothing is synchronized over network.
     /// </summary>
     /// <remarks>
     /// For simplicity we assume that all players are present in the room when playing starts.
@@ -30,8 +31,7 @@ namespace Examples.Game.Scripts
         [SerializeField] private Vector3 myPrevPosition;
         [SerializeField] private Vector3 otherPrevPosition;
 
-        [Header("Rotation Constants")]
-        [SerializeField] private float minPlayerRotationAngle;
+        [Header("Rotation Constants"), SerializeField] private float minPlayerRotationAngle;
         [SerializeField] private float maxPlayerRotationAngle;
         [SerializeField] private float sqrMinPlayerRotationDistance;
         [SerializeField] private float sqrMaxPlayerRotationDistance;
@@ -145,7 +145,7 @@ namespace Examples.Game.Scripts
         {
             // Linear conversion formula - could be optimized a bit!
             return (sqrDistance - sqrMinPlayerRotationDistance) / (sqrMaxPlayerRotationDistance - sqrMinPlayerRotationDistance) *
-                Mathf.Abs(minPlayerRotationAngle - maxPlayerRotationAngle) + Mathf.Max(minPlayerRotationAngle,maxPlayerRotationAngle);
+                Mathf.Abs(minPlayerRotationAngle - maxPlayerRotationAngle) + Mathf.Max(minPlayerRotationAngle, maxPlayerRotationAngle);
         }
 
         public override string ToString()
