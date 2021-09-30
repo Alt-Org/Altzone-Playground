@@ -35,8 +35,12 @@ namespace Examples.Game.Scripts
             initialPosition = _transform.position;
             validTarget = initialPosition;
             playerColor = GetComponent<PlayerColor>();
+            // Set playerName for Editor
             var playerName = _photonView.Owner.NickName;
             name = name.Replace("(Clone)", $"({playerName})");
+            // Re-parent so that all game actors are in one place. These are the ball and all players.
+            var actorParent = FindObjectOfType<BallMovement>().transform.parent;
+            _transform.parent = actorParent;
             Debug.Log($"Awake {playerName} IsMine={_photonView.IsMine} initialPosition={initialPosition}");
         }
 
