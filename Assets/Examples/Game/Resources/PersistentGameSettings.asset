@@ -21,3 +21,5 @@ MonoBehaviour:
     ballLerpSmoothingFactor: 4
     ballTeleportDistance: 1
     playerMoveSpeed: 5
+    playerSqrMinRotationDistance: 4
+    playerSqrMaxRotationDistance: 16

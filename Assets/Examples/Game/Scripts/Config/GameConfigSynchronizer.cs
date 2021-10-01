@@ -2,6 +2,7 @@ using Photon.Pun;
 using Prg.Scripts.Common.Photon;
 using System;
 using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 namespace Examples.Game.Scripts.Config
@@ -95,19 +96,29 @@ namespace Examples.Game.Scripts.Config
         private void synchronizeFeatures()
         {
             var features = RuntimeGameConfig.Get().features;
+            var countFieldsToWrite = 0;
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream))
                 {
                     writer.Write((byte) What.Features);
+                    countFieldsToWrite += 1;
                     writer.Write(features.isRotateGameCamera);
+                    countFieldsToWrite += 1;
                     writer.Write(features.isSPawnMiniBall);
+                    countFieldsToWrite += 1;
                     writer.Write(features.isActivateTeamWithBall);
                     writer.Write(endByte);
                 }
                 var bytes = stream.ToArray();
-                Debug.Log($"synchronizeFeatures data length {bytes.Length}");
+                Debug.Log($"synchronizeFeatures data length {bytes.Length} fields {countFieldsToWrite}");
                 Debug.Log($"data> {string.Join(", ", bytes)}");
+                var type = features.GetType();
+                var countFields = type.GetFields(BindingFlags.Public | BindingFlags.Instance).Length;
+                if (countFieldsToWrite != countFields)
+                {
+                    throw new UnityException($"mismatch in type {type} fields {countFields} and written fields {countFieldsToWrite}");
+                }
                 photonEventDispatcher.RaiseEvent(photonEventCode, bytes);
             }
         }
@@ -134,20 +145,35 @@ namespace Examples.Game.Scripts.Config
         private void synchronizeVariables()
         {
             var variables = RuntimeGameConfig.Get().variables;
+            var countFieldsToWrite = 0;
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream))
                 {
                     writer.Write((byte) What.Variables);
+                    countFieldsToWrite += 1;
                     writer.Write(variables.ballMoveSpeed);
+                    countFieldsToWrite += 1;
                     writer.Write(variables.ballLerpSmoothingFactor);
+                    countFieldsToWrite += 1;
                     writer.Write(variables.ballTeleportDistance);
+                    countFieldsToWrite += 1;
                     writer.Write(variables.playerMoveSpeed);
+                    countFieldsToWrite += 1;
+                    writer.Write(variables.playerSqrMinRotationDistance);
+                    countFieldsToWrite += 1;
+                    writer.Write(variables.playerSqrMaxRotationDistance);
                     writer.Write(endByte);
                 }
                 var bytes = stream.ToArray();
-                Debug.Log($"synchronizeVariables data length {bytes.Length}");
+                Debug.Log($"synchronizeVariables data length {bytes.Length} fields {countFieldsToWrite}");
                 Debug.Log($"data> {string.Join(", ", bytes)}");
+                var type = variables.GetType();
+                var countFields = type.GetFields(BindingFlags.Public | BindingFlags.Instance).Length;
+                if (countFieldsToWrite != countFields)
+                {
+                    throw new UnityException($"mismatch in type {type} fields {countFields} and written fields {countFieldsToWrite}");
+                }
                 photonEventDispatcher.RaiseEvent(photonEventCode, bytes);
             }
         }
@@ -166,6 +192,8 @@ namespace Examples.Game.Scripts.Config
                     variables.ballLerpSmoothingFactor = reader.ReadSingle();
                     variables.ballTeleportDistance = reader.ReadSingle();
                     variables.playerMoveSpeed = reader.ReadSingle();
+                    variables.playerSqrMinRotationDistance = reader.ReadSingle();
+                    variables.playerSqrMaxRotationDistance = reader.ReadSingle();
                     reader.ReadByte(); // skip last
                 }
             }

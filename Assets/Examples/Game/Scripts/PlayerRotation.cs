@@ -1,3 +1,4 @@
+using Examples.Game.Scripts.Config;
 using Examples.Lobby.Scripts;
 using Photon.Pun;
 using Photon.Realtime;
@@ -34,13 +35,15 @@ namespace Examples.Game.Scripts
 
         [Header("Rotation Constants"), SerializeField] private float minPlayerRotationAngle;
         [SerializeField] private float maxPlayerRotationAngle;
-        [SerializeField] private float sqrMinPlayerRotationDistance;
-        [SerializeField] private float sqrMaxPlayerRotationDistance;
+
+        // Configurable settings
+        private GameVariables variables;
 
         private bool isUpperSide => teamIndex == 1;
 
         private void Awake()
         {
+            variables = RuntimeGameConfig.Get().variables;
             _photonView = photonView;
             actorId = _photonView.OwnerActorNr;
             _transform = GetComponent<Transform>();
@@ -64,7 +67,6 @@ namespace Examples.Game.Scripts
                     teamMate.teamMate = this;
                     teamMate._otherTransform = _transform;
                     teamMate.enabled = true;
-
                 }
             }
             else
@@ -113,9 +115,9 @@ namespace Examples.Game.Scripts
             otherPrevPosition = otherPosition;
             sqrDistanceBetween = Mathf.Abs((myPosition - otherPosition).sqrMagnitude);
             zSide = otherPosition.x < myPosition.x ? -1f : 1f;
-            if (sqrDistanceBetween > sqrMinPlayerRotationDistance)
+            if (sqrDistanceBetween > variables.playerSqrMinRotationDistance)
             {
-                if (sqrDistanceBetween < sqrMaxPlayerRotationDistance)
+                if (sqrDistanceBetween < variables.playerSqrMaxRotationDistance)
                 {
                     zAngle = distanceToAngle(sqrDistanceBetween);
                     if (isUpperSide)
@@ -123,7 +125,6 @@ namespace Examples.Game.Scripts
                         zSide = -zSide;
                         zAngle += 180f;
                     }
-                    // Side affects only when inside "rotation range"!
                     // Flipping from side to side when rotation angle is big causes kind of "glitch" as shield changes side very quickly :-(
                     _transform.rotation = Quaternion.Euler(0f, 0f, zAngle * zSide);
                 }
@@ -151,8 +152,10 @@ namespace Examples.Game.Scripts
         private float distanceToAngle(float sqrDistance)
         {
             // Linear conversion formula - could be optimized a bit!
-            return (sqrDistance - sqrMinPlayerRotationDistance) / (sqrMaxPlayerRotationDistance - sqrMinPlayerRotationDistance) *
-                Mathf.Abs(minPlayerRotationAngle - maxPlayerRotationAngle) + Mathf.Max(minPlayerRotationAngle, maxPlayerRotationAngle);
+            return (sqrDistance - variables.playerSqrMinRotationDistance) /
+                (variables.playerSqrMaxRotationDistance - variables.playerSqrMinRotationDistance) *
+                Mathf.Abs(minPlayerRotationAngle - maxPlayerRotationAngle) +
+                Mathf.Max(minPlayerRotationAngle, maxPlayerRotationAngle);
         }
 
         public override string ToString()

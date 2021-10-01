@@ -1,4 +1,4 @@
-using System;
+#if UNITY_EDITOR
 using UnityEngine;
 
 namespace Examples.Game.Scripts.Config
@@ -31,3 +31,4 @@ namespace Examples.Game.Scripts.Config
         }
     }
 }
+#endif

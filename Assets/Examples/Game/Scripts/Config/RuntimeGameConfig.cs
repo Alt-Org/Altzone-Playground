@@ -1,3 +1,4 @@
+using Prg.Scripts.Common.Util;
 using System;
 using UnityEngine;
 
@@ -26,9 +27,7 @@ namespace Examples.Game.Scripts.Config
 
         public void CopyFrom(GameFeatures other)
         {
-            this.isRotateGameCamera = other.isRotateGameCamera;
-            this.isSPawnMiniBall = other.isSPawnMiniBall;
-            this.isActivateTeamWithBall = other.isActivateTeamWithBall;
+            PropertyCopier<GameFeatures,GameFeatures>.CopyFields(other,this);
         }
     }
 
@@ -43,14 +42,12 @@ namespace Examples.Game.Scripts.Config
         public float ballTeleportDistance;
 
         [Header("Player")] public float playerMoveSpeed;
+        public float playerSqrMinRotationDistance;
+        public float playerSqrMaxRotationDistance;
 
         public void CopyFrom(GameVariables other)
         {
-            this.ballMoveSpeed = other.ballMoveSpeed;
-            this.ballLerpSmoothingFactor = other.ballLerpSmoothingFactor;
-            this.ballTeleportDistance = other.ballTeleportDistance;
-
-            this.playerMoveSpeed = other.playerMoveSpeed;
+            PropertyCopier<GameVariables,GameVariables>.CopyFields(other,this);
         }
     }
 

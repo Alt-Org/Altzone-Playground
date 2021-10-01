@@ -81,6 +81,7 @@ MonoBehaviour:
   _transform: {fileID: 0}
   playerPos: 0
   teamIndex: 0
+  actorId: 0
   teamMate: {fileID: 0}
   _otherTransform: {fileID: 0}
   sqrDistanceBetween: 0
@@ -90,8 +91,6 @@ MonoBehaviour:
   otherPrevPosition: {x: 0, y: 0, z: 0}
   minPlayerRotationAngle: 0
   maxPlayerRotationAngle: 180
-  sqrMinPlayerRotationDistance: 4
-  sqrMaxPlayerRotationDistance: 16
 --- !u!114 &2972943607577269493
 MonoBehaviour:
   m_ObjectHideFlags: 0
