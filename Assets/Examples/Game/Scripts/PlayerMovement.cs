@@ -42,8 +42,13 @@ namespace Examples.Game.Scripts
             var playerName = _photonView.Owner.NickName;
             name = name.Replace("(Clone)", $"({playerName})");
             // Re-parent so that all game actors are in one place. These are the ball and all players.
-            var actorParent = FindObjectOfType<BallMovement>().transform.parent;
-            _transform.parent = actorParent;
+            var ballMovement = FindObjectOfType<BallMovement>();
+            if (ballMovement != null)
+            {
+                // It can happen that ball is not in play yet or has been destroyed already
+                var actorParent = FindObjectOfType<BallMovement>().transform.parent;
+                _transform.parent = actorParent;
+            }
             Debug.Log($"Awake {playerName} IsMine={_photonView.IsMine} initialPosition={initialPosition}");
         }
 
@@ -101,11 +106,6 @@ namespace Examples.Game.Scripts
         {
             base.OnJoinedRoom();
             startPlaying();
-        }
-
-        public override void OnPlayerLeftRoom(Player otherPlayer)
-        {
-            enabled = false; // game play is over when one player leaves room
         }
 
         public void setPlayArea(Rect area)
