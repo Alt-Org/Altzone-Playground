@@ -27,7 +27,7 @@ namespace Examples.Game.Scripts.Config
 
         public static void synchronize(What what)
         {
-            if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient)
+            if (!PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient)
             {
                 throw new UnityException("only master client can synchronize in a room");
             }
