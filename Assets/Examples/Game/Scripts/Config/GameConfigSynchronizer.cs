@@ -26,6 +26,11 @@ namespace Examples.Game.Scripts.Config
         private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 4; // synchronize game config
         private const byte endByte = 0xFE;
 
+        public static void listen()
+        {
+            Get(); // Instantiate our private instance for listening synchronize events
+        }
+
         public static void synchronize(What what)
         {
             if (!PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient)
@@ -96,28 +101,24 @@ namespace Examples.Game.Scripts.Config
         private void synchronizeFeatures()
         {
             var features = RuntimeGameConfig.Get().features;
-            var countFieldsToWrite = 0;
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream))
                 {
                     writer.Write((byte) What.Features);
-                    countFieldsToWrite += 1;
                     writer.Write(features.isRotateGameCamera);
-                    countFieldsToWrite += 1;
                     writer.Write(features.isSPawnMiniBall);
-                    countFieldsToWrite += 1;
                     writer.Write(features.isActivateTeamWithBall);
                     writer.Write(endByte);
                 }
                 var bytes = stream.ToArray();
-                Debug.Log($"synchronizeFeatures data length {bytes.Length} fields {countFieldsToWrite}");
-                Debug.Log($"data> {string.Join(", ", bytes)}");
                 var type = features.GetType();
-                var countFields = type.GetFields(BindingFlags.Public | BindingFlags.Instance).Length;
-                if (countFieldsToWrite != countFields)
+                var fieldsLength = countFieldsByteSize(type, out var fieldCount);
+                Debug.Log($"synchronizeFeatures data {fieldCount} fields {bytes.Length} bytes");
+                Debug.Log($"send data> {string.Join(", ", bytes)}");
+                if (bytes.Length != fieldsLength)
                 {
-                    throw new UnityException($"mismatch in type {type} fields {countFields} and written fields {countFieldsToWrite}");
+                    throw new UnityException($"mismatch in type {type} fields size {fieldsLength} and written fields size {bytes.Length}");
                 }
                 photonEventDispatcher.RaiseEvent(photonEventCode, bytes);
             }
@@ -126,7 +127,7 @@ namespace Examples.Game.Scripts.Config
         private static void readFeatures(byte[] bytes)
         {
             Debug.Log($"readFeatures data length {bytes.Length}");
-            Debug.Log($"data< {string.Join(", ", bytes)}");
+            Debug.Log($"recv data< {string.Join(", ", bytes)}");
             var features = new GameFeatures();
             using (var stream = new MemoryStream(bytes))
             {
@@ -145,34 +146,27 @@ namespace Examples.Game.Scripts.Config
         private void synchronizeVariables()
         {
             var variables = RuntimeGameConfig.Get().variables;
-            var countFieldsToWrite = 0;
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream))
                 {
                     writer.Write((byte) What.Variables);
-                    countFieldsToWrite += 1;
                     writer.Write(variables.ballMoveSpeed);
-                    countFieldsToWrite += 1;
                     writer.Write(variables.ballLerpSmoothingFactor);
-                    countFieldsToWrite += 1;
                     writer.Write(variables.ballTeleportDistance);
-                    countFieldsToWrite += 1;
                     writer.Write(variables.playerMoveSpeed);
-                    countFieldsToWrite += 1;
                     writer.Write(variables.playerSqrMinRotationDistance);
-                    countFieldsToWrite += 1;
                     writer.Write(variables.playerSqrMaxRotationDistance);
                     writer.Write(endByte);
                 }
                 var bytes = stream.ToArray();
-                Debug.Log($"synchronizeVariables data length {bytes.Length} fields {countFieldsToWrite}");
-                Debug.Log($"data> {string.Join(", ", bytes)}");
                 var type = variables.GetType();
-                var countFields = type.GetFields(BindingFlags.Public | BindingFlags.Instance).Length;
-                if (countFieldsToWrite != countFields)
+                var fieldsLength = countFieldsByteSize(type, out var fieldCount);
+                Debug.Log($"synchronizeVariables data {fieldCount} fields {bytes.Length} bytes");
+                Debug.Log($"send data> {string.Join(", ", bytes)}");
+                if (bytes.Length != fieldsLength)
                 {
-                    throw new UnityException($"mismatch in type {type} fields {countFields} and written fields {countFieldsToWrite}");
+                    throw new UnityException($"mismatch in type {type} fields size {fieldsLength} and written fields size {bytes.Length}");
                 }
                 photonEventDispatcher.RaiseEvent(photonEventCode, bytes);
             }
@@ -181,7 +175,7 @@ namespace Examples.Game.Scripts.Config
         private static void readVariables(byte[] bytes)
         {
             Debug.Log($"readVariables data length {bytes.Length}");
-            Debug.Log($"data< {string.Join(", ", bytes)}");
+            Debug.Log($"recv data< {string.Join(", ", bytes)}");
             var variables = new GameVariables();
             using (var stream = new MemoryStream(bytes))
             {
@@ -198,6 +192,29 @@ namespace Examples.Game.Scripts.Config
                 }
             }
             RuntimeGameConfig.Get().variables = variables;
+        }
+
+        private static int countFieldsByteSize(Type type, out int fieldCount)
+        {
+            var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+            var countBytes = 2; // stream type at start and guardian byte at end
+            foreach (var fieldInfo in fields)
+            {
+                var fieldTypeName = fieldInfo.FieldType.Name.ToString();
+                switch (fieldTypeName)
+                {
+                    case "Boolean":
+                        countBytes += 1;
+                        break;
+                    case "Single":
+                        countBytes += 4;
+                        break;
+                    default:
+                        throw new UnityException("unknown field type: " + fieldTypeName);
+                }
+            }
+            fieldCount = fields.Length;
+            return countBytes;
         }
     }
 }

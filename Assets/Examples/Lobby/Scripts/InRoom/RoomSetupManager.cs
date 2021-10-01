@@ -1,3 +1,4 @@
+using Examples.Game.Scripts.Config;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -99,6 +100,18 @@ namespace Examples.Lobby.Scripts.InRoom
             setButton(buttonGuest, interactableGuest, captionGuest);
             setButton(buttonSpectator, interactableSpectator, captionSpectator);
             setButton(buttonStartPlay, interactableStartPlay, null);
+
+            // NOTE that in real world we would not use this kind of protocol - but one with more precise logic for handshaking!
+            if (PhotonNetwork.IsMasterClient)
+            {
+                // While in the game room that is going to start playing soon
+                // we will send known runtime settings every time something significant changes, regardless of what to be on the safe side :)
+                GameConfigSynchronizer.synchronize(What.All);
+            }
+            else
+            {
+                GameConfigSynchronizer.listen();
+            }
         }
 
         private void checkOtherPlayer(Player player)
