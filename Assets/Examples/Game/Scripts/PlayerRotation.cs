@@ -21,6 +21,7 @@ namespace Examples.Game.Scripts
         [SerializeField] protected Transform _transform;
         [SerializeField] private int playerPos;
         [SerializeField] private int teamIndex;
+        [SerializeField] private int actorId;
 
         [Header("Teammate"), SerializeField] private PlayerRotation teamMate;
         [SerializeField] private Transform _otherTransform;
@@ -41,6 +42,7 @@ namespace Examples.Game.Scripts
         private void Awake()
         {
             _photonView = photonView;
+            actorId = _photonView.OwnerActorNr;
             _transform = GetComponent<Transform>();
             var player = _photonView.Owner;
             playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
@@ -62,6 +64,7 @@ namespace Examples.Game.Scripts
                     teamMate.teamMate = this;
                     teamMate._otherTransform = _transform;
                     teamMate.enabled = true;
+
                 }
             }
             else
@@ -90,7 +93,11 @@ namespace Examples.Game.Scripts
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
-            enabled = false; // game play is over when one player leaves room
+            if (otherPlayer.ActorNumber == teamMate.actorId)
+            {
+                Debug.Log($"OnPlayerLeftRoom STOP PLAYING otherPlayer={otherPlayer.GetDebugLabel()}");
+                enabled = false; // our game play is over when teammate leaves room
+            }
         }
 
         private void rotatePlayer()
