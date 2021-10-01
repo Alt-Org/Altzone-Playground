@@ -103,7 +103,7 @@ namespace Examples.Lobby.Scripts.InRoom
 
         private void checkOtherPlayer(Player player)
         {
-            Debug.Log($"checkOtherPlayer {player.ToStringFull()}");
+            Debug.Log($"checkOtherPlayer {player.GetDebugLabel()}");
             if (!player.HasCustomProperty(playerPositionKey))
             {
                 return;
@@ -140,7 +140,7 @@ namespace Examples.Lobby.Scripts.InRoom
 
         private void checkLocalPlayer(Player player)
         {
-            Debug.Log($"checkLocalPlayer {player.ToStringFull()} pos={localPlayerPosition} ok={isLocalPlayerPositionUnique}");
+            Debug.Log($"checkLocalPlayer {player.GetDebugLabel()} pos={localPlayerPosition} ok={isLocalPlayerPositionUnique}");
             var curValue = player.GetCustomProperty(playerPositionKey, playerIsGuest);
             // Master client can *only* start the game when in room as player!
             interactableStartPlay = player.IsMasterClient && curValue >= LobbyManager.playerPosition0 && curValue <= LobbyManager.playerPosition3;
