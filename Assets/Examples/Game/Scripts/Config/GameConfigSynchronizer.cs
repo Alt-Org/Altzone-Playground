@@ -25,6 +25,7 @@ namespace Examples.Game.Scripts.Config
     {
         private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 4; // synchronize game config
         private const byte endByte = 0xFE;
+        private const int overheadBytes = 2;
 
         public static void listen()
         {
@@ -39,11 +40,11 @@ namespace Examples.Game.Scripts.Config
             }
             if (what.HasFlag(What.All) || what.HasFlag(What.Features))
             {
-                Get().synchronizeFeatures();
+                Get().synchronizeFeatures((byte)What.Features, endByte);
             }
             if (what.HasFlag(What.All) || what.HasFlag(What.Variables))
             {
-                Get().synchronizeVariables();
+                Get().synchronizeVariables((byte)What.Variables, endByte);
             }
         }
 
@@ -98,18 +99,18 @@ namespace Examples.Game.Scripts.Config
             });
         }
 
-        private void synchronizeFeatures()
+        private void synchronizeFeatures(byte first, byte last)
         {
             var features = RuntimeGameConfig.Get().features;
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream))
                 {
-                    writer.Write((byte) What.Features);
+                    writer.Write(first);
                     writer.Write(features.isRotateGameCamera);
                     writer.Write(features.isSPawnMiniBall);
                     writer.Write(features.isActivateTeamWithBall);
-                    writer.Write(endByte);
+                    writer.Write(last);
                 }
                 var bytes = stream.ToArray();
                 var type = features.GetType();
@@ -135,29 +136,29 @@ namespace Examples.Game.Scripts.Config
                 {
                     reader.ReadByte(); // skip first
                     features.isRotateGameCamera = reader.ReadBoolean();
-                    features.isRotateGameCamera = reader.ReadBoolean();
-                    features.isRotateGameCamera = reader.ReadBoolean();
+                    features.isSPawnMiniBall = reader.ReadBoolean();
+                    features.isActivateTeamWithBall = reader.ReadBoolean();
                     reader.ReadByte(); // skip last
                 }
             }
             RuntimeGameConfig.Get().features = features;
         }
 
-        private void synchronizeVariables()
+        private void synchronizeVariables(byte first, byte last)
         {
             var variables = RuntimeGameConfig.Get().variables;
             using (var stream = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(stream))
                 {
-                    writer.Write((byte) What.Variables);
+                    writer.Write(first);
                     writer.Write(variables.ballMoveSpeed);
                     writer.Write(variables.ballLerpSmoothingFactor);
                     writer.Write(variables.ballTeleportDistance);
                     writer.Write(variables.playerMoveSpeed);
                     writer.Write(variables.playerSqrMinRotationDistance);
                     writer.Write(variables.playerSqrMaxRotationDistance);
-                    writer.Write(endByte);
+                    writer.Write(last);
                 }
                 var bytes = stream.ToArray();
                 var type = variables.GetType();
@@ -197,7 +198,7 @@ namespace Examples.Game.Scripts.Config
         private static int countFieldsByteSize(Type type, out int fieldCount)
         {
             var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
-            var countBytes = 2; // stream type at start and guardian byte at end
+            var countBytes = overheadBytes; // stream start and end bytes
             foreach (var fieldInfo in fields)
             {
                 var fieldTypeName = fieldInfo.FieldType.Name.ToString();
