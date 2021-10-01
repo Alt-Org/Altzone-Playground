@@ -32,7 +32,7 @@ namespace Examples.Game.Scripts
 
         private void Awake()
         {
-            variables = GameConfig.Get().variables;
+            variables = RuntimeGameConfig.Get().variables;
             _photonView = photonView;
             _transform = GetComponent<Transform>();
             initialPosition = _transform.position;

@@ -50,7 +50,7 @@ namespace Examples.Game.Scripts
                 {
                     makeRoomClosed();
                 }
-                if (GameConfig.Get().features.isRotateGameCamera)
+                if (RuntimeGameConfig.Get().features.isRotateGameCamera)
                 {
                     setupCamera(_camera);
                 }

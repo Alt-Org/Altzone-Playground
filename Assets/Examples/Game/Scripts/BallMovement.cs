@@ -51,8 +51,8 @@ namespace Examples.Game.Scripts
 
         private void Awake()
         {
-            features = GameConfig.Get().features;
-            variables = GameConfig.Get().variables;
+            features = RuntimeGameConfig.Get().features;
+            variables = RuntimeGameConfig.Get().variables;
             Debug.Log("Awake");
             _transform = GetComponent<Transform>();
             _rigidbody = GetComponent<Rigidbody2D>();

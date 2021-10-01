@@ -55,21 +55,21 @@ namespace Examples.Game.Scripts.Config
     }
 
     /// <summary>
-    /// Game config variables that can be changed on the fly and can be referenced from anywhere safely.
+    /// Runtime game config variables that can be changed on the fly and can be referenced from anywhere safely.
     /// </summary>
     /// <remarks>
-    /// Meaning of "changed" is not specified here.
+    /// Note that full or partial <c>RuntimeGameConfig</c> can be synchronized over network and is intended to be used so.
     /// </remarks>
-    public class GameConfig : MonoBehaviour
+    public class RuntimeGameConfig : MonoBehaviour
     {
-        public static GameConfig Get()
+        public static RuntimeGameConfig Get()
         {
             if (_Instance == null)
             {
-                _Instance = FindObjectOfType<GameConfig>();
+                _Instance = FindObjectOfType<RuntimeGameConfig>();
                 if (_Instance == null)
                 {
-                    _Instance = UnityExtensions.CreateGameObjectAndComponent<GameConfig>(nameof(GameConfig), isDontDestroyOnLoad: true);
+                    _Instance = UnityExtensions.CreateGameObjectAndComponent<RuntimeGameConfig>(nameof(RuntimeGameConfig), isDontDestroyOnLoad: true);
                     _Instance._permanentFeatures = new GameFeatures();
                     _Instance._permanentVariables = new GameVariables();
                     loadGameConfig();
@@ -78,7 +78,7 @@ namespace Examples.Game.Scripts.Config
             return _Instance;
         }
 
-        private static GameConfig _Instance;
+        private static RuntimeGameConfig _Instance;
 
         [SerializeField] private GameFeatures _permanentFeatures;
         [SerializeField] private GameVariables _permanentVariables;
@@ -97,7 +97,7 @@ namespace Examples.Game.Scripts.Config
 
         private static void loadGameConfig()
         {
-            var gameSettings = Resources.Load<GameSettings>(nameof(GameSettings));
+            var gameSettings = Resources.Load<PersistentGameSettings>(nameof(PersistentGameSettings));
             _Instance.features = gameSettings.features;
             _Instance.variables = gameSettings.variables;
         }
