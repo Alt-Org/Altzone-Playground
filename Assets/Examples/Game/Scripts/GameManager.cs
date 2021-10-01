@@ -1,4 +1,5 @@
 using Examples.Lobby.Scripts;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
@@ -101,6 +102,14 @@ namespace Examples.Game.Scripts
                 score.wallCollisionCount = _wallCollisionCount;
 
                 this.Publish(new Event(score));
+                // Dirty hack to keep score updating in somewhere global storage
+                if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom)
+                {
+                    var room = PhotonNetwork.CurrentRoom;
+                    var key = $"T{score.teamIndex}";
+                    var value = score.wallCollisionCount;
+                    room.SetCustomProperties(new Hashtable { { key, value } });
+                }
             });
             photonEventDispatcher.registerEventListener(photonEventCodeBrick, data =>
             {
