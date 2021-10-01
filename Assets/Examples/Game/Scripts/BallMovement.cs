@@ -1,4 +1,5 @@
 using DigitalRuby;
+using Examples.Game.Scripts.Config;
 using Photon.Pun;
 using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
@@ -19,16 +20,11 @@ namespace Examples.Game.Scripts
         private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 2; // Switch active team
         private const float minStartDirection = 0.2f;
 
-        public float speed;
-        public float teleportDistance;
-        public float moveDistance;
         public Collider2D upperTeam;
         public Collider2D lowerTeam;
         public Color upperColor;
         public Color lowerColor;
         public Color originalColor;
-        public bool isSPawnMiniBall;
-        public bool isSendActiveTeamEvent;
         public GameObject miniBallPrefab;
         public bool canMove;
         public bool isUpper;
@@ -49,11 +45,14 @@ namespace Examples.Game.Scripts
         private Vector3 initialPosition;
         private PhotonEventDispatcher photonEventDispatcher;
 
-        private float lerpSmoothingFactor => 4f;
-        private float ballMoveSpeed => speed;
+        // Configurable settings
+        private GameFeatures features;
+        private GameVariables variables;
 
         private void Awake()
         {
+            features = GameConfig.Get().features;
+            variables = GameConfig.Get().variables;
             Debug.Log("Awake");
             _transform = GetComponent<Transform>();
             _rigidbody = GetComponent<Rigidbody2D>();
@@ -152,7 +151,7 @@ namespace Examples.Game.Scripts
             {
                 isLower = true;
             }
-            if (isSendActiveTeamEvent)
+            if (features.isActivateTeamWithBall)
             {
                 checkBallAndTeam();
             }
@@ -173,7 +172,7 @@ namespace Examples.Game.Scripts
             {
                 isLower = false;
             }
-            if (isSendActiveTeamEvent)
+            if (features.isActivateTeamWithBall)
             {
                 checkBallAndTeam();
             }
@@ -212,17 +211,17 @@ namespace Examples.Game.Scripts
                 var curPos = _rigidbody.position;
                 var deltaX = Mathf.Abs(curPos.x - networkPosition.x);
                 var deltaY = Mathf.Abs(curPos.y - networkPosition.y);
-                if (deltaX > teleportDistance || deltaY > teleportDistance)
+                if (deltaX > variables.ballTeleportDistance || deltaY > variables.ballTeleportDistance)
                 {
                     _rigidbody.position = networkPosition;
                 }
-                else if (deltaX > moveDistance || deltaY > moveDistance)
+                else
                 {
                     _rigidbody.position = Vector2.MoveTowards(curPos, networkPosition, Time.deltaTime);
                 }
                 return;
             }
-            if (isSPawnMiniBall)
+            if (features.isSPawnMiniBall)
             {
                 updateForMiniBall();
             }
@@ -267,7 +266,7 @@ namespace Examples.Game.Scripts
                 return;
             }
             _transform.position = initialPosition;
-            _rigidbody.velocity = getStartDirection() * ballMoveSpeed;
+            _rigidbody.velocity = getStartDirection() * variables.ballMoveSpeed;
         }
 
         private void checkBallAndTeam()
@@ -297,13 +296,13 @@ namespace Examples.Game.Scripts
         private void keepConstantVelocity(float deltaTime)
         {
             var _velocity = _rigidbody.velocity;
-            var targetVelocity = _velocity.normalized * ballMoveSpeed;
+            var targetVelocity = _velocity.normalized * variables.ballMoveSpeed;
             if (targetVelocity == Vector2.zero)
             {
                 restart();
                 return;
             }
-            _rigidbody.velocity = Vector2.Lerp(_velocity, targetVelocity, deltaTime * lerpSmoothingFactor);
+            _rigidbody.velocity = Vector2.Lerp(_velocity, targetVelocity, deltaTime * variables.ballLerpSmoothingFactor);
         }
 
         private static Vector2 getStartDirection()

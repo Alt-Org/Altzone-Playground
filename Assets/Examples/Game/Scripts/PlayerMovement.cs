@@ -1,4 +1,5 @@
-﻿using Examples.Lobby.Scripts;
+﻿using Examples.Game.Scripts.Config;
+using Examples.Lobby.Scripts;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.PubSub;
@@ -26,10 +27,12 @@ namespace Examples.Game.Scripts
         [SerializeField] private Rect playArea;
         [SerializeField] private PlayerColor playerColor;
 
-        private static float playerMoveSpeed => 5;
+        // Configurable settings
+        private GameVariables variables;
 
         private void Awake()
         {
+            variables = GameConfig.Get().variables;
             _photonView = photonView;
             _transform = GetComponent<Transform>();
             initialPosition = _transform.position;
@@ -88,7 +91,7 @@ namespace Examples.Game.Scripts
             {
                 return;
             }
-            var speed = playerMoveSpeed * Time.deltaTime;
+            var speed = variables.playerMoveSpeed * Time.deltaTime;
             var newPosition = Vector3.MoveTowards(_transform.position, validTarget, speed);
             isMoving = newPosition != validTarget;
             _transform.position = newPosition;

@@ -1,3 +1,4 @@
+using Examples.Game.Scripts.Config;
 using Examples.Lobby.Scripts;
 using Photon.Pun;
 using Photon.Realtime;
@@ -18,7 +19,6 @@ namespace Examples.Game.Scripts
     public class GameManagerLoader : MonoBehaviour
     {
         public Camera _camera;
-        public bool isSetupCamera;
         public GameManager gameManager;
 
         private bool isDebugSetPlayerPropsSet;
@@ -50,7 +50,7 @@ namespace Examples.Game.Scripts
                 {
                     makeRoomClosed();
                 }
-                if (isSetupCamera)
+                if (GameConfig.Get().features.isRotateGameCamera)
                 {
                     setupCamera(_camera);
                 }
