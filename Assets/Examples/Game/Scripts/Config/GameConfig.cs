@@ -69,6 +69,7 @@ namespace Examples.Game.Scripts.Config
                     _Instance = UnityExtensions.CreateGameObjectAndComponent<GameConfig>(nameof(GameConfig), isDontDestroyOnLoad: true);
                     _Instance._permanentFeatures = new GameFeatures();
                     _Instance._permanentVariables = new GameVariables();
+                    loadGameConfig();
                 }
             }
             return _Instance;
@@ -89,6 +90,13 @@ namespace Examples.Game.Scripts.Config
         {
             get => _permanentVariables;
             set => _permanentVariables.CopyFrom(value);
+        }
+
+        private static void loadGameConfig()
+        {
+            var gameSettings = Resources.Load<GameSettings>(nameof(GameSettings));
+            _Instance.features = gameSettings.features;
+            _Instance.variables = gameSettings.variables;
         }
     }
 }
