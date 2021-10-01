@@ -32,14 +32,17 @@ namespace Examples.Game.Scripts.Config
         }
     }
 
+    /// <summary>
+    /// Game variables that control game play somehow.
+    /// </summary>
     [Serializable]
     public class GameVariables
     {
-        public float ballMoveSpeed;
+        [Header("Ball")] public float ballMoveSpeed;
         public float ballLerpSmoothingFactor;
         public float ballTeleportDistance;
 
-        public float playerMoveSpeed;
+        [Header("Player")] public float playerMoveSpeed;
 
         public void CopyFrom(GameVariables other)
         {

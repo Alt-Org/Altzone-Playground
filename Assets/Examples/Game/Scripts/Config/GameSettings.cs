@@ -11,7 +11,7 @@ namespace Examples.Game.Scripts.Config
     [CreateAssetMenu(menuName = "ALT-Zone/GameSettings")]
     public class GameSettings : ScriptableObject
     {
-        public GameFeatures features;
-        public GameVariables variables;
+        [Header("Game Features")] public GameFeatures features;
+        [Header("Game Variables")] public GameVariables variables;
     }
 }
