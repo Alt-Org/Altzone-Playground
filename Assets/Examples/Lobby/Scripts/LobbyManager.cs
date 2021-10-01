@@ -98,7 +98,7 @@ namespace Examples.Lobby.Scripts
                 {
                     continue;
                 }
-                Debug.Log($"KICK {player.NickName} {playerPositionKey}={curValue}");
+                Debug.Log($"KICK and CloseConnection for {player.GetDebugLabel()} {playerPositionKey}={curValue}");
                 PhotonNetwork.CloseConnection(player);
                 yield return null;
             }
@@ -118,11 +118,22 @@ namespace Examples.Lobby.Scripts
             player.SafeSetCustomProperty(playerPositionKey, playerPosition, curValue);
         }
 
+        public override void OnDisconnected(DisconnectCause cause)
+        {
+            Debug.Log($"OnDisconnected {cause}");
+        }
+
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            Debug.Log($"OnPlayerLeftRoom {otherPlayer.GetDebugLabel()}");
+        }
+
         public override void OnLeftRoom() // IMatchmakingCallbacks
         {
             // Goto menu if we left (in)voluntarily any room
             // - typically master client kicked us off before starting a new game as we did not qualify to participate.
-            Debug.Log($"OnLeftRoom {PhotonNetwork.LocalPlayer.NickName}");
+            Debug.Log($"OnLeftRoom {PhotonNetwork.LocalPlayer.GetDebugLabel()}");
+            Debug.Log($"LoadScene {cancelLevel.unityName}");
             SceneManager.LoadScene(cancelLevel.unityName);
         }
 
