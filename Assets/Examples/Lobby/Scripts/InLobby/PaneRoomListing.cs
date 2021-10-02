@@ -13,7 +13,6 @@ namespace Examples.Lobby.Scripts.InLobby
     /// </summary>
     public class PaneRoomListing : MonoBehaviour
     {
-        [SerializeField] private Text title;
         [SerializeField] private Button templateButton;
         [SerializeField] private Transform buttonParent;
 
@@ -21,7 +20,6 @@ namespace Examples.Lobby.Scripts.InLobby
 
         private void Start()
         {
-            title.text = $"Welcome to {Application.productName}";
             templateButton.onClick.AddListener(createRoomForMe);
         }
 
@@ -56,7 +54,14 @@ namespace Examples.Lobby.Scripts.InLobby
                 return;
             }
             var rooms = photonRoomList.currentRooms.ToList();
-            rooms.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
+            rooms.Sort((a, b) =>
+            {
+                // First open rooms by name, then closed (aka playing) rooms by name
+                var result = a.IsOpen.CompareTo(b.IsOpen);
+                return result == 0
+                    ? 0
+                    : string.Compare(a.Name, b.Name, StringComparison.Ordinal);
+            });
             Debug.Log($"updateStatus enter {PhotonNetwork.NetworkClientState} buttons: {buttonParent.childCount} rooms: {rooms.Count}");
 
             // Synchronize button count with room count.
@@ -126,12 +131,12 @@ namespace Examples.Lobby.Scripts.InLobby
             }
             if (room.IsOpen)
             {
-                roomText += $" ({room.PlayerCount})";
+                roomText += $" ({room.PlayerCount} wait)";
                 roomText = $"<color=blue>{roomText}</color>";
             }
             else
             {
-                roomText += " (closed)";
+                roomText += $" ({room.PlayerCount} playing)";
                 roomText = $"<color=brown>{roomText}</color>";
             }
             Debug.Log($"update '{text.text}' -> '{roomText}'");
