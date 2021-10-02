@@ -1,12 +1,12 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.Unity;
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Prg.Scripts.Common.Photon
+namespace Battle.Scripts.Photon
 {
     public class LobbyHelper
     {
@@ -35,7 +35,6 @@ namespace Prg.Scripts.Common.Photon
             Application.quitting += () => isApplicationQuitting = true;
         }
 
-        [Obsolete("This class is obsolete. Use PhotonLobby instead and handle spectators separately.")]
         public static LobbyHelper Get(KeyNames keynames)
         {
             return new LobbyHelper(keynames);
@@ -54,7 +53,7 @@ namespace Prg.Scripts.Common.Photon
             {
                 return;
             }
-            SequenceDiagram.receive(nameof(LobbyHelper), SD.CONNECT);
+            //-SequenceDiagram.receive(nameof(LobbyHelper), SD.CONNECT);
             if (PhotonNetwork.OfflineMode)
             {
                 PhotonNetwork.OfflineMode = false;
@@ -73,7 +72,7 @@ namespace Prg.Scripts.Common.Photon
 
         public void disconnect()
         {
-            SequenceDiagram.receive(nameof(LobbyHelper), SD.DISCONNECT);
+            //-SequenceDiagram.receive(nameof(LobbyHelper), SD.DISCONNECT);
             PhotonNetwork.Disconnect();
         }
 
@@ -83,7 +82,7 @@ namespace Prg.Scripts.Common.Photon
             {
                 return;
             }
-            SequenceDiagram.receive(nameof(LobbyHelper), SD.JOIN_LOBBY);
+            //-SequenceDiagram.receive(nameof(LobbyHelper), SD.JOIN_LOBBY);
             if (PhotonNetwork.OfflineMode)
             {
                 throw new UnityException("PhotonNetwork.OfflineMode not allowed here");
@@ -100,7 +99,7 @@ namespace Prg.Scripts.Common.Photon
 
         public void leaveLobby()
         {
-            SequenceDiagram.receive(nameof(LobbyHelper), SD.LEAVE_LOBBY);
+            //-SequenceDiagram.receive(nameof(LobbyHelper), SD.LEAVE_LOBBY);
             if (PhotonNetwork.InLobby)
             {
                 Debug.Log("LeaveLobby");
@@ -116,7 +115,7 @@ namespace Prg.Scripts.Common.Photon
             {
                 return;
             }
-            SequenceDiagram.receive(nameof(LobbyHelper), SD.CREATE_ROOM);
+            //-SequenceDiagram.receive(nameof(LobbyHelper), SD.CREATE_ROOM);
             if (string.IsNullOrWhiteSpace(roomName))
             {
                 roomName = null; // Let Photon generate room name us to ensure that room creation succeeds
@@ -135,7 +134,7 @@ namespace Prg.Scripts.Common.Photon
             {
                 return false;
             }
-            SequenceDiagram.receive(nameof(LobbyHelper), SD.JOIN_ROOM);
+            //-SequenceDiagram.receive(nameof(LobbyHelper), SD.JOIN_ROOM);
             var player = PhotonNetwork.LocalPlayer;
             var isSpectator = false;//player.IsSpectator();
             countLobbyParticipants(roomInfo, out var playerCount, out var maxPlayerCount, out var spectatorCount);
@@ -168,7 +167,7 @@ namespace Prg.Scripts.Common.Photon
             {
                 return;
             }
-            SequenceDiagram.receive(nameof(LobbyHelper), SD.JOIN_ROOM);
+            //-SequenceDiagram.receive(nameof(LobbyHelper), SD.JOIN_ROOM);
             Debug.Log($"joinOrCreateRoom {roomName}");
 
             var options = new RoomOptions
@@ -182,7 +181,7 @@ namespace Prg.Scripts.Common.Photon
 
         public void closeAndHideRoom(bool keepOpen = false, bool keepVisible = false)
         {
-            SequenceDiagram.receive(nameof(LobbyHelper), SD.CLOSE_ROOM);
+            //-SequenceDiagram.receive(nameof(LobbyHelper), SD.CLOSE_ROOM);
             if (!PhotonNetwork.InRoom)
             {
                 throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
@@ -197,7 +196,7 @@ namespace Prg.Scripts.Common.Photon
 
         public void leaveRoom()
         {
-            SequenceDiagram.receive(nameof(LobbyHelper), SD.LEAVE_ROOM);
+            //-SequenceDiagram.receive(nameof(LobbyHelper), SD.LEAVE_ROOM);
             if (PhotonNetwork.InRoom)
             {
                 PhotonNetwork.LeaveRoom();

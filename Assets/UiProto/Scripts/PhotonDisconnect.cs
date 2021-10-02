@@ -2,7 +2,7 @@
 using Photon.Realtime;
 using UnityEngine;
 
-namespace Prg.Scripts.Common.Photon
+namespace UiProto.Scripts
 {
     public class PhotonDisconnect : MonoBehaviour
     {

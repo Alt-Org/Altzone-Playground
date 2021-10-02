@@ -8,7 +8,7 @@ using System.Linq;
 using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-namespace Prg.Scripts.Common.Photon
+namespace Battle.Scripts.Photon
 {
     /// <summary>
     /// Watch Photon network events on behalf of clients.

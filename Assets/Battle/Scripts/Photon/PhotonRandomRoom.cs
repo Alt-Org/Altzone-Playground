@@ -5,7 +5,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Prg.Scripts.Common.Photon
+namespace Battle.Scripts.Photon
 {
     /// <summary>
     /// Helper class to create a room for continuous online mode testing
