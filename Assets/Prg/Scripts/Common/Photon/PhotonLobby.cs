@@ -24,11 +24,16 @@ namespace Prg.Scripts.Common.Photon
         }
 
         /// <summary>
-        /// To override default <c>PhotonNetwork.GameVersion</c> set to <c>Application.version</c>.
+        /// Official game version for Photon.
         /// </summary>
-        public static Func<string> gameVersion = () => _gameVersion;
+        public static string gameVersion => _gameVersion();
 
-        private static string _gameVersion => Application.version;
+        /// <summary>
+        /// To override default <c>PhotonNetwork.GameVersion</c> that is alias for <c>Application.version</c>.
+        /// </summary>
+        public static Func<string> _gameVersion = () => __gameVersion;
+
+        private static string __gameVersion => Application.version;
 
         public static void connect(string playerName, bool isAutomaticallySyncScene = true)
         {
@@ -195,7 +200,7 @@ namespace Prg.Scripts.Common.Photon
                 : PhotonNetwork.ConnectUsingSettings();
             if (started)
             {
-                PhotonNetwork.GameVersion = gameVersion();
+                PhotonNetwork.GameVersion = gameVersion;
                 Debug.Log($"Set GameVersion: {PhotonNetwork.GameVersion}");
             }
         }

@@ -12,7 +12,7 @@ namespace Examples.Lobby.Scripts.InLobby
 
         private void Start()
         {
-            titleText.text = $"Welcome to {Application.productName} {PhotonLobby.gameVersion()}";
+            titleText.text = $"Welcome to {Application.productName} {PhotonLobby.gameVersion}";
         }
 
         private void Update()

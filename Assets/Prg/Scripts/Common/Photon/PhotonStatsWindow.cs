@@ -110,7 +110,7 @@ namespace Prg.Scripts.Common.Photon
                     }
                 }
             }
-            label += $"\r\nPhoton v='{PhotonLobby.gameVersion()}'";
+            label += $"\r\nPhoton v='{PhotonLobby.gameVersion}'";
             label += $"\r\nSend rate={PhotonNetwork.SendRate} ser rate={PhotonNetwork.SerializationRate}";
             GUILayout.Label(label, guiLabelStyle);
         }

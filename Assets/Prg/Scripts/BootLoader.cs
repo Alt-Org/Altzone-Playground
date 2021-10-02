@@ -37,7 +37,7 @@ namespace Prg.Scripts
 
             if (!string.IsNullOrWhiteSpace(LocalDevConfig.Instance.photonVersionPrefix))
             {
-                PhotonLobby.gameVersion = () => $"{LocalDevConfig.Instance.photonVersionPrefix}{Application.version}";
+                PhotonLobby._gameVersion = () => $"{LocalDevConfig.Instance.photonVersionPrefix}{Application.version}";
             }
         }
     }
