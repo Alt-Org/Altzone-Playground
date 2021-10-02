@@ -17,15 +17,8 @@ namespace Examples.Lobby.Scripts.InRoom
         private const string playerMainSkillKey = LobbyManager.playerMainSkillKey;
         private const int playerIsGuest = LobbyManager.playerIsGuest;
 
-        [SerializeField] private GameObject contentRoot;
+        [SerializeField] private Transform contentRoot;
         [SerializeField] private Text textTemplate;
-
-        [SerializeField] private List<Text> textLines;
-
-        private void Start()
-        {
-            textLines = new List<Text>();
-        }
 
         private void OnEnable()
         {
@@ -39,6 +32,7 @@ namespace Examples.Lobby.Scripts.InRoom
         private void OnDisable()
         {
             PhotonNetwork.RemoveCallbackTarget(this);
+            deleteExtraLines(contentRoot);
         }
 
         private void updateStatus()
@@ -46,35 +40,45 @@ namespace Examples.Lobby.Scripts.InRoom
             // Use PaneRoomListing.updateStatus() style to manage dynamic text lines - IMHO is has better implementation!
             if (!PhotonNetwork.InRoom)
             {
-                deleteExtraLines(textLines, 0);
+                deleteExtraLines(contentRoot);
                 return;
             }
             var players = PhotonNetwork.CurrentRoom.GetPlayersByNickName().ToList();
-            Debug.Log($"updateStatus {PhotonNetwork.NetworkClientState} lines: {textLines.Count} players: {players.Count}");
+            Debug.Log($"updateStatus {PhotonNetwork.NetworkClientState} lines: {contentRoot.childCount} players: {players.Count}");
 
             // Synchronize line count with player count.
-            while (textLines.Count < players.Count)
+            while (contentRoot.childCount < players.Count)
             {
-                textLines.Add(duplicate(textTemplate));
+                addTextLine(contentRoot, textTemplate);
             }
-            deleteExtraLines(textLines, players.Count);
-            // Update button captions
+            // Update text lines
             for (var i = 0; i < players.Count; ++i)
             {
                 var player = players[i];
-                var line = textLines[i];
+                var lineObject = contentRoot.GetChild(i).gameObject;
+                lineObject.SetActive(true);
+                var line = lineObject.GetComponent<Text>();
                 update(line, player);
+            }
+            // Hide extra lines
+            if (contentRoot.childCount > players.Count)
+            {
+                for (var i = players.Count; i < contentRoot.childCount; ++i)
+                {
+                    var lineObject = contentRoot.GetChild(i).gameObject;
+                    if (lineObject.activeSelf)
+                    {
+                        lineObject.SetActive(false);
+                    }
+                }
             }
         }
 
-        private Text duplicate(Text template)
+        private void addTextLine(Transform parent, Text template)
         {
             var templateParent = template.gameObject;
-            var instance = Instantiate(templateParent, contentRoot.transform);
+            var instance = Instantiate(templateParent, parent);
             instance.SetActive(true);
-            var text = instance.GetComponent<Text>();
-            Debug.Log("duplicate");
-            return text;
         }
 
         private static readonly string[] skillNames = { "---", "Des", "Def", "Int", "Pro", "Ret", "Ego", "Con" };
@@ -96,17 +100,13 @@ namespace Examples.Lobby.Scripts.InRoom
             text.text = playerText;
         }
 
-        private static void deleteExtraLines(List<Text> lines, int linesToKeep)
+        private static void deleteExtraLines(Transform parent)
         {
-            while (lines.Count > linesToKeep)
+            var childCount = parent.childCount;
+            for (var i = childCount - 1; i >= 0; --i)
             {
-                var lastLine = lines[lines.Count - 1];
-                Debug.Log($"Destroy '{lastLine.GetComponent<Text>().text}'");
-                if (!lines.Remove(lastLine))
-                {
-                    throw new UnityException("can not remove line");
-                }
-                Destroy(lastLine.gameObject);
+                var child = parent.GetChild(i).gameObject;
+                Destroy(child);
             }
         }
 

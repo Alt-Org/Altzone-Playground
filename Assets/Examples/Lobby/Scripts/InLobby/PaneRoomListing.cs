@@ -74,13 +74,11 @@ namespace Examples.Lobby.Scripts.InLobby
             {
                 var room = rooms[i];
                 var buttonObject = buttonParent.GetChild(i).gameObject;
-                if (!buttonObject.activeSelf)
-                {
-                    buttonObject.SetActive(true);
-                }
+                buttonObject.SetActive(true);
                 var button = buttonObject.GetComponent<Button>();
                 update(button, room);
             }
+            // Hide extra lines
             if (buttonParent.childCount > rooms.Count)
             {
                 for (var i = rooms.Count; i < buttonParent.childCount; ++i)
@@ -118,7 +116,7 @@ namespace Examples.Lobby.Scripts.InLobby
         {
             var templateParent = template.gameObject;
             var instance = Instantiate(templateParent, parent);
-            Debug.Log($"duplicate {instance.name}");
+            instance.SetActive(true);
         }
 
         private void update(Button button, RoomInfo room)
@@ -131,7 +129,7 @@ namespace Examples.Lobby.Scripts.InLobby
             }
             if (room.IsOpen)
             {
-                roomText += $" ({room.PlayerCount} wait)";
+                roomText += $" ({room.PlayerCount} in room)";
                 roomText = $"<color=blue>{roomText}</color>";
             }
             else
@@ -154,7 +152,6 @@ namespace Examples.Lobby.Scripts.InLobby
             for (var i = childCount - 1; i >= 0; --i)
             {
                 var child = parent.GetChild(i).gameObject;
-                Debug.Log($"Destroy {child.name}");
                 Destroy(child);
             }
         }

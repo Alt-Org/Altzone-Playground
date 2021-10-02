@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   features:
     isRotateGameCamera: 1
-    isSPawnMiniBall: 1
+    isSPawnMiniBall: 0
     isActivateTeamWithBall: 1
   variables:
     ballMoveSpeed: 7
