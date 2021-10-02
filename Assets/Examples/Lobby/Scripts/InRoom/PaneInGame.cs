@@ -32,7 +32,7 @@ namespace Examples.Lobby.Scripts.InRoom
             {
                 throw new UnityException("invalid positionIndex: " + positionIndex);
             }
-            this.Publish(new LobbyManager.Event(positionMap[positionIndex]));
+            this.Publish(new LobbyManager.PlayerPosEvent(positionMap[positionIndex]));
         }
     }
 }

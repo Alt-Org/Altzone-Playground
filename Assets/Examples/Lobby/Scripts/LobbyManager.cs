@@ -36,13 +36,13 @@ namespace Examples.Lobby.Scripts
         public override void OnEnable()
         {
             base.OnEnable();
-            this.Subscribe<Event>(onEvent);
+            this.Subscribe<PlayerPosEvent>(OnPlayerPosEvent);
         }
 
         public override void OnDisable()
         {
             base.OnDisable();
-            this.Unsubscribe<Event>(onEvent);
+            this.Unsubscribe();
         }
 
         private void OnApplicationQuit()
@@ -66,7 +66,7 @@ namespace Examples.Lobby.Scripts
             }
         }
 
-        private void onEvent(Event data)
+        private void OnPlayerPosEvent(PlayerPosEvent data)
         {
             Debug.Log($"onEvent {data}");
             if (data.playerPosition == startPlaying)
@@ -137,11 +137,11 @@ namespace Examples.Lobby.Scripts
             SceneManager.LoadScene(cancelLevel.unityName);
         }
 
-        public class Event
+        public class PlayerPosEvent
         {
             public readonly int playerPosition;
 
-            public Event(int playerPosition)
+            public PlayerPosEvent(int playerPosition)
             {
                 this.playerPosition = playerPosition;
             }

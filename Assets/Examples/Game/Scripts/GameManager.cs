@@ -101,7 +101,7 @@ namespace Examples.Game.Scripts
                 score.headCollisionCount = _headCollisionCount;
                 score.wallCollisionCount = _wallCollisionCount;
 
-                this.Publish(new Event(score));
+                this.Publish(new TeamScoreEvent(score));
                 // Dirty hack to keep score updating in somewhere global storage
                 if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom)
                 {
@@ -122,16 +122,16 @@ namespace Examples.Game.Scripts
         {
             base.OnEnable();
             Debug.Log($"OnEnable: {PhotonNetwork.NetworkClientState}");
-            this.Subscribe<BallMovement.CollisionEvent>(OnBallCollision);
-            this.Publish(new Event(scores[0]));
-            this.Publish(new Event(scores[1]));
+            this.Subscribe<BallMovement.CollisionEvent>(OnCollisionEvent);
+            this.Publish(new TeamScoreEvent(scores[0]));
+            this.Publish(new TeamScoreEvent(scores[1]));
             instantiateLocalPlayer();
         }
 
         public override void OnDisable()
         {
             base.OnDisable();
-            this.Unsubscribe<BallMovement.CollisionEvent>(OnBallCollision);
+            this.Unsubscribe();
         }
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -144,7 +144,7 @@ namespace Examples.Game.Scripts
             }
         }
 
-        private void OnBallCollision(BallMovement.CollisionEvent data)
+        private void OnCollisionEvent(BallMovement.CollisionEvent data)
         {
             // var hasLayer = layerMask == (layerMask | 1 << _layer); // unity3d check if layer mask contains a layer
 
@@ -254,11 +254,11 @@ namespace Examples.Game.Scripts
             return new Rect(x, y, width, height);
         }
 
-        public class Event
+        public class TeamScoreEvent
         {
             public readonly TeamScore score;
 
-            public Event(TeamScore score)
+            public TeamScoreEvent(TeamScore score)
             {
                 this.score = score;
             }

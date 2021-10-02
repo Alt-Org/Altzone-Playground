@@ -29,24 +29,22 @@ namespace Examples.Game.Scripts
                 playerMovement = value;
                 _transform = transform;
                 playerPositionZ = _transform.position.z;
-                this.Subscribe<InputManager.ClickDownEvent>(onClickDownEvent);
-                this.Subscribe<InputManager.ClickUpEvent>(onClickUpEvent);
+                this.Subscribe<InputManager.ClickDownEvent>(OnClickDownEvent);
+                this.Subscribe<InputManager.ClickUpEvent>(OnClickUpEvent);
             }
         }
 
         private void OnDestroy()
         {
-            // Unsubscribe always as photonView can be destroyed before us
-            this.Unsubscribe<InputManager.ClickDownEvent>(onClickDownEvent);
-            this.Unsubscribe<InputManager.ClickUpEvent>(onClickUpEvent);
+            this.Unsubscribe();
         }
 
-        private void onClickDownEvent(InputManager.ClickDownEvent data)
+        private void OnClickDownEvent(InputManager.ClickDownEvent data)
         {
             movePlayerTo(data.ScreenPosition);
         }
 
-        private void onClickUpEvent(InputManager.ClickUpEvent data)
+        private void OnClickUpEvent(InputManager.ClickUpEvent data)
         {
             movePlayerTo(data.ScreenPosition);
         }

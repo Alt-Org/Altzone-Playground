@@ -18,17 +18,17 @@ namespace Examples.Game.Scripts
         {
             leftText.text = "initializing";
             rightText.text = "initializing";
-            this.Subscribe<GameManager.Event>(OnGameDataUpdate);
+            this.Subscribe<GameManager.TeamScoreEvent>(OnTeamScoreEvent);
         }
 
         private void OnDisable()
         {
             leftText.text = "";
             rightText.text = "";
-            this.Unsubscribe<GameManager.Event>(OnGameDataUpdate);
+            this.Unsubscribe();
         }
 
-        private void OnGameDataUpdate(GameManager.Event data)
+        private void OnTeamScoreEvent(GameManager.TeamScoreEvent data)
         {
             Debug.Log($"OnGameDataUpdate {data}");
             var score = data.score;

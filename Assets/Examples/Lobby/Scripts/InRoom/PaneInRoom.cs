@@ -25,21 +25,21 @@ namespace Examples.Lobby.Scripts.InRoom
         private void setPlayerAsGuest()
         {
             Debug.Log($"setPlayerAsGuest {LobbyManager.playerIsGuest}");
-            this.Publish(new LobbyManager.Event(LobbyManager.playerIsGuest));
+            this.Publish(new LobbyManager.PlayerPosEvent(LobbyManager.playerIsGuest));
 
         }
 
         private void setPlayerAsSpectator()
         {
             Debug.Log($"setPlayerAsSpectator {LobbyManager.playerIsSpectator}");
-            this.Publish(new LobbyManager.Event(LobbyManager.playerIsSpectator));
+            this.Publish(new LobbyManager.PlayerPosEvent(LobbyManager.playerIsSpectator));
 
         }
 
         private void startPlaying()
         {
             Debug.Log($"startPlaying {LobbyManager.startPlaying}");
-            this.Publish(new LobbyManager.Event(LobbyManager.startPlaying));
+            this.Publish(new LobbyManager.PlayerPosEvent(LobbyManager.startPlaying));
 
         }
 

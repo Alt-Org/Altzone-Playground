@@ -56,7 +56,7 @@ namespace Examples.Game.Scripts
         {
             Debug.Log($"OnEnable IsMine={_photonView.IsMine} initialPosition={initialPosition}");
             base.OnEnable();
-            this.Subscribe<BallMovement.ActiveTeamEvent>(OnActiveTeam);
+            this.Subscribe<BallMovement.ActiveTeamEvent>(OnActiveTeamEvent);
             if (PhotonNetwork.InRoom)
             {
                 startPlaying();
@@ -66,10 +66,10 @@ namespace Examples.Game.Scripts
         public override void OnDisable()
         {
             base.OnDisable();
-            this.Unsubscribe<BallMovement.ActiveTeamEvent>(OnActiveTeam);
+            this.Unsubscribe();
         }
 
-        private void OnActiveTeam(BallMovement.ActiveTeamEvent data)
+        private void OnActiveTeamEvent(BallMovement.ActiveTeamEvent data)
         {
             canMove = data.teamIndex == teamIndex;
             if (canMove)

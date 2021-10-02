@@ -97,18 +97,18 @@ namespace Examples.Game.Scripts
                 var newDefence = (Defence) Enum.ToObject(typeof(Defence), data.CustomData);
                 Debug.Log($"set Defence {curDefence} <- {newDefence}");
                 curDefence = newDefence;
-                this.Publish(new Event(curDefence));
+                this.Publish(new DefenceEvent(curDefence));
             });
         }
 
         private void OnEnable()
         {
-            this.Subscribe<Event>(OnDefenceChanged);
+            this.Subscribe<DefenceEvent>(onDefenceEvent);
         }
 
         private void OnDisable()
         {
-            this.Unsubscribe<Event>(OnDefenceChanged);
+            this.Unsubscribe();
         }
 
         private void OnDestroy()
@@ -119,16 +119,17 @@ namespace Examples.Game.Scripts
             }
         }
 
-        private static void OnDefenceChanged(Event data)
+        private static void onDefenceEvent(DefenceEvent data)
         {
+            // We just monitor the event!
             Debug.Log($"changed Defence {data.Defence}");
         }
 
-        public class Event
+        public class DefenceEvent
         {
             public readonly Defence Defence;
 
-            public Event(Defence defence)
+            public DefenceEvent(Defence defence)
             {
                 Defence = defence;
             }
