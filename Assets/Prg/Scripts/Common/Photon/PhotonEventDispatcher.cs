@@ -6,6 +6,12 @@ using UnityEngine;
 
 namespace Prg.Scripts.Common.Photon
 {
+    /// <summary>
+    /// Wrapper and helper for PhotonNetwork.RaiseEvent and receiving events on one place.
+    /// </summary>
+    /// <remarks>
+    /// We use lazy initialization and <c>DontDestroyOnLoad</c> to stay alive (for ever).
+    /// </remarks>
     public class PhotonEventDispatcher : MonoBehaviour, IOnEventCallback
     {
         public const int eventCodeBase = 10;

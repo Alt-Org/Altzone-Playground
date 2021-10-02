@@ -9,6 +9,12 @@ using UnityEngine.SceneManagement;
 
 namespace Prg.Scripts.Common.Photon
 {
+    /// <summary>
+    /// Utility to log all Photon events.
+    /// </summary>
+    /// <remarks>
+    /// Should have very low "script execution order" number in order to be able to log events before others can see them.
+    /// </remarks>
     public class PhotonListener : MonoBehaviour,
         IConnectionCallbacks, ILobbyCallbacks, IMatchmakingCallbacks, IInRoomCallbacks, IPunOwnershipCallbacks
     {
