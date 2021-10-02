@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using Prg.Scripts.Common.Photon;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +12,7 @@ namespace Examples.Lobby.Scripts.InLobby
 
         private void Start()
         {
-            titleText.text = $"Welcome to {Application.productName} {Application.version}";
+            titleText.text = $"Welcome to {Application.productName} {PhotonLobby.gameVersion()}";
         }
 
         private void Update()
