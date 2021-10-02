@@ -2,6 +2,12 @@
 
 namespace DigitalRuby
 {
+    /// <summary>
+    /// Component to return its <c>GameObject</c> to pool when given trigger collider collides with us.
+    /// </summary>
+    /// <remarks>
+    /// Note that when <c>GameObject</c> is in pool it is inactive and this implementation relies on this!
+    /// </remarks>
     public class TriggerReturnToPool : MonoBehaviour
     {
         public LayerMask collisionMask;

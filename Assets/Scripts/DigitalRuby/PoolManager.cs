@@ -3,12 +3,18 @@ using UnityEngine;
 
 namespace DigitalRuby
 {
+    /// <summary>
+    /// Thin wrapper around <c>SpawningPool</c>
+    /// </summary>
+    /// <remarks>
+    /// We allow pooled objects to be seen and edited as usual!<br />
+    /// -this has slightly annoying side effect that all pooled objects are visible under DontDestroyOnLoad in Editor Hierarchy window
+    /// </remarks>
     public static class PoolManager
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void beforeSceneLoad()
         {
-            // We allow pooled objects to be seen and edited as usual!
             SpawningPool.DefaultHideFlags = HideFlags.None;
             Application.quitting += () => isApplicationQuitting = true;
         }
@@ -42,7 +48,7 @@ namespace DigitalRuby
 
         public static bool ReturnToCache(GameObject pooledObject)
         {
-            return SpawningPool.ReturnToCache(pooledObject);
+            return pooledObject.ReturnToCache();
         }
 
         public static bool ReturnToCache(GameObject pooledObject, string key)
