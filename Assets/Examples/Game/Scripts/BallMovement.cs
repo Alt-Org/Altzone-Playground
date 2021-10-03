@@ -142,6 +142,10 @@ namespace Examples.Game.Scripts
             {
                 return; // Collision events will be sent to disabled MonoBehaviours, to allow enabling Behaviours in response to collisions.
             }
+            if (!canMove)
+            {
+                return; // We can be started before we are in a room, we ignore collision until in room
+            }
             //Debug.Log($"OnTriggerEnter2D {other.gameObject.name}");
             if (other.Equals(upperTeam))
             {
@@ -162,6 +166,10 @@ namespace Examples.Game.Scripts
             if (!enabled)
             {
                 return; // Collision events will be sent to disabled MonoBehaviours, to allow enabling Behaviours in response to collisions.
+            }
+            if (!canMove)
+            {
+                return; // We can be started before we are in a room, we ignore collision until in room
             }
             //Debug.Log($"OnTriggerExit2D {other.gameObject.name}");
             if (other.Equals(upperTeam))
