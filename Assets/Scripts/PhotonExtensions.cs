@@ -2,7 +2,6 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -60,22 +59,39 @@ public static class PhotonExtensions
 
     public static void SafeSetCustomProperty<T>(this Player player, string key, T newValue, T currentValue) where T : struct
     {
-        var isTypeAcceptable = newValue is bool || newValue is int; // T is limited to some "value types" which struct represents!
-        if (isTypeAcceptable)
+        // T is limited to some "value types" which struct represents!
+        var isTypeAcceptable = newValue is bool ||
+                               newValue is byte ||
+                               newValue is short ||
+                               newValue is int;
+        if (!isTypeAcceptable)
         {
-            var props = new Hashtable { { key, newValue } };
+            throw new UnityException("type is not supported: " + typeof(T));
+        }
+        var props = new Hashtable { { key, newValue } };
+        if (!player.CustomProperties.ContainsKey(key))
+        {
+            player.SetCustomProperties(props); // can not check!
+        }
+        else
+        {
             var expectedProps = new Hashtable { { key, currentValue } };
             player.SetCustomProperties(props, expectedProps);
-            return;
         }
-        throw new UnityException("type is not supported: " + typeof(T));
     }
 
     public static void SafeSetCustomProperty(this Player player, string key, string newValue, string currentValue)
     {
         var props = new Hashtable { { key, newValue } };
-        var expectedProps = new Hashtable { { key, currentValue } };
-        player.SetCustomProperties(props, expectedProps);
+        if (!player.CustomProperties.ContainsKey(key))
+        {
+            player.SetCustomProperties(props); // can not check!
+        }
+        else
+        {
+            var expectedProps = new Hashtable { { key, currentValue } };
+            player.SetCustomProperties(props, expectedProps);
+        }
     }
 
     public static void RemoveCustomProperty(this Player player, string key)
@@ -85,27 +101,6 @@ public static class PhotonExtensions
             var props = new Hashtable { { key, null } };
             player.SetCustomProperties(props);
         }
-    }
-
-    public static void SafeSetCustomProperty(this Room room, string key, byte newValue, byte currentValue)
-    {
-        var props = new Hashtable { { key, newValue } };
-        var expectedProps = new Hashtable { { key, currentValue } };
-        room.SetCustomProperties(props, expectedProps);
-    }
-
-    public static void SafeSetCustomProperty(this Room room, string key, short newValue, short currentValue)
-    {
-        var props = new Hashtable { { key, newValue } };
-        var expectedProps = new Hashtable { { key, currentValue } };
-        room.SetCustomProperties(props, expectedProps);
-    }
-
-    public static void SafeSetCustomProperty(this Room room, string key, string newValue, string currentValue)
-    {
-        var props = new Hashtable { { key, newValue } };
-        var expectedProps = new Hashtable { { key, currentValue } };
-        room.SetCustomProperties(props, expectedProps);
     }
 
     public static T GetCustomProperty<T>(this Player player, string key, T defaultValue = default)
@@ -122,6 +117,43 @@ public static class PhotonExtensions
         return defaultValue;
     }
 
+    public static void SafeSetCustomProperty<T>(this Room room, string key, T newValue, T currentValue) where T : struct
+    {
+        // T is limited to some "value types" which struct represents!
+        var isTypeAcceptable = newValue is bool ||
+                               newValue is byte ||
+                               newValue is short ||
+                               newValue is int;
+        if (!isTypeAcceptable)
+        {
+            throw new UnityException("type is not supported: " + typeof(T));
+        }
+        var props = new Hashtable { { key, newValue } };
+        if (!room.CustomProperties.ContainsKey(key))
+        {
+            room.SetCustomProperties(props); // can not check!
+        }
+        else
+        {
+            var expectedProps = new Hashtable { { key, currentValue } };
+            room.SetCustomProperties(props, expectedProps);
+        }
+    }
+
+    public static void SafeSetCustomProperty(this Room room, string key, string newValue, string currentValue)
+    {
+        var props = new Hashtable { { key, newValue } };
+        if (!room.CustomProperties.ContainsKey(key))
+        {
+            room.SetCustomProperties(props); // can not check!
+        }
+        else
+        {
+            var expectedProps = new Hashtable { { key, currentValue } };
+            room.SetCustomProperties(props, expectedProps);
+        }
+    }
+
     public static T GetCustomProperty<T>(this RoomInfo room, string key, T defaultValue = default)
     {
         if (room.CustomProperties.TryGetValue(key, out var propValue))
@@ -134,6 +166,15 @@ public static class PhotonExtensions
                 $"GetCustomProperty value {propValue} ({propValue.GetType().FullName}) is not correct type: {typeof(T).FullName}");
         }
         return defaultValue;
+    }
+
+    public static void RemoveCustomProperty(this Room room, string key)
+    {
+        if (room.CustomProperties.ContainsKey(key))
+        {
+            var props = new Hashtable { { key, null } };
+            room.SetCustomProperties(props);
+        }
     }
 
     #endregion
