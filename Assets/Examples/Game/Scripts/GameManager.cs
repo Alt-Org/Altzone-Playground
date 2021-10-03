@@ -1,5 +1,4 @@
 using Examples.Lobby.Scripts;
-using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
@@ -95,20 +94,23 @@ namespace Examples.Game.Scripts
             {
                 TeamScore.FromBytes(data.CustomData, out var _teamIndex, out var _headCollisionCount, out var _wallCollisionCount);
                 var score = scores[_teamIndex];
-
                 Debug.Log(
-                    $"Synchronize head:{score.headCollisionCount}<-{_headCollisionCount} wall:{score.wallCollisionCount}<-{_wallCollisionCount}");
+                    $"Score head:{score.headCollisionCount}<-{_headCollisionCount} wall:{score.wallCollisionCount}<-{_wallCollisionCount}");
                 score.headCollisionCount = _headCollisionCount;
                 score.wallCollisionCount = _wallCollisionCount;
-
                 this.Publish(new TeamScoreEvent(score));
+
                 // Dirty hack to keep score updating in somewhere global storage
                 if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom)
                 {
                     var room = PhotonNetwork.CurrentRoom;
                     var key = $"T{score.teamIndex}";
-                    var value = score.wallCollisionCount;
-                    room.SetCustomProperties(new Hashtable { { key, value } });
+                    var newValue = score.wallCollisionCount;
+                    var curValue = room.GetCustomProperty(key, 0);
+                    if (newValue != curValue)
+                    {
+                        room.SafeSetCustomProperty(key, newValue, curValue);
+                    }
                 }
             });
             photonEventDispatcher.registerEventListener(photonEventCodeBrick, data =>
