@@ -1,5 +1,4 @@
 ﻿using Photon.Pun;
-using Photon.Realtime;
 using Prg.Scripts.Common.PubSub;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,7 +13,6 @@ namespace Examples.Lobby.Scripts.InRoom
         [SerializeField] private Text title;
         [SerializeField] private Button[] buttons;
 
-        private ClientState curClientState;
         private void Start()
         {
             buttons[0].onClick.AddListener(setPlayerAsGuest);
@@ -26,21 +24,18 @@ namespace Examples.Lobby.Scripts.InRoom
         {
             Debug.Log($"setPlayerAsGuest {LobbyManager.playerIsGuest}");
             this.Publish(new LobbyManager.PlayerPosEvent(LobbyManager.playerIsGuest));
-
         }
 
         private void setPlayerAsSpectator()
         {
             Debug.Log($"setPlayerAsSpectator {LobbyManager.playerIsSpectator}");
             this.Publish(new LobbyManager.PlayerPosEvent(LobbyManager.playerIsSpectator));
-
         }
 
         private void startPlaying()
         {
             Debug.Log($"startPlaying {LobbyManager.startPlaying}");
             this.Publish(new LobbyManager.PlayerPosEvent(LobbyManager.startPlaying));
-
         }
 
         /// <summary>
@@ -48,13 +43,7 @@ namespace Examples.Lobby.Scripts.InRoom
         /// </summary>
         private void Update()
         {
-            if (curClientState == PhotonNetwork.NetworkClientState)
-            {
-                return;
-            }
-            curClientState = PhotonNetwork.NetworkClientState;
-            var room = PhotonNetwork.CurrentRoom;
-            title.text = room?.Name ?? "<color=red><b>Not in room</b></color>";
+            title.text = PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : "<color=red><b>Not in room</b></color>";
         }
     }
 }

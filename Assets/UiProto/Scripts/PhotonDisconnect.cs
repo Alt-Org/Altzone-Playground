@@ -1,5 +1,4 @@
-﻿using Photon.Pun;
-using Photon.Realtime;
+﻿using Prg.Scripts.Common.Photon;
 using UnityEngine;
 
 namespace UiProto.Scripts
@@ -8,22 +7,20 @@ namespace UiProto.Scripts
     {
         private void Update()
         {
-            var state = PhotonNetwork.NetworkClientState;
-            var isOK = state == ClientState.PeerCreated || state == ClientState.ConnectedToMasterServer || state == ClientState.Disconnected;
-            if (isOK)
+            if (PhotonWrapper.IsPhotonReady)
             {
-                Debug.Log("Photon ready and idle: " + state);
+                Debug.Log("Photon is ready: " + PhotonWrapper.NetworkClientState);
                 enabled = false;
                 return;
             }
-            if (PhotonNetwork.InRoom)
+            if (PhotonWrapper.InRoom)
             {
-                PhotonNetwork.LeaveRoom();
+                PhotonLobby.leaveRoom();
                 return;
             }
-            if (PhotonNetwork.InLobby)
+            if (PhotonWrapper.InLobby)
             {
-                PhotonNetwork.LeaveLobby();
+                PhotonLobby.leaveLobby();
             }
         }
     }

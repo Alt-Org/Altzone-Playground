@@ -1,6 +1,4 @@
-﻿using Photon.Pun;
-using Photon.Realtime;
-using Prg.Scripts.Common.Photon;
+﻿using Prg.Scripts.Common.Photon;
 using System;
 using UnityEngine;
 
@@ -22,27 +20,26 @@ namespace Examples.Lobby.Scripts
 
         private void Update()
         {
-            if (PhotonNetwork.InLobby)
+            if (PhotonWrapper.InLobby)
             {
                 inLobby.SetActive(true);
                 enabled = false;
                 return;
             }
-            if (PhotonNetwork.InRoom)
+            if (PhotonWrapper.InRoom)
             {
                 PhotonLobby.leaveRoom();
                 return;
             }
-            var state = PhotonNetwork.NetworkClientState;
-            if (state == ClientState.ConnectedToMasterServer)
+            if (PhotonWrapper.CanJoinLobby)
             {
                 PhotonLobby.joinLobby();
                 return;
             }
-            var isOK = state == ClientState.PeerCreated || state == ClientState.Disconnected;
-            if (isOK)
+            if (PhotonWrapper.CanConnect)
             {
-                PhotonLobby.connect($"Player{DateTime.Now.Second:00}");
+                var randomPlayer = $"Player{DateTime.Now.Second:00}";
+                PhotonLobby.connect(randomPlayer);
             }
         }
     }

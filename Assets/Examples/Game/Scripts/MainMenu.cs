@@ -1,4 +1,4 @@
-﻿using Photon.Pun;
+﻿using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.Unity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,7 +19,7 @@ namespace Examples.Game.Scripts
         {
             if (Input.GetKeyUp(KeyCode.Escape))
             {
-                Debug.Log($"Escape {PhotonNetwork.NetworkClientState} {PhotonNetwork.LocalPlayer.NickName}");
+                Debug.Log($"Escape {PhotonWrapper.NetworkClientState}");
                 GotoMainMenu();
                 enabled = false;
             }

@@ -1,4 +1,4 @@
-using Photon.Pun;
+using Prg.Scripts.Common.Photon;
 using UnityEngine;
 
 namespace Examples.Lobby.Scripts
@@ -13,7 +13,7 @@ namespace Examples.Lobby.Scripts
 
         private void Update()
         {
-            if (PhotonNetwork.InRoom)
+            if (PhotonWrapper.InRoom)
             {
                 inLobby.SetActive(false);
                 inRoom.SetActive(true);

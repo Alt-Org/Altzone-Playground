@@ -1,4 +1,3 @@
-using Photon.Pun;
 using Prg.Scripts.Common.Photon;
 using System;
 using System.IO;
@@ -34,7 +33,7 @@ namespace Examples.Game.Scripts.Config
 
         public static void synchronize(What what)
         {
-            if (!PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient)
+            if (!PhotonWrapper.InRoom || !PhotonWrapper.IsMasterClient)
             {
                 throw new UnityException("only master client can synchronize in a room");
             }

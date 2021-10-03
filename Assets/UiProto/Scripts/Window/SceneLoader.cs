@@ -1,4 +1,4 @@
-using Photon.Pun;
+using Prg.Scripts.Common.Photon;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -29,7 +29,7 @@ namespace UiProto.Scripts.Window
         public static void LoadScene(string levelName)
         {
             var currentSceneName = SceneManager.GetActiveScene().name;
-            Debug.Log($"LoadScene {PhotonNetwork.NetworkClientState} : {currentSceneName} <- {levelName}");
+            Debug.Log($"LoadScene {PhotonWrapper.NetworkClientState} : {currentSceneName} <- {levelName}");
             var level = findLevel(levelName);
             if (level == null)
             {
@@ -43,7 +43,7 @@ namespace UiProto.Scripts.Window
         public static void LoadScene(LevelId levelId)
         {
             var currentSceneName = SceneManager.GetActiveScene().name;
-            Debug.Log($"LoadScene {PhotonNetwork.NetworkClientState} : {currentSceneName} <- {levelId}");
+            Debug.Log($"LoadScene {PhotonWrapper.NetworkClientState} : {currentSceneName} <- {levelId}");
             var level = findLevel(levelId);
             if (level == null)
             {
@@ -69,7 +69,7 @@ namespace UiProto.Scripts.Window
         private static void loadLevel(LevelIdDef level)
         {
             var currentSceneName = SceneManager.GetActiveScene().name;
-            Debug.Log($"loadLevel {PhotonNetwork.NetworkClientState} : {currentSceneName} <- {level}");
+            Debug.Log($"loadLevel {PhotonWrapper.NetworkClientState} : {currentSceneName} <- {level}");
             if (level.unityName == currentSceneName)
             {
                 WindowStack.dumpWindowStack();
@@ -77,7 +77,7 @@ namespace UiProto.Scripts.Window
             }
             if (level.isNetwork)
             {
-                PhotonNetwork.LoadLevel(level.unityName);
+                PhotonWrapper.LoadLevel(level.unityName);
             }
             else
             {

@@ -1,5 +1,4 @@
-﻿using Photon.Pun;
-using Prg.Scripts.Common.Photon;
+﻿using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
 using System;
 using UnityEngine;
@@ -61,7 +60,7 @@ namespace Examples.Game.Scripts
             get => curDefence;
             set
             {
-                if (!PhotonNetwork.IsMasterClient)
+                if (!PhotonWrapper.IsMasterClient)
                 {
                     throw new UnityException($"Only Master Client can change {nameof(GestaltRing)} {nameof(Defence)} state");
                 }
