@@ -11,6 +11,11 @@ namespace Prg.Scripts.Common.PubSub
             public Delegate Action { get; set; }
             public WeakReference Sender { get; set; }
             public Type Type { get; set; }
+
+            public override string ToString()
+            {
+                return $"A={Action.Method.Name}, S={(Sender.IsAlive ? Sender.Target : "dead")}, T={Type.Name}";
+            }
         }
 
         private readonly object locker = new object();
@@ -47,6 +52,7 @@ namespace Prg.Scripts.Common.PubSub
 
                 foreach (var l in handlersToRemoveList)
                 {
+                    //-Debug.Log($"remove {l}");
                     handlers.Remove(l);
                 }
             }
@@ -78,6 +84,7 @@ namespace Prg.Scripts.Common.PubSub
 
             lock (locker)
             {
+                //-Debug.Log($"subscribe {item}");
                 handlers.Add(item);
             }
         }
@@ -95,10 +102,11 @@ namespace Prg.Scripts.Common.PubSub
             lock (locker)
             {
                 var query = handlers.Where(a => !a.Sender.IsAlive ||
-                                                     a.Sender.Target.Equals(sender));
+                                                a.Sender.Target.Equals(sender));
 
                 foreach (var h in query.ToList())
                 {
+                    //-Debug.Log($"unsubscribe {h}");
                     handlers.Remove(h);
                 }
             }
@@ -138,6 +146,7 @@ namespace Prg.Scripts.Common.PubSub
 
                 foreach (var h in query.ToList())
                 {
+                    //-Debug.Log($"unsubscribe {h}");
                     handlers.Remove(h);
                 }
             }
