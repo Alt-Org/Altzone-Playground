@@ -1,13 +1,13 @@
+using Altzone.Scripts.Config;
 using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.Unity;
 using Prg.Scripts.Common.Util;
-using Prg.Scripts.Config;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using UnityEngine;
 
-namespace Prg.Scripts
+namespace Altzone.Scripts
 {
     public class BootLoader : MonoBehaviour
     {

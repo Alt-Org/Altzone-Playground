@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Prg.Scripts.Config
+namespace Altzone.Scripts.Config
 {
     /// <summary>
     /// Local development settings.

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Prg.Scripts.Config
+namespace Altzone.Scripts.Config
 {
     [CreateAssetMenu(menuName = "ALT-Zone/FolderConfig", fileName = "FolderConfig")]
     public class FolderConfig : ScriptableObject
