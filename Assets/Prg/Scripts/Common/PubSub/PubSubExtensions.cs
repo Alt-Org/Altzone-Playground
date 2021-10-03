@@ -2,7 +2,7 @@
 
 namespace Prg.Scripts.Common.PubSub
 {
-    internal static class PubSubExtensions
+    public static class PubSubExtensions
     {
         private static readonly Hub Hub = new Hub();
 
