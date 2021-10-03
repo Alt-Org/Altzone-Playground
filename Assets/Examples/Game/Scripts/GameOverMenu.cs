@@ -1,7 +1,7 @@
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
-using UiProto.Scripts.Window;
+using Prg.Scripts.Common.Unity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,7 +16,7 @@ namespace Examples.Game.Scripts
     /// </remarks>
     public class GameOverMenu : MonoBehaviour
     {
-        [Header("Settings"), SerializeField] private LevelIdDef mainMenu;
+        [Header("Settings"), SerializeField] private UnitySceneName mainScene;
         [SerializeField] private float waitForGracefulExit;
 
         [Header("Scores"), SerializeField] private Text team0;
@@ -88,8 +88,8 @@ namespace Examples.Game.Scripts
             var state = PhotonNetwork.NetworkClientState;
             if (state == ClientState.PeerCreated || state == ClientState.Disconnected || state == ClientState.ConnectedToMasterServer)
             {
-                Debug.Log($"LoadScene {PhotonNetwork.NetworkClientState} {mainMenu.unityName}");
-                SceneManager.LoadScene(mainMenu.unityName);
+                Debug.Log($"LoadScene {PhotonNetwork.NetworkClientState} {mainScene.sceneName}");
+                SceneManager.LoadScene(mainScene.sceneName);
                 enabled = false;
             }
         }

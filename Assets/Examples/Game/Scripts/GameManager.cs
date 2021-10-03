@@ -139,8 +139,8 @@ namespace Examples.Game.Scripts
             Debug.Log($"OnPlayerLeftRoom {otherPlayer.GetDebugLabel()}");
             if (PhotonNetwork.IsMasterClient)
             {
-                var startMenu = GetComponent<StartMenu>();
-                startMenu.GotoMenu();
+                var menu = GetComponent<MainMenu>();
+                menu.GotoMainMenu();
             }
         }
 

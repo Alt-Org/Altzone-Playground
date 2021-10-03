@@ -690,12 +690,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 543acb88a76a4df5ba9faabcdd92ec6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenu:
-    levelName: 
-    unityName: 70-Example-Lobby
-    isNetwork: 0
-    isExcluded: 0
-    levelId: 0
+  mainScene:
+    sceneName: 70-Example-Lobby
   waitForGracefulExit: 3
   team0: {fileID: 207037293}
   team1: {fileID: 1153401090}

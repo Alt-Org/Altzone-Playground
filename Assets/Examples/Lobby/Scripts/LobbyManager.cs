@@ -2,9 +2,9 @@ using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
+using Prg.Scripts.Common.Unity;
 using System.Collections;
 using System.Linq;
-using UiProto.Scripts.Window;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -30,8 +30,8 @@ namespace Examples.Lobby.Scripts
         public const int playerIsSpectator = 11;
         public const int startPlaying = 123;
 
-        [SerializeField] private LevelIdDef cancelLevel;
-        [SerializeField] private LevelIdDef gameLevel;
+        [SerializeField] private UnitySceneName gameScene;
+        [SerializeField] private UnitySceneName cancelScene;
 
         public override void OnEnable()
         {
@@ -62,7 +62,7 @@ namespace Examples.Lobby.Scripts
             if (Input.GetKeyUp(KeyCode.Escape))
             {
                 Debug.Log($"Escape {PhotonNetwork.NetworkClientState} {PhotonNetwork.LocalPlayer.NickName}");
-                SceneManager.LoadScene(cancelLevel.unityName);
+                SceneManager.LoadScene(cancelScene.sceneName);
             }
         }
 
@@ -71,7 +71,7 @@ namespace Examples.Lobby.Scripts
             Debug.Log($"onEvent {data}");
             if (data.playerPosition == startPlaying)
             {
-                StartCoroutine(startTheGameplay(gameLevel.unityName));
+                StartCoroutine(startTheGameplay(gameScene.sceneName));
                 return;
             }
             setPlayer(PhotonNetwork.LocalPlayer, data.playerPosition);
@@ -133,8 +133,8 @@ namespace Examples.Lobby.Scripts
             // Goto menu if we left (in)voluntarily any room
             // - typically master client kicked us off before starting a new game as we did not qualify to participate.
             Debug.Log($"OnLeftRoom {PhotonNetwork.LocalPlayer.GetDebugLabel()}");
-            Debug.Log($"LoadScene {cancelLevel.unityName}");
-            SceneManager.LoadScene(cancelLevel.unityName);
+            Debug.Log($"LoadScene {cancelScene.sceneName}");
+            SceneManager.LoadScene(cancelScene.sceneName);
         }
 
         public class PlayerPosEvent

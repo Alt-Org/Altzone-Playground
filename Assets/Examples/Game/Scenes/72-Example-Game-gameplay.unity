@@ -1146,12 +1146,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c679335e7b0ceda439c3edb2e1ecd68e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenu:
-    levelName: 
-    unityName: 74-Example-Game-gameover
-    isNetwork: 0
-    isExcluded: 0
-    levelId: 0
+  mainScene:
+    sceneName: 74-Example-Game-gameover
 --- !u!114 &991472592
 MonoBehaviour:
   m_ObjectHideFlags: 0

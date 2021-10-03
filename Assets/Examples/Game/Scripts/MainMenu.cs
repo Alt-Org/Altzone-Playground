@@ -1,5 +1,5 @@
 ﻿using Photon.Pun;
-using UiProto.Scripts.Window;
+using Prg.Scripts.Common.Unity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,23 +11,23 @@ namespace Examples.Game.Scripts
     /// <remarks>
     /// Do not close room here because loading new level during room close leads to errors from Photon!
     /// </remarks>
-    public class StartMenu : MonoBehaviour
+    public class MainMenu : MonoBehaviour
     {
-        [SerializeField] private LevelIdDef mainMenu;
+        [SerializeField] private UnitySceneName mainScene;
 
         private void Update()
         {
             if (Input.GetKeyUp(KeyCode.Escape))
             {
                 Debug.Log($"Escape {PhotonNetwork.NetworkClientState} {PhotonNetwork.LocalPlayer.NickName}");
-                GotoMenu();
+                GotoMainMenu();
                 enabled = false;
             }
         }
 
-        public void GotoMenu()
+        public void GotoMainMenu()
         {
-            SceneManager.LoadScene(mainMenu.unityName);
+            SceneManager.LoadScene(mainScene.sceneName);
         }
     }
 }

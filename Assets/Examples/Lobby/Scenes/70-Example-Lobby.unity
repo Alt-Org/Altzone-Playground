@@ -2613,7 +2613,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -532.15625, y: 0}
+  m_AnchoredPosition: {x: -532.15533, y: 0}
   m_SizeDelta: {x: 1064, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1059583873
@@ -2722,7 +2722,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 609486849}
   m_HandleRect: {fileID: 609486848}
   m_Direction: 0
-  m_Value: 1.002947
+  m_Value: 1.0001965
   m_Size: 0.999708
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3821,18 +3821,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29bd8cda7d1b4cf5b520a142d730ecd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cancelLevel:
-    levelName: 
-    unityName: 70-Example-Lobby
-    isNetwork: 0
-    isExcluded: 0
-    levelId: 0
-  gameLevel:
-    levelName: 
-    unityName: 72-Example-Game-gameplay
-    isNetwork: 0
-    isExcluded: 0
-    levelId: 0
+  gameScene:
+    sceneName: 72-Example-Game-gameplay
+  cancelScene:
+    sceneName: 70-Example-Lobby
 --- !u!1 &1610626805
 GameObject:
   m_ObjectHideFlags: 0
