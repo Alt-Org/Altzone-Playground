@@ -18,9 +18,8 @@ namespace Altzone.NewPlayer
         [SerializeField] private float angle = 0f;
         [SerializeField] private int health = 4;
 
-        // Setting up a couple transforms and a float into which put the distance betweent them.
+        // Setting up a couple transforms and a float into which put the distance between them.
         // This is for disabling and enabling the shield with distance.
-        // This code will be transferred to the rotator when I make that.
         [SerializeField] private Transform thisPlayer;
         [SerializeField] private Transform teamMate;
         [SerializeField] private float playerDist;

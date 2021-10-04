@@ -35,6 +35,8 @@ namespace Altzone.NewPlayer
         [SerializeField] private float dist;
         // Player transform mostly used to get his position.
         [SerializeField] private Transform playerTrans;
+        // Teammates transform so we can get the direction and distance for ballLauncher();
+        [SerializeField] private Transform teamMateTrans;
         // Players rigidbody on which we can apply movement.
         [SerializeField] private Rigidbody2D rb;
         // An array of the sprites set in Player Squash Settings for easy store and access.
@@ -52,6 +54,13 @@ namespace Altzone.NewPlayer
         {            
             head.sprite = sprites[health];
             headcollider.radius = radi[health];
+        }
+
+        // A function that sets the direction and speed for a ball being launched by a player.
+        public void ballLauncher()
+        {
+            Vector3 dir = (playerTrans.position - teamMateTrans.position).normalized;
+            Debug.DrawLine(playerTrans.position, playerTrans.position + dir * 10, Color.red, Mathf.Infinity);
         }
 
         // A function that stops the player and changes its head color for a certain time.
@@ -96,6 +105,26 @@ namespace Altzone.NewPlayer
                 head.color = new Color(0.0f, 0.5f, 0.0f, 1f);
             }
 
+            if (teamMateTrans == null)
+            {
+                if(this.transform.tag == "Pelaaja-1")
+                {
+                    teamMateTrans = GameObject.FindWithTag("Pelaaja-3").transform;
+                }
+                else if(this.transform.tag == "Pelaaja-2")
+                {
+                    teamMateTrans = GameObject.FindWithTag("Pelaaja-4").transform;
+                }
+                else if(this.transform.tag == "Pelaaja-3")
+                {
+                    teamMateTrans = GameObject.FindWithTag("Pelaaja-1").transform;
+                }
+                else if(this.transform.tag == "Pelaaja-4")
+                {
+                    teamMateTrans = GameObject.FindWithTag("Pelaaja-2").transform;
+                }
+            }
+
             // If the mouse is pressed down.
             if (Input.GetButton("Fire1"))
             {
@@ -106,7 +135,7 @@ namespace Altzone.NewPlayer
                 direction = (mousePosition - temp).normalized;
                 rb.velocity = new Vector2(direction.x * playerMoveSpeed, direction.y * playerMoveSpeed);
                 //Acquiring the distance between player and mouse for the following 'if, esle if' chain.
-                dist = Vector2.Distance(mousePosition, playerTrans.position);    
+                dist = Vector2.Distance(mousePosition, playerTrans.position);
 
                 // Stopping the player if there is targetTime left
                 if (targetTime > 0.0f)
