@@ -17,21 +17,22 @@ namespace Editor.Prg
         {
             sceneList = new List<Tuple<string, bool, int>>();
             var scenes = EditorBuildSettings.scenes;
+            var usedIndex = -1;
             for (var i = 0; i < scenes.Length; ++i)
             {
                 var scene = scenes[i];
                 // We use just the level name without path and extension, duplicate level names should not be used
                 var tokens = scene.path.Split('/');
                 var sceneName = tokens[tokens.Length - 1].Split('.')[0];
-                sceneList.Add(new Tuple<string, bool, int>(sceneName, scene.enabled, i));
+                var sceneIndex = scene.enabled ? ++usedIndex : -1;
+                sceneList.Add(new Tuple<string, bool, int>(sceneName, scene.enabled, sceneIndex));
             }
             sceneList.Sort((a, b) => string.Compare(a.Item1, b.Item1, StringComparison.Ordinal));
             sceneDisplayNames = new string[sceneList.Count];
             for (var i = 0; i < sceneDisplayNames.Length; ++i)
             {
                 var tuple = sceneList[i];
-                var sceneIndex = tuple.Item2 ? tuple.Item3 : -1;
-                sceneDisplayNames[i] = $"{sceneList[i].Item1} [{sceneIndex}]";
+                sceneDisplayNames[i] = $"{sceneList[i].Item1} [{tuple.Item3}]";
             }
 
             // Using BeginProperty / EndProperty on the parent property means that
