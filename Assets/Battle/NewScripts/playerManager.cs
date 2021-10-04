@@ -60,7 +60,7 @@ namespace Altzone.NewPlayer
         public void ballLauncher()
         {
             Vector3 dir = (playerTrans.position - teamMateTrans.position).normalized;
-            Debug.DrawLine(playerTrans.position, playerTrans.position + dir * 10, Color.red, Mathf.Infinity);
+            UnityEngine.Debug.DrawLine(playerTrans.position, playerTrans.position + dir * 10, Color.red, Mathf.Infinity);
         }
 
         // A function that stops the player and changes its head color for a certain time.
