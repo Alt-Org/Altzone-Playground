@@ -1,7 +1,6 @@
 ﻿using Examples.Game.Scripts.Config;
 using Examples.Lobby.Scripts;
 using Photon.Pun;
-using Photon.Realtime;
 using Prg.Scripts.Common.PubSub;
 using UnityEngine;
 
@@ -140,11 +139,12 @@ namespace Examples.Game.Scripts
             isMoving = false;
             var player = _photonView.Owner;
             playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
-            // Rotate
+            // Select team
             if (playerPos == 1 || playerPos == 3)
             {
-                _transform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
                 teamIndex = 1;
+                // Rotate player for upper team
+                _transform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
             }
             else
             {
