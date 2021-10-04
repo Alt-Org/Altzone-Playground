@@ -1,3 +1,4 @@
+using Examples.Game.Scripts.Config;
 using Examples.Lobby.Scripts;
 using Photon.Pun;
 using Photon.Realtime;
@@ -38,12 +39,14 @@ namespace Examples.Game.Scripts
     }
 
     /// <summary>
-    /// More game manager example functionality.
+    /// Simple game manager example that creates local player and manages some game related events over network.
     /// </summary>
     public class GameManager : MonoBehaviourPunCallbacks
     {
         private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 1;
         private const int photonEventCodeBrick = PhotonEventDispatcher.eventCodeBase + 3;
+
+        [SerializeField] private Camera _camera;
 
         public Transform[] playerStartPos = new Transform[4];
         public Rect[] playerPlayArea = new Rect[4];
@@ -60,8 +63,6 @@ namespace Examples.Game.Scripts
         public int collisionToBrick;
 
         public TeamScore[] scores;
-
-        [SerializeField] private Camera _camera;
 
         private PhotonEventDispatcher photonEventDispatcher;
 
@@ -82,8 +83,6 @@ namespace Examples.Game.Scripts
             collisionToHead = collisionToHeadMask.value;
             collisionToWall = collisionToWallMask.value;
             collisionToBrick = collisionToBrickMask.value;
-            // We are disabled until room is ready to play!
-            enabled = false;
         }
 
         private void Start()
@@ -92,37 +91,21 @@ namespace Examples.Game.Scripts
             photonEventDispatcher = PhotonEventDispatcher.Get();
             photonEventDispatcher.registerEventListener(photonEventCode, data =>
             {
-                TeamScore.FromBytes(data.CustomData, out var _teamIndex, out var _headCollisionCount, out var _wallCollisionCount);
-                var score = scores[_teamIndex];
-                Debug.Log(
-                    $"Score head:{score.headCollisionCount}<-{_headCollisionCount} wall:{score.wallCollisionCount}<-{_wallCollisionCount}");
-                score.headCollisionCount = _headCollisionCount;
-                score.wallCollisionCount = _wallCollisionCount;
-                this.Publish(new TeamScoreEvent(score));
-
-                // Dirty hack to keep score updating in somewhere global storage
-                if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom)
-                {
-                    var room = PhotonNetwork.CurrentRoom;
-                    var key = $"T{score.teamIndex}";
-                    var newValue = score.wallCollisionCount;
-                    var curValue = room.GetCustomProperty(key, 0);
-                    if (newValue != curValue)
-                    {
-                        room.SafeSetCustomProperty(key, newValue, curValue);
-                    }
-                }
+                handleHeadOrWallCollision(data.CustomData);
             });
             photonEventDispatcher.registerEventListener(photonEventCodeBrick, data =>
             {
-                var brickId = (short) data.CustomData;
-                brickManager.deleteBrick(brickId);
+                handleBrickCollision(data.CustomData);
             });
         }
 
         public override void OnEnable()
         {
             base.OnEnable();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                makeRoomClosedForTheGame();
+            }
             Debug.Log($"OnEnable: {PhotonNetwork.NetworkClientState}");
             this.Subscribe<BallMovement.CollisionEvent>(OnCollisionEvent);
             this.Publish(new TeamScoreEvent(scores[0]));
@@ -134,6 +117,15 @@ namespace Examples.Game.Scripts
         {
             base.OnDisable();
             this.Unsubscribe();
+        }
+
+        private static void makeRoomClosedForTheGame()
+        {
+            if (PhotonNetwork.CurrentRoom.IsOpen)
+            {
+                Debug.Log($"Close room {PhotonNetwork.CurrentRoom.Name}");
+                PhotonNetwork.CurrentRoom.IsOpen = false;
+            }
         }
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -186,6 +178,12 @@ namespace Examples.Game.Scripts
             photonEventDispatcher.RaiseEvent(photonEventCodeBrick, payload);
         }
 
+        private void handleBrickCollision(object payload)
+        {
+            var brickId = (short) payload;
+            brickManager.deleteBrick(brickId);
+        }
+
         private void headOrWallCollision(int _headCollisionCount, int _wallCollisionCount, float positionY)
         {
             Debug.Log($"headOrWallCollision head {_headCollisionCount} wall {_wallCollisionCount} positionY {positionY}");
@@ -201,6 +199,30 @@ namespace Examples.Game.Scripts
             // Synchronize to all game managers
             var payload = score.ToBytes();
             photonEventDispatcher.RaiseEvent(photonEventCode, payload);
+        }
+
+        private void handleHeadOrWallCollision(object payload)
+        {
+            TeamScore.FromBytes(payload, out var _teamIndex, out var _headCollisionCount, out var _wallCollisionCount);
+            var score = scores[_teamIndex];
+            Debug.Log(
+                $"Score head:{score.headCollisionCount}<-{_headCollisionCount} wall:{score.wallCollisionCount}<-{_wallCollisionCount}");
+            score.headCollisionCount = _headCollisionCount;
+            score.wallCollisionCount = _wallCollisionCount;
+            this.Publish(new TeamScoreEvent(score));
+
+            // Dirty hack to keep score updating in somewhere global storage
+            if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom)
+            {
+                var room = PhotonNetwork.CurrentRoom;
+                var key = $"T{score.teamIndex}";
+                var newValue = score.wallCollisionCount;
+                var curValue = room.GetCustomProperty(key, 0);
+                if (newValue != curValue)
+                {
+                    room.SafeSetCustomProperty(key, newValue, curValue);
+                }
+            }
         }
 
         private void instantiateLocalPlayer()
@@ -236,6 +258,15 @@ namespace Examples.Game.Scripts
             {
                 var keyboardInput = instance.AddComponent<PlayerInputKeyboard>();
                 keyboardInput.PlayerMovement = playerMovement;
+            }
+            if (RuntimeGameConfig.Get().features.isRotateGameCamera)
+            {
+                if (playerPos == 1 || playerPos == 3)
+                {
+                    // Rotate game camera for upper team
+                    var cameraTransform = _camera.transform;
+                    cameraTransform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
+                }
             }
         }
 
