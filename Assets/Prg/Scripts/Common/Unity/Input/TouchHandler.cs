@@ -14,6 +14,8 @@ namespace Prg.Scripts.Common.Unity.Input
 
         [SerializeField] private Vector2[] lastZoomPositions;
 
+        private readonly Vector2[] newPositions = new Vector2[2];
+
         private void Update()
         {
             switch (UnityEngine.Input.touchCount)
@@ -47,10 +49,12 @@ namespace Prg.Scripts.Common.Unity.Input
                     break;
 
                 case 2: // Zooming
-                    var newPositions = new[] { UnityEngine.Input.GetTouch(0).position, UnityEngine.Input.GetTouch(1).position };
+                    newPositions[0] = UnityEngine.Input.GetTouch(0).position;
+                    newPositions[1] = UnityEngine.Input.GetTouch(1).position;
                     if (!zoomActive)
                     {
-                        lastZoomPositions = newPositions;
+                        lastZoomPositions[0] = newPositions[0];
+                        lastZoomPositions[1] = newPositions[1];
                         zoomActive = true;
                     }
                     else
@@ -60,7 +64,8 @@ namespace Prg.Scripts.Common.Unity.Input
                         var oldDistance = Vector2.Distance(lastZoomPositions[0], lastZoomPositions[1]);
                         var offset = newDistance - oldDistance;
                         ZoomCamera(offset * zoomSpeed);
-                        lastZoomPositions = newPositions;
+                        lastZoomPositions[0] = newPositions[0];
+                        lastZoomPositions[1] = newPositions[1];
                     }
                     break;
 
