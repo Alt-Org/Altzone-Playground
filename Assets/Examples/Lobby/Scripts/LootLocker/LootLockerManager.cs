@@ -13,7 +13,11 @@ namespace Examples.Lobby.Scripts.LootLocker
             LootLockerSDKManager.StartSession(playerIdentifier, (response) =>
             {
                 Debug.Log($"StartSession: {response.success}");
-                if (!response.success)
+                if (response.success)
+                {
+                    Debug.Log($"{response.statusCode} {response.text.Replace("\n    ", " ")}");
+                }
+                else
                 {
                     Debug.Log($"{response.statusCode} {response.Error.Replace("\n    ", " ")}");
                 }
