@@ -73,6 +73,10 @@ crashlytics-build.properties
 # Intellij products project files directory
 .idea/
 
+# Project Auditor (https://github.com/Unity-Technologies/ProjectAuditor)
+/Assets/BuildReports/*
+/Assets/BuildReports.meta
+
 # This Project local settings override folder: XxxTest
 **/[Rr]esources/*[Tt]est/
 **/[Rr]esources/*[Tt]est.meta
