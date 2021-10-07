@@ -87,7 +87,7 @@ namespace Examples.Lobby.Scripts
             var masterPosition = PhotonNetwork.LocalPlayer.GetCustomProperty(playerPositionKey, -1);
             if (masterPosition < playerPosition0 || masterPosition > playerPosition3)
             {
-                throw new UnityException("master client does not have valid player position: " + masterPosition);
+                throw new UnityException($"master client does not have valid player position: {masterPosition}");
             }
             // Snapshot player list before iteration because we can change it
             var players = PhotonNetwork.CurrentRoom.Players.Values.ToList();

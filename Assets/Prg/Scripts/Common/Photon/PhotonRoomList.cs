@@ -39,7 +39,7 @@ namespace Prg.Scripts.Common.Photon
                 roomListCount = 0;
                 return currentRoomList.AsReadOnly();
             }
-            throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
+            throw new UnityException($"Invalid connection state: {PhotonNetwork.NetworkClientState}");
         }
 
         private void OnEnable()

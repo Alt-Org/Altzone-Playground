@@ -30,7 +30,7 @@ namespace Examples.Lobby.Scripts.InRoom
             Debug.Log($"setPlayerPosition {positionIndex}");
             if (positionIndex < 0 || positionIndex > 3)
             {
-                throw new UnityException("invalid positionIndex: " + positionIndex);
+                throw new UnityException($"invalid positionIndex: {positionIndex}");
             }
             this.Publish(new LobbyManager.PlayerPosEvent(positionMap[positionIndex]));
         }

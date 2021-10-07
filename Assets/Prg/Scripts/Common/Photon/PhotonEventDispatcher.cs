@@ -68,7 +68,7 @@ namespace Prg.Scripts.Common.Photon
         {
             if (eventCode < eventCodeBase || eventCode > eventCodeMax)
             {
-                throw new UnityException("invalid event code " + eventCode);
+                throw new UnityException($"invalid event code {eventCode}");
             }
             var index = eventCode - eventCodeBase;
             if (listeners[index] == null)

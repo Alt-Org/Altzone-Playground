@@ -53,7 +53,7 @@ namespace Prg.Scripts.Common.Photon
                 connectUsingSettings(appSettings, playerName, isAutomaticallySyncScene);
                 return;
             }
-            throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
+            throw new UnityException($"Invalid connection state: {PhotonNetwork.NetworkClientState}");
         }
 
         public static void disconnect()
@@ -78,7 +78,7 @@ namespace Prg.Scripts.Common.Photon
                 PhotonNetwork.JoinLobby();
                 return;
             }
-            throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
+            throw new UnityException($"Invalid connection state: {PhotonNetwork.NetworkClientState}");
         }
 
         public static void leaveLobby()
@@ -89,7 +89,7 @@ namespace Prg.Scripts.Common.Photon
                 PhotonNetwork.LeaveLobby();
                 return;
             }
-            throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
+            throw new UnityException($"Invalid connection state: {PhotonNetwork.NetworkClientState}");
         }
 
         public static void createRoom(string roomName, RoomOptions roomOptions = null)
@@ -154,16 +154,16 @@ namespace Prg.Scripts.Common.Photon
         {
             if (!PhotonNetwork.InRoom)
             {
-                throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
+                throw new UnityException($"Invalid connection state: {PhotonNetwork.NetworkClientState}");
             }
             if (!PhotonNetwork.IsMasterClient)
             {
-                throw new UnityException("Player is not Master Client: " + PhotonNetwork.LocalPlayer.GetDebugLabel());
+                throw new UnityException($"Player is not Master Client: {PhotonNetwork.LocalPlayer.GetDebugLabel()}");
             }
             var room = PhotonNetwork.CurrentRoom;
             if (!room.IsOpen)
             {
-                throw new UnityException("Room is closed already: " + room.GetDebugLabel());
+                throw new UnityException($"Room is closed already: {room.GetDebugLabel()}");
             }
             room.IsOpen = false;
             room.IsVisible = keepVisible;
@@ -176,7 +176,7 @@ namespace Prg.Scripts.Common.Photon
                 PhotonNetwork.LeaveRoom();
                 return;
             }
-            throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
+            throw new UnityException($"Invalid connection state: {PhotonNetwork.NetworkClientState}");
         }
 
         private static void connectUsingSettings(AppSettings appSettings, string playerName, bool isAutomaticallySyncScene)

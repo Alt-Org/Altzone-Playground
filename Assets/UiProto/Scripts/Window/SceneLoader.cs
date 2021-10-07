@@ -35,7 +35,7 @@ namespace UiProto.Scripts.Window
             {
                 Debug.Log($"levels {string.Join("| ", levels)}");
                 WindowStack.dumpWindowStack();
-                throw new UnityException("levelName was not found in config: " + levelName);
+                throw new UnityException($"levelName was not found in config: {levelName}");
             }
             loadLevel(level);
         }
@@ -49,7 +49,7 @@ namespace UiProto.Scripts.Window
             {
                 Debug.Log($"levels {string.Join("| ", levels)}");
                 WindowStack.dumpWindowStack();
-                throw new UnityException("levelId was not found in config: " + levelId);
+                throw new UnityException($"levelId was not found in config: {levelId}");
             }
             loadLevel(level);
         }
@@ -73,7 +73,7 @@ namespace UiProto.Scripts.Window
             if (level.unityName == currentSceneName)
             {
                 WindowStack.dumpWindowStack();
-                throw new UnityException("trying to load same scene twice: " + level);
+                throw new UnityException($"trying to load same scene twice: {level}");
             }
             if (level.isNetwork)
             {

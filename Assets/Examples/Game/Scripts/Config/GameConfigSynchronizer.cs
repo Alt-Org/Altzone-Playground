@@ -74,12 +74,12 @@ namespace Examples.Game.Scripts.Config
                 {
                     if (bytes.Length < 3)
                     {
-                        throw new UnityException("invalid synchronization message length: " + bytes.Length);
+                        throw new UnityException($"invalid synchronization message length: {bytes.Length}");
                     }
                     var lastByte = bytes[bytes.Length - 1];
                     if (lastByte != endByte)
                     {
-                        throw new UnityException("invalid synchronization message end: " + lastByte);
+                        throw new UnityException($"invalid synchronization message end: {lastByte}");
                     }
                     var firstByte = bytes[0];
                     if (firstByte == (byte) What.Features)
@@ -92,7 +92,7 @@ namespace Examples.Game.Scripts.Config
                     }
                     else
                     {
-                        throw new UnityException("invalid synchronization message start: " + firstByte);
+                        throw new UnityException($"invalid synchronization message start: {firstByte}");
                     }
                 }
             });
@@ -210,7 +210,7 @@ namespace Examples.Game.Scripts.Config
                         countBytes += 4;
                         break;
                     default:
-                        throw new UnityException("unknown field type: " + fieldTypeName);
+                        throw new UnityException($"unknown field type: {fieldTypeName}");
                 }
             }
             fieldCount = fields.Length;

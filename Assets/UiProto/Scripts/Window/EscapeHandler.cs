@@ -20,7 +20,7 @@ namespace UiProto.Scripts.Window
                 this.Subscribe<EscapeKeyPressed.Event>(OnEscapeKeyPressed);
                 return;
             }
-            throw new UnityException("Component added more than once: " + nameof(EscapeHandler));
+            throw new UnityException($"Component added more than once: {nameof(EscapeHandler)}");
         }
 
         protected void OnDestroy()

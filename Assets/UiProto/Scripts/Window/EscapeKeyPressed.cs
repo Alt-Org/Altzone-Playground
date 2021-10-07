@@ -24,7 +24,7 @@ namespace UiProto.Scripts.Window
                 _Instance = this;
                 return;
             }
-            throw new UnityException("Component added more than once: " + nameof(EscapeKeyPressed));
+            throw new UnityException($"Component added more than once: {nameof(EscapeKeyPressed)}");
         }
 
         protected void OnDestroy()

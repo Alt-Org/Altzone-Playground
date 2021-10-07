@@ -24,7 +24,7 @@ public static class PhotonExtensions
     {
         if (!PhotonNetwork.InRoom)
         {
-            throw new UnityException("Invalid connection state: " + PhotonNetwork.NetworkClientState);
+            throw new UnityException($"Invalid connection state: {PhotonNetwork.NetworkClientState}");
         }
         if (room.PlayerCount > 0)
         {
@@ -66,7 +66,7 @@ public static class PhotonExtensions
                                newValue is int;
         if (!isTypeAcceptable)
         {
-            throw new UnityException("type is not supported: " + typeof(T));
+            throw new UnityException($"SafeSetCustomProperty type is not supported: {typeof(T)}");
         }
         var props = new Hashtable { { key, newValue } };
         if (!player.CustomProperties.ContainsKey(key))
@@ -126,7 +126,7 @@ public static class PhotonExtensions
                                newValue is int;
         if (!isTypeAcceptable)
         {
-            throw new UnityException("type is not supported: " + typeof(T));
+            throw new UnityException($"SafeSetCustomProperty type is not supported: {typeof(T)}");
         }
         var props = new Hashtable { { key, newValue } };
         if (!room.CustomProperties.ContainsKey(key))

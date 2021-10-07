@@ -31,7 +31,7 @@ namespace DigitalRuby
         {
             if (SpawningPool.ContainsPrefab(key))
             {
-                throw new UnityException("prefab pool key is in use already: " + key);
+                throw new UnityException($"prefab pool key is in use already: {key}");
             }
             SpawningPool.AddPrefab(key, prefab);
         }

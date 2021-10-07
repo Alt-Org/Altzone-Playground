@@ -34,7 +34,7 @@ namespace Prg.Scripts.Common.Unity
             Debug.Log($"Awake {_componentName} : {_component.GetFullPath()}");
             if (components.ContainsKey(_componentName))
             {
-                throw new UnityException("Duplicate component name: " + _componentName);
+                throw new UnityException($"Duplicate component name: {_componentName}");
             }
             components.Add(_componentName, _component);
 #if UNITY_EDITOR
