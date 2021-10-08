@@ -1,53 +1,131 @@
-﻿using LootLocker;
-using LootLocker.Requests;
+﻿using LootLocker.Requests;
 using System;
 using UnityEngine;
 
 namespace Examples.Lobby.Scripts.LootLocker
 {
+    [Serializable]
+    public class PlayerHandle
+    {
+        [SerializeField] private string deviceId;
+        [SerializeField] private string playerName;
+        [SerializeField] private int player_id;
+        [SerializeField] private string public_uid;
+        [SerializeField] private string session_token;
+
+        public string DeviceId => deviceId;
+        public int PlayerId => player_id;
+
+        public string PlayerName
+        {
+            get => playerName;
+            set => playerName = value;
+        }
+
+        public PlayerHandle(string deviceId, string playerName, int playerId, string publicUid, string sessionToken)
+        {
+            this.deviceId = deviceId;
+            this.playerName = playerName;
+            player_id = playerId;
+            public_uid = publicUid;
+            session_token = sessionToken;
+        }
+    }
+
     /// <summary>
     /// Test driver for LootLocker Game BAAS
     /// </summary>
+    /// <remarks>
+    /// We create a new session and try to synchronize player name between <c>LootLocker</c> and our <c>PlayerPrefs</c>.<br />
+    /// We mostly ignore errors as next time player logins there is a chance to fix everything that need to be fixed.
+    /// </remarks>
     public class LootLockerManager : MonoBehaviour
     {
-        public void VerifyID(string playerIdentifier, Action<bool> onComplete)
+        [SerializeField] private PlayerHandle _playerHandle;
+        [SerializeField] private bool isStartSessionReady;
+
+        public PlayerHandle playerHandle => _playerHandle;
+        public bool isValid => _playerHandle != null && isStartSessionReady;
+
+        private void Awake()
         {
-            var config = LootLockerConfig.Get();
-            if (!(config.platform == LootLockerConfig.platformType.Steam || config.platform == LootLockerConfig.platformType.PlayStationNetwork))
+            var deviceId = PlayerPrefs.GetString("lootLocker.deviceId", "");
+            if (string.IsNullOrWhiteSpace(deviceId))
             {
-                throw new UnityException($"DO NOT CALL VerifyID for {playerIdentifier} - it is reserved for STEAM or PLAYSTATION platforms ONLY!");
+                deviceId = Guid.NewGuid().ToString();
+                PlayerPrefs.SetString("lootLocker.deviceId", deviceId);
             }
-            Debug.Log($"VerifyID for {playerIdentifier}");
-            LootLockerSDKManager.VerifyID(playerIdentifier, response =>
+            var playerName = PlayerPrefs.GetString("lootLocker.playerName", "");
+            if (string.IsNullOrWhiteSpace(playerName))
             {
-                Debug.Log($"VerifyID: {response.success}");
-                if (response.success)
+                playerName = $"Player{1000 * (1 + DateTime.Now.Second % 10) + DateTime.Now.Millisecond:00}";
+                PlayerPrefs.SetString("lootLocker.playerName", playerName);
+            }
+            isStartSessionReady = false;
+            Debug.Log($"StartSession for {playerName} {deviceId}");
+            LootLockerSDKManager.StartSession(deviceId, (sessionResp) =>
+            {
+                if (!sessionResp.success)
                 {
-                    Debug.Log($"{response.statusCode} {response.text.Replace("\n    ", " ")}");
+                    _playerHandle = new PlayerHandle(deviceId, playerName, 0, "", "");
+                    isStartSessionReady = true;
+                    return;
                 }
-                else
+                _playerHandle = new PlayerHandle(deviceId, playerName, sessionResp.player_id, sessionResp.public_uid, sessionResp.session_token);
+                if (!sessionResp.seen_before)
                 {
-                    Debug.Log($"{response.statusCode} {response.Error.Replace("\n    ", " ")}");
+                    Debug.Log($"SetPlayerName '{playerName}'");
+                    LootLockerSDKManager.SetPlayerName(playerName, null); // Fire and forget
+                    isStartSessionReady = true;
+                    return;
                 }
-                onComplete?.Invoke(response.success);
+                LootLockerSDKManager.GetPlayerName(getNameResp =>
+                {
+                    if (!getNameResp.success)
+                    {
+                        isStartSessionReady = true;
+                        return;
+                    }
+                    if (getNameResp.name == _playerHandle.PlayerName)
+                    {
+                        isStartSessionReady = true;
+                        return;
+                    }
+                    if (!string.IsNullOrWhiteSpace(getNameResp.name))
+                    {
+                        _playerHandle.PlayerName = getNameResp.name;
+                        isStartSessionReady = true;
+                        return;
+                    }
+                    // Name was empty
+                    Debug.Log($"SetPlayerName '{_playerHandle.PlayerName}'");
+                    LootLockerSDKManager.SetPlayerName(_playerHandle.PlayerName, setNameResp =>
+                    {
+                        if (!setNameResp.success || string.IsNullOrWhiteSpace(setNameResp.name))
+                        {
+                            isStartSessionReady = true;
+                            return;
+                        }
+                        _playerHandle.PlayerName = setNameResp.name;
+                        isStartSessionReady = true;
+                    });
+                });
             });
         }
 
-        public void StartSession(string playerIdentifier, Action<bool> onComplete)
+        private bool isApplicationQuit;
+        private void OnApplicationQuit()
         {
-            Debug.Log($"StartSession for {playerIdentifier}");
-            LootLockerSDKManager.StartSession(playerIdentifier, (response) =>
+            isApplicationQuit = true;
+        }
+
+        private void OnDestroy()
+        {
+            if (!isApplicationQuit && isValid)
             {
-                Debug.Log($"StartSession for {playerIdentifier}: {response.success}");
-                if (response.success)
-                {
-                    Debug.Log($"{response.statusCode} {response.text.Replace("\n    ", " ")}");
-                }
-                else
-                {
-                    Debug.Log($"{response.statusCode} {response.Error.Replace("\n    ", " ")}");
-                }
-            });
+                // Try to be polite and close session as we don't need it after this scene.
+                LootLockerSDKManager.EndSession(_playerHandle.DeviceId, null);
+            }
         }
     }
 }
