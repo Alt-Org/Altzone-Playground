@@ -1239,12 +1239,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4364f036ae0c8b44ebcb48175b979bda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isAsyncMode: 1
   _playerHandle:
     deviceId: 
     playerName: 
     player_id: 0
     public_uid: 
     session_token: 
+  isStartSessionReady: 0
 --- !u!1 &2065046678
 GameObject:
   m_ObjectHideFlags: 0
