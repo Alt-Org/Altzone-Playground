@@ -159,6 +159,16 @@ namespace Examples.Lobby.Scripts.LootLocker
             });
         }
 
+        public async Task SetPlayerName(string playerName)
+        {
+            var setNameResp = await LootLockerAsync.SetPlayerName(playerName);
+            if (setNameResp.success)
+            {
+                Debug.Log($"Update player {_playerHandle.PlayerName} <- {setNameResp.name}");
+                _playerHandle.PlayerName = setNameResp.name;
+            }
+        }
+
         private static void getPlayerPrefs(out string deviceId, out string playerName)
         {
             deviceId = PlayerPrefs.GetString("lootLocker.deviceId", "");

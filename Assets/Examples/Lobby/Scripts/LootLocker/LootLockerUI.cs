@@ -35,11 +35,20 @@ namespace Examples.Lobby.Scripts.LootLocker
             username.text = manager.playerHandle.PlayerName;
             var playerHandle = manager.playerHandle;
             Debug.Log($"LootLocker player is {playerHandle.PlayerName} {playerHandle.PlayerId}");
-            continueButton.onClick.AddListener(() =>
+            continueButton.onClick.AddListener(continueButtonOnClick);
+        }
+
+        private async void continueButtonOnClick()
+        {
+            if (username.text != manager.playerHandle.PlayerName)
             {
-                Debug.Log($"LoadScene {lobbyScene.sceneName}");
-                SceneManager.LoadScene(lobbyScene.sceneName);
-            });
+                Debug.Log($"Set player {manager.playerHandle.PlayerName} <- {username.text}");
+                username.interactable = false;
+                continueButton.interactable = false;
+                await manager.SetPlayerName(username.text);
+            }
+            Debug.Log($"LoadScene {lobbyScene.sceneName}");
+            SceneManager.LoadScene(lobbyScene.sceneName);
         }
     }
 }
