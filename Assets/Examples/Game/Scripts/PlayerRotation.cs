@@ -1,4 +1,4 @@
-using Examples.Game.Scripts.Config;
+using Examples.Config.Scripts;
 using Examples.Lobby.Scripts;
 using Photon.Pun;
 using Photon.Realtime;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Examples.Game.Scripts.Config
+namespace Examples.Config.Scripts
 {
     /// <summary>
     /// Editable persistent settings for the game.

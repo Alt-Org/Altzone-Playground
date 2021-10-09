@@ -1,4 +1,5 @@
-﻿using Prg.Scripts.Common.Photon;
+﻿using Examples.Config.Scripts;
+using Prg.Scripts.Common.Photon;
 using System;
 using UnityEngine;
 
@@ -38,8 +39,8 @@ namespace Examples.Lobby.Scripts
             }
             if (PhotonWrapper.CanConnect)
             {
-                var randomPlayer = $"Player{DateTime.Now.Second:00}";
-                PhotonLobby.connect(randomPlayer);
+                var playerData = RuntimeGameConfig.Get().playerDataCache;
+                PhotonLobby.connect(playerData.PlayerName);
             }
         }
     }

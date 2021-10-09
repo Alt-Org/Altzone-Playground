@@ -1,3 +1,4 @@
+using Examples.Config.Scripts;
 using Examples.Lobby.Scripts;
 using ExitGames.Client.Photon;
 using Photon.Pun;
@@ -81,7 +82,8 @@ namespace Examples.Game.Scripts
             if (state == ClientState.PeerCreated || state == ClientState.Disconnected)
             {
                 Debug.LogWarning($"connect: {PhotonNetwork.NetworkClientState}");
-                PhotonLobby.connect($"Player{DateTime.Now.Second:00}");
+                var playerData = RuntimeGameConfig.Get().playerDataCache;
+                PhotonLobby.connect(playerData.PlayerName);
             }
         }
 

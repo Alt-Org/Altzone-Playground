@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 
-namespace Examples.Game.Scripts.Config
+namespace Examples.Config.Scripts
 {
     [Flags] public enum What
     {

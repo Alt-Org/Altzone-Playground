@@ -1,5 +1,5 @@
 using DigitalRuby;
-using Examples.Game.Scripts.Config;
+using Examples.Config.Scripts;
 using Photon.Pun;
 using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;

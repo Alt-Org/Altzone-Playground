@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using UnityEngine;
 
-namespace Examples.Game.Scripts.Config
+namespace Examples.Config.Scripts
 {
     public class RuntimeGameConfigTest : MonoBehaviour
     {
