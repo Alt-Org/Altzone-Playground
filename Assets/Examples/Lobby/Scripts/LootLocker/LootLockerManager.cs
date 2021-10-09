@@ -1,4 +1,6 @@
-﻿using LootLocker.Requests;
+﻿using Examples.Config.Scripts;
+using LootLocker;
+using LootLocker.Requests;
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -11,25 +13,16 @@ namespace Examples.Lobby.Scripts.LootLocker
         [SerializeField] private string deviceId;
         [SerializeField] private string playerName;
         [SerializeField] private int player_id;
-        [SerializeField] private string public_uid;
-        [SerializeField] private string session_token;
 
         public string DeviceId => deviceId;
         public int PlayerId => player_id;
+        public string PlayerName => playerName;
 
-        public string PlayerName
-        {
-            get => playerName;
-            set => playerName = value;
-        }
-
-        public PlayerHandle(string deviceId, string playerName, int playerId, string publicUid, string sessionToken)
+        public PlayerHandle(string deviceId, string playerName, int playerId)
         {
             this.deviceId = deviceId;
             this.playerName = playerName;
             player_id = playerId;
-            public_uid = publicUid;
-            session_token = sessionToken;
         }
     }
 
@@ -42,6 +35,8 @@ namespace Examples.Lobby.Scripts.LootLocker
     /// </remarks>
     public class LootLockerManager : MonoBehaviour
     {
+        private const string do_not_save_it_here = "f1e477e40a312095f53887ebb3de4425b19e420a";
+
         [SerializeField] private bool isAsyncMode;
         [SerializeField] private PlayerHandle _playerHandle;
         [SerializeField] private bool isStartSessionReady;
@@ -55,6 +50,7 @@ namespace Examples.Lobby.Scripts.LootLocker
         private async void Awake()
         {
             Debug.Log("Awake start");
+            LootLockerSDKManager.Init(do_not_save_it_here, "0.0.0.1", LootLockerConfig.platformType.Android, true);
             isStartSessionReady = false;
             if (isAsyncMode)
             {
@@ -75,11 +71,15 @@ namespace Examples.Lobby.Scripts.LootLocker
             var sessionResp = await LootLockerAsync.StartSession(deviceId);
             if (!sessionResp.success)
             {
+                if (sessionResp.text.Contains("Game not found"))
+                {
+                    Debug.LogError("INVALID game_key");
+                }
                 // Create dummy player using PlayerPrefs values
-                _playerHandle = new PlayerHandle(deviceId, playerName, 0, "", "");
+                _playerHandle = new PlayerHandle(deviceId, playerName, -1);
                 return;
             }
-            _playerHandle = new PlayerHandle(deviceId, playerName, sessionResp.player_id, sessionResp.public_uid, sessionResp.session_token);
+            _playerHandle = new PlayerHandle(deviceId, playerName, sessionResp.player_id);
 
             if (!sessionResp.seen_before)
             {
@@ -100,8 +100,8 @@ namespace Examples.Lobby.Scripts.LootLocker
             if (_playerHandle.PlayerName != getNameResp.name)
             {
                 // Update local name from LootLocker
-                _playerHandle.PlayerName = getNameResp.name;
-                PlayerPrefs.SetString("lootLocker.playerName", _playerHandle.PlayerName);
+                _playerHandle = new PlayerHandle(deviceId, _playerHandle.PlayerName, sessionResp.player_id);
+                setPlayerPrefs(_playerHandle.PlayerName);
             }
         }
 
@@ -113,11 +113,11 @@ namespace Examples.Lobby.Scripts.LootLocker
             {
                 if (!sessionResp.success)
                 {
-                    _playerHandle = new PlayerHandle(deviceId, playerName, 0, "", "");
+                    _playerHandle = new PlayerHandle(deviceId, playerName, 0);
                     isStartSessionReady = true;
                     return;
                 }
-                _playerHandle = new PlayerHandle(deviceId, playerName, sessionResp.player_id, sessionResp.public_uid, sessionResp.session_token);
+                _playerHandle = new PlayerHandle(deviceId, playerName, sessionResp.player_id);
                 if (!sessionResp.seen_before)
                 {
                     Debug.Log($"SetPlayerName '{playerName}'");
@@ -139,7 +139,8 @@ namespace Examples.Lobby.Scripts.LootLocker
                     }
                     if (!string.IsNullOrWhiteSpace(getNameResp.name))
                     {
-                        _playerHandle.PlayerName = getNameResp.name;
+                        _playerHandle = new PlayerHandle(deviceId, getNameResp.name, sessionResp.player_id);
+                        setPlayerPrefs(_playerHandle.PlayerName);
                         isStartSessionReady = true;
                         return;
                     }
@@ -152,7 +153,8 @@ namespace Examples.Lobby.Scripts.LootLocker
                             isStartSessionReady = true;
                             return;
                         }
-                        _playerHandle.PlayerName = setNameResp.name;
+                        _playerHandle = new PlayerHandle(deviceId, setNameResp.name, sessionResp.player_id);
+                        setPlayerPrefs(_playerHandle.PlayerName);
                         isStartSessionReady = true;
                     });
                 });
@@ -165,39 +167,25 @@ namespace Examples.Lobby.Scripts.LootLocker
             if (setNameResp.success)
             {
                 Debug.Log($"Update player {_playerHandle.PlayerName} <- {setNameResp.name}");
-                _playerHandle.PlayerName = setNameResp.name;
+                _playerHandle = new PlayerHandle(_playerHandle.DeviceId, setNameResp.name, _playerHandle.PlayerId);
             }
+            setPlayerPrefs(_playerHandle.PlayerName);
         }
 
         private static void getPlayerPrefs(out string deviceId, out string playerName)
         {
-            deviceId = PlayerPrefs.GetString("lootLocker.deviceId", "");
-            if (string.IsNullOrWhiteSpace(deviceId))
-            {
-                deviceId = Guid.NewGuid().ToString();
-                PlayerPrefs.SetString("lootLocker.deviceId", deviceId);
-            }
-            playerName = PlayerPrefs.GetString("lootLocker.playerName", "");
-            if (string.IsNullOrWhiteSpace(playerName))
-            {
-                playerName = $"Player{1000 * (1 + DateTime.Now.Second % 10) + DateTime.Now.Millisecond:00}";
-                PlayerPrefs.SetString("lootLocker.playerName", playerName);
-            }
+            var playerData = RuntimeGameConfig.Get().playerDataCache;
+            deviceId = playerData.PlayerHandle;
+            playerName = playerData.PlayerName;
         }
 
-        private bool isApplicationQuit;
-
-        private void OnApplicationQuit()
+        private static void setPlayerPrefs(string playerName)
         {
-            isApplicationQuit = true;
-        }
-
-        private void OnDestroy()
-        {
-            if (!isApplicationQuit && isValid)
+            var playerData = RuntimeGameConfig.Get().playerDataCache;
+            if (playerData.PlayerName != playerName)
             {
-                // Try to be polite and close session as we don't need it after this scene.
-                LootLockerSDKManager.EndSession(_playerHandle.DeviceId, null);
+                playerData.PlayerName = playerName;
+                playerData.Save();
             }
         }
     }

@@ -20,6 +20,7 @@ namespace Examples.Lobby.Scripts.LootLocker
 
         [SerializeField] private LootLockerManager manager;
         [SerializeField] private UnitySceneName lobbyScene;
+        [SerializeField] private bool isConnected;
 
         private IEnumerator Start()
         {
@@ -30,10 +31,11 @@ namespace Examples.Lobby.Scripts.LootLocker
             continueButton.interactable = false;
             var waitUntil = new WaitUntil(() => manager.isValid);
             yield return waitUntil;
-            username.interactable = true;
-            continueButton.interactable = true;
-            username.text = manager.playerHandle.PlayerName;
             var playerHandle = manager.playerHandle;
+            isConnected = playerHandle.PlayerId != -1;
+            username.interactable = isConnected;
+            continueButton.interactable = true;
+            username.text = playerHandle.PlayerName;
             Debug.Log($"LootLocker player is {playerHandle.PlayerName} {playerHandle.PlayerId}");
             continueButton.onClick.AddListener(continueButtonOnClick);
         }
