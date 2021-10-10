@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace Examples.Model.Scripts.Model
             models.Add(key, model);
         }
 
-        public static T Get<T>(object modelName) where T : AbstractModel
+        public static T GetByName<T>(object modelName) where T : AbstractModel
         {
             var modelType = typeof(T);
             var key = $"{modelType.Name}.{modelName}";
@@ -37,6 +38,16 @@ namespace Examples.Model.Scripts.Model
                     $"model type {anyModel.GetType().Name} is different than excepted type  {modelType.Name}for key: {key}");
             }
             return exactModel;
+        }
+
+        public static T GetById<T>(int id) where T : AbstractModel
+        {
+            return models.Values.OfType<T>().FirstOrDefault(x => x.Id == id);
+        }
+
+        public static T Get<T>(Predicate<T> selector) where T : AbstractModel
+        {
+            return models.Values.OfType<T>().FirstOrDefault(x => selector(x));
         }
 
         public static List<T> GetAll<T>() where T : AbstractModel
