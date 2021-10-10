@@ -2,11 +2,12 @@ using System;
 using System.Collections;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 public static class UnityExtensions
 {
-    #region GameObjects and COmponents
+    #region GameObjects and Components
 
     public static T GetOrAddComponent<T>(this GameObject parent) where T : Component
     {
@@ -31,6 +32,16 @@ public static class UnityExtensions
             return parent.AddComponent<T>();
         }
         return parent.GetComponent<T>();
+    }
+
+    #endregion
+
+    #region Button
+
+    public static void SetCaption(this Button button, string caption)
+    {
+        var text = button.GetComponentInChildren<Text>();
+        text.text = caption;
     }
 
     #endregion
