@@ -23,6 +23,11 @@
             Defence = defence;
         }
 
+        public override string sortValue()
+        {
+            return Defence.ToString();
+        }
+
         public override string ToString()
         {
             return $"{nameof(Defence)}: {Defence}";

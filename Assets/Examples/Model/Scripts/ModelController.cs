@@ -1,6 +1,7 @@
 ﻿using Examples.Config.Scripts;
 using Examples.Model.Scripts.Model;
 using Prg.Scripts.Common.Photon;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,6 +32,7 @@ namespace Examples.Model.Scripts
             });
             var buttons = view.getButtons();
             var characters = Models.GetAll<CharacterModel>();
+            characters.Sort((a,b) => string.Compare(a.sortValue(), b.sortValue(), StringComparison.Ordinal));
             for (var i = 0; i < characters.Count; ++i)
             {
                 var button = buttons[i];

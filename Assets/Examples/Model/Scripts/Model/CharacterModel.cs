@@ -22,6 +22,11 @@
             Defence = defence;
         }
 
+        public override string sortValue()
+        {
+            return MainDefence.ToString();
+        }
+
         public override string ToString()
         {
             return
