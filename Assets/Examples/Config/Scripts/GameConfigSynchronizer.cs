@@ -114,8 +114,7 @@ namespace Examples.Config.Scripts
                 var bytes = stream.ToArray();
                 var type = features.GetType();
                 var fieldsLength = countFieldsByteSize(type, out var fieldCount);
-                Debug.Log($"synchronizeFeatures data {fieldCount} fields {bytes.Length} bytes");
-                Debug.Log($"send data> {string.Join(", ", bytes)}");
+                Debug.Log($"send data> {bytes.Length}({fieldCount}): {string.Join(", ", bytes)}");
                 if (bytes.Length != fieldsLength)
                 {
                     throw new UnityException($"mismatch in type {type} fields size {fieldsLength} and written fields size {bytes.Length}");
@@ -126,8 +125,7 @@ namespace Examples.Config.Scripts
 
         private static void readFeatures(byte[] bytes)
         {
-            Debug.Log($"readFeatures data length {bytes.Length}");
-            Debug.Log($"recv data< {string.Join(", ", bytes)}");
+            Debug.Log($"recv data< {bytes.Length}: {string.Join(", ", bytes)}");
             var features = new GameFeatures();
             using (var stream = new MemoryStream(bytes))
             {
@@ -162,8 +160,7 @@ namespace Examples.Config.Scripts
                 var bytes = stream.ToArray();
                 var type = variables.GetType();
                 var fieldsLength = countFieldsByteSize(type, out var fieldCount);
-                Debug.Log($"synchronizeVariables data {fieldCount} fields {bytes.Length} bytes");
-                Debug.Log($"send data> {string.Join(", ", bytes)}");
+                Debug.Log($"send data> {bytes.Length}({fieldCount}): {string.Join(", ", bytes)}");
                 if (bytes.Length != fieldsLength)
                 {
                     throw new UnityException($"mismatch in type {type} fields size {fieldsLength} and written fields size {bytes.Length}");
@@ -174,8 +171,7 @@ namespace Examples.Config.Scripts
 
         private static void readVariables(byte[] bytes)
         {
-            Debug.Log($"readVariables data length {bytes.Length}");
-            Debug.Log($"recv data< {string.Join(", ", bytes)}");
+            Debug.Log($"recv data< {bytes.Length}: {string.Join(", ", bytes)}");
             var variables = new GameVariables();
             using (var stream = new MemoryStream(bytes))
             {

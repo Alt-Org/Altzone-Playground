@@ -27,7 +27,7 @@ namespace Examples.Config.Scripts
 
         public void CopyFrom(GameFeatures other)
         {
-            PropertyCopier<GameFeatures,GameFeatures>.CopyFields(other,this);
+            PropertyCopier<GameFeatures, GameFeatures>.CopyFields(other, this);
         }
     }
 
@@ -47,7 +47,7 @@ namespace Examples.Config.Scripts
 
         public void CopyFrom(GameVariables other)
         {
-            PropertyCopier<GameVariables,GameVariables>.CopyFields(other,this);
+            PropertyCopier<GameVariables, GameVariables>.CopyFields(other, this);
         }
     }
 
@@ -55,7 +55,7 @@ namespace Examples.Config.Scripts
     /// Player data cache.
     /// </summary>
     /// <remarks>
-    /// Common location for player related data that is persisted elsewhere</remarks>
+    /// Common location for player related data that is persisted elsewhere.</remarks>
     [Serializable]
     public class PlayerDataCache
     {
@@ -65,7 +65,20 @@ namespace Examples.Config.Scripts
         /// <remarks>
         /// This should be validated and sanitized before accepting a new value.
         /// </remarks>
-        public string PlayerName;
+        [SerializeField] protected string _playerName;
+
+        public string PlayerName
+        {
+            get => _playerName;
+            set
+            {
+                if (_playerName != value)
+                {
+                    _playerName = value;
+                    Save();
+                }
+            }
+        }
 
         /// <summary>
         /// Unique string to identify this player across devices and systems.
@@ -73,16 +86,31 @@ namespace Examples.Config.Scripts
         /// <remarks>
         /// When new player is detected this should be given and persisted in all external systems in order to identify this player unambiguously.
         /// </remarks>
-        public string PlayerHandle;
+        [SerializeField] protected string _playerHandle;
 
-        public virtual void Save() {}
+        public string PlayerHandle
+        {
+            get => _playerHandle;
+            set
+            {
+                if (_playerHandle != value)
+                {
+                    _playerHandle = value;
+                    Save();
+                }
+            }
+        }
+
+        protected virtual void Save()
+        {
+        }
     }
 
     /// <summary>
-    /// Runtime game config variables that can be changed on the fly and can be referenced from anywhere safely.
+    /// Runtime game config variables that can be referenced from anywhere safely and optionally can be changed on the fly.
     /// </summary>
     /// <remarks>
-    /// Note that full or partial <c>RuntimeGameConfig</c> can be synchronized over network and is intended to be used so.
+    /// Note that some parts of <c>RuntimeGameConfig</c> can be synchronized over network.
     /// </remarks>
     public class RuntimeGameConfig : MonoBehaviour
     {
@@ -132,32 +160,33 @@ namespace Examples.Config.Scripts
 
         private static PlayerDataCache loadPlayerDataCache()
         {
-            return new PlayerDataCacheProxy();
+            return new PlayerDataCacheLocal();
         }
 
-        private class PlayerDataCacheProxy : PlayerDataCache
+        private class PlayerDataCacheLocal : PlayerDataCache
         {
             private const string PlayerNameKey = "PlayerData.PlayerName";
             private const string PlayerHandleKey = "PlayerData.PlayerHandle";
 
-            public PlayerDataCacheProxy()
+            public PlayerDataCacheLocal()
             {
-                PlayerName = PlayerPrefs.GetString(PlayerNameKey, string.Empty);
+                _playerName = PlayerPrefs.GetString(PlayerNameKey, string.Empty);
                 if (string.IsNullOrWhiteSpace(PlayerName))
                 {
-                    PlayerName = $"Player{1000 * (1 + DateTime.Now.Second % 10) + DateTime.Now.Millisecond:00}";
+                    _playerName = $"Player{1000 * (1 + DateTime.Now.Second % 10) + DateTime.Now.Millisecond:00}";
                     PlayerPrefs.SetString(PlayerNameKey, PlayerName);
                 }
-                PlayerHandle = PlayerPrefs.GetString(PlayerHandleKey, string.Empty);
+                _playerHandle = PlayerPrefs.GetString(PlayerHandleKey, string.Empty);
                 if (string.IsNullOrWhiteSpace(PlayerHandle))
                 {
-                    PlayerHandle = Guid.NewGuid().ToString();
+                    _playerHandle = Guid.NewGuid().ToString();
                     PlayerPrefs.SetString(PlayerHandleKey, PlayerHandle);
                 }
             }
 
-            public override void Save()
+            protected override void Save()
             {
+                // If this gets large we might want to save just the changed values?
                 PlayerPrefs.SetString(PlayerNameKey, PlayerName);
                 PlayerPrefs.SetString(PlayerHandleKey, PlayerHandle);
             }
