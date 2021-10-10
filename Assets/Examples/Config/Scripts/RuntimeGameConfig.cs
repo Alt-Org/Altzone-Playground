@@ -1,3 +1,4 @@
+using Examples.Model.Scripts.Model;
 using Prg.Scripts.Common.Util;
 using System;
 using UnityEngine;
@@ -75,6 +76,24 @@ namespace Examples.Config.Scripts
                 if (_playerName != value)
                 {
                     _playerName = value;
+                    Save();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Player character model id.
+        /// </summary>
+        [SerializeField] protected int _characterModelId;
+
+        public int CharacterModelId
+        {
+            get => _characterModelId;
+            set
+            {
+                if (_characterModelId != value)
+                {
+                    _characterModelId = value;
                     Save();
                 }
             }
@@ -167,6 +186,7 @@ namespace Examples.Config.Scripts
         {
             private const string PlayerNameKey = "PlayerData.PlayerName";
             private const string PlayerHandleKey = "PlayerData.PlayerHandle";
+            private const string CharacterModelIdKey = "PlayerData.CharacterModelId";
 
             public PlayerDataCacheLocal()
             {
@@ -176,6 +196,7 @@ namespace Examples.Config.Scripts
                     _playerName = $"Player{1000 * (1 + DateTime.Now.Second % 10) + DateTime.Now.Millisecond:00}";
                     PlayerPrefs.SetString(PlayerNameKey, PlayerName);
                 }
+                _characterModelId = PlayerPrefs.GetInt(CharacterModelIdKey, -1);
                 _playerHandle = PlayerPrefs.GetString(PlayerHandleKey, string.Empty);
                 if (string.IsNullOrWhiteSpace(PlayerHandle))
                 {
@@ -188,6 +209,7 @@ namespace Examples.Config.Scripts
             {
                 // If this gets large we might want to save just the changed values?
                 PlayerPrefs.SetString(PlayerNameKey, PlayerName);
+                PlayerPrefs.SetInt(CharacterModelIdKey, CharacterModelId);
                 PlayerPrefs.SetString(PlayerHandleKey, PlayerHandle);
             }
         }

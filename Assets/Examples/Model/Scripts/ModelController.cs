@@ -14,6 +14,8 @@ namespace Examples.Model.Scripts
         [SerializeField] private ModelManager manager;
         [SerializeField] private ModelView view;
 
+        [SerializeField] private int currentCharacterId;
+
         private void Start()
         {
             Debug.Log("Start");
@@ -22,22 +24,35 @@ namespace Examples.Model.Scripts
             view.playerName.text = player.PlayerName;
             view.continueButton.onClick.AddListener(() =>
             {
+                // Save player settings if changed before continuing!
                 if (view.playerName.text != player.PlayerName)
                 {
-                    // Name has been changed - save it
                     player.PlayerName = view.playerName.text;
+                }
+                if (currentCharacterId != player.CharacterModelId)
+                {
+                    player.CharacterModelId = currentCharacterId;
                 }
                 manager.Continue();
             });
+            currentCharacterId = player.CharacterModelId;
             var buttons = view.getButtons();
             var characters = Models.GetAll<CharacterModel>();
-            characters.Sort((a,b) => string.Compare(a.sortValue(), b.sortValue(), StringComparison.Ordinal));
+            characters.Sort((a, b) => string.Compare(a.sortValue(), b.sortValue(), StringComparison.Ordinal));
             for (var i = 0; i < characters.Count; ++i)
             {
                 var button = buttons[i];
                 var character = characters[i];
                 button.SetCaption(character.Name);
-                button.onClick.AddListener(() => { showCharacter(character); });
+                button.onClick.AddListener(() =>
+                {
+                    currentCharacterId = character.Id;
+                    showCharacter(character);
+                });
+                if (currentCharacterId == character.Id)
+                {
+                    showCharacter(character);
+                }
             }
         }
 
