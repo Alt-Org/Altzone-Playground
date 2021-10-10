@@ -25,13 +25,14 @@ namespace Examples.Model.Scripts
             view.continueButton.onClick.AddListener(() =>
             {
                 // Save player settings if changed before continuing!
-                if (view.playerName.text != player.PlayerName)
+                if (view.playerName.text != player.PlayerName ||
+                    currentCharacterId != player.CharacterModelId)
                 {
-                    player.PlayerName = view.playerName.text;
-                }
-                if (currentCharacterId != player.CharacterModelId)
-                {
-                    player.CharacterModelId = currentCharacterId;
+                    player.BatchSave(() =>
+                    {
+                        player.PlayerName = view.playerName.text;
+                        player.CharacterModelId = currentCharacterId;
+                    });
                 }
                 manager.Continue();
             });

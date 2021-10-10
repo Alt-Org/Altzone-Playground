@@ -56,7 +56,9 @@ namespace Examples.Config.Scripts
     /// Player data cache.
     /// </summary>
     /// <remarks>
-    /// Common location for player related data that is persisted elsewhere.</remarks>
+    /// Common location for player related data that is persisted elsewhere.<br />
+    /// As this class is visible in UNITY Editor it can not be <c>abstract</c> as it should be!
+    /// </remarks>
     [Serializable]
     public class PlayerDataCache
     {
@@ -75,7 +77,7 @@ namespace Examples.Config.Scripts
             {
                 if (_playerName != value)
                 {
-                    _playerName = value;
+                    _playerName = value ?? "";
                     Save();
                 }
             }
@@ -114,14 +116,33 @@ namespace Examples.Config.Scripts
             {
                 if (_playerHandle != value)
                 {
-                    _playerHandle = value;
+                    _playerHandle = value ?? "";
                     Save();
                 }
             }
         }
 
+        /// <summary>
+        /// Protected <c>Save</c> method to handle single property change.
+        /// </summary>
         protected virtual void Save()
         {
+            // Placeholder for actual implementation in derived class.
+        }
+
+        /// <summary>
+        /// Public <c>BatchSave</c> method to save several properties at once.
+        /// </summary>
+        /// <param name="saveSettings"></param>
+        public virtual void BatchSave(Action saveSettings)
+        {
+            // Placeholder for actual implementation in derived class.
+        }
+
+        public override string ToString()
+        {
+            // This is required for actual implementation to detect changes in our properties!
+            return $"Name:{PlayerName}, C-ModelId:{CharacterModelId}, GUID:{PlayerHandle}";
         }
     }
 
@@ -188,6 +209,9 @@ namespace Examples.Config.Scripts
             private const string PlayerHandleKey = "PlayerData.PlayerHandle";
             private const string CharacterModelIdKey = "PlayerData.CharacterModelId";
 
+            private bool isBatchSave;
+            private string currentState;
+
             public PlayerDataCacheLocal()
             {
                 _playerName = PlayerPrefs.GetString(PlayerNameKey, string.Empty);
@@ -203,14 +227,42 @@ namespace Examples.Config.Scripts
                     _playerHandle = Guid.NewGuid().ToString();
                     PlayerPrefs.SetString(PlayerHandleKey, PlayerHandle);
                 }
+                currentState = ToString();
+            }
+
+            public sealed override string ToString()
+            {
+                // https://www.jetbrains.com/help/rider/VirtualMemberCallInConstructor.html
+                return base.ToString();
             }
 
             protected override void Save()
             {
-                // If this gets large we might want to save just the changed values?
+                internalSave();
+            }
+
+            public override void BatchSave(Action saveSettings)
+            {
+                isBatchSave = true;
+                saveSettings?.Invoke();
+                isBatchSave = false;
+                internalSave();
+            }
+
+            private void internalSave()
+            {
+                if (isBatchSave)
+                {
+                    return; // Defer saving until later
+                }
+                if (currentState == ToString())
+                {
+                    return; // Skip saving when nothing has changed
+                }
                 PlayerPrefs.SetString(PlayerNameKey, PlayerName);
                 PlayerPrefs.SetInt(CharacterModelIdKey, CharacterModelId);
                 PlayerPrefs.SetString(PlayerHandleKey, PlayerHandle);
+                currentState = ToString();
             }
         }
     }
