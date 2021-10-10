@@ -1,6 +1,8 @@
 ﻿using Examples.Config.Scripts;
+using Examples.Model.Scripts.Model;
 using Prg.Scripts.Common.Photon;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Examples.Model.Scripts
 {
@@ -27,6 +29,27 @@ namespace Examples.Model.Scripts
                 }
                 manager.Continue();
             });
+            var buttons = view.getButtons();
+            var characters = Models.GetAll<CharacterModel>();
+            for (var i = 0; i < characters.Count; ++i)
+            {
+                var button = buttons[i];
+                var character = characters[i];
+                button.SetCaption(character.Name);
+                button.onClick.AddListener(() => { showCharacter(character); });
+            }
+        }
+
+        private void showCharacter(CharacterModel character)
+        {
+            var labels = view.getTextLabels();
+            var i = -1;
+            labels[++i].text = $"<b>{character.Name}</b>";
+            labels[++i].text = $"MainDefence:\r\n{character.MainDefence}";
+            labels[++i].text = $"Speed:\r\n{character.Speed}";
+            labels[++i].text = $"Resistance:\r\n{character.Resistance}";
+            labels[++i].text = $"Attack:\r\n{character.Attack}";
+            labels[++i].text = $"Defence:\r\n{character.Defence}";
         }
     }
 }

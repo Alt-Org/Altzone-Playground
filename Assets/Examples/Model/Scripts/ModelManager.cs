@@ -1,4 +1,5 @@
-﻿using Prg.Scripts.Common.Unity;
+﻿using Examples.Model.Scripts.Model;
+using Prg.Scripts.Common.Unity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +12,12 @@ namespace Examples.Model.Scripts
     {
         [SerializeField] private UnitySceneName continueScene;
         [SerializeField] private UnitySceneName cancelScene;
+
+        private void Awake()
+        {
+            Debug.Log("Awake");
+            ModelLoader.LoadModels();
+        }
 
         private void Update()
         {
