@@ -12,6 +12,11 @@ namespace Examples.Model.Scripts.Model
     {
         private static readonly Dictionary<string, AbstractModel> models = new Dictionary<string, AbstractModel>();
 
+        public static void Clear()
+        {
+            models.Clear();
+        }
+
         public static void Add(AbstractModel model, string modelName)
         {
             var modelType = model.GetType();

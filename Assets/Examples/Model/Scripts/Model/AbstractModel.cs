@@ -16,5 +16,10 @@
         {
             return Id.ToString();
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(Id)}: {Id}";
+        }
     }
 }

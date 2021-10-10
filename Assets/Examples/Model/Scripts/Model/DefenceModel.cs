@@ -31,7 +31,7 @@
 
         public override string ToString()
         {
-            return $"{nameof(Defence)}: {Defence}";
+            return $"{base.ToString()}, {nameof(Defence)}: {Defence}";
         }
     }
 }
