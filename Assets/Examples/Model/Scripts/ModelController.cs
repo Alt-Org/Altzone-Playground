@@ -3,7 +3,6 @@ using Examples.Model.Scripts.Model;
 using Prg.Scripts.Common.Photon;
 using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Examples.Model.Scripts
 {

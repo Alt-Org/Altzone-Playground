@@ -5,6 +5,16 @@
     /// </summary>
     public abstract class AbstractModel
     {
-        public abstract string sortValue();
+        public readonly int Id;
+
+        protected AbstractModel(int id)
+        {
+            Id = id;
+        }
+
+        public virtual string sortValue()
+        {
+            return Id.ToString();
+        }
     }
 }

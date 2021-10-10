@@ -12,7 +12,7 @@
         public readonly int Attack;
         public readonly int Defence;
 
-        public CharacterModel(string name, Defence mainDefence, int speed, int resistance, int attack, int defence)
+        public CharacterModel(int id, string name, Defence mainDefence, int speed, int resistance, int attack, int defence) : base(id)
         {
             Name = name;
             MainDefence = mainDefence;
