@@ -1,5 +1,7 @@
 ﻿using Prg.Scripts.Common.Util;
+using System;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -8,23 +10,30 @@ namespace Editor.Prg.Util
 {
     public class LogWriterMenu : MonoBehaviour
     {
+        [MenuItem("Window/ALT-Zone/Util/Editor Log/Add 'FORCE_LOG' define")]
+        private static void AddDefine()
+        {
+            var knownTargets = new[] { BuildTarget.Android, BuildTarget.StandaloneWindows64, BuildTarget.WebGL };
+            AddScriptingDefineSymbolToAllBuildTargetGroups("FORCE_LOG", knownTargets);
+        }
+
         [MenuItem("Window/ALT-Zone/Util/Editor Log/Show location")]
         private static void Show()
         {
-            getPath();
+            getLogFilePath();
         }
 
         [MenuItem("Window/ALT-Zone/Util/Editor Log/Open in text editor")]
         private static void Load()
         {
-            var path = getPath();
+            var path = getLogFilePath();
             if (File.Exists(path))
             {
                 InternalEditorUtility.OpenFileAtLineExternal(path, 1);
             }
         }
 
-        private static string getPath()
+        private static string getLogFilePath()
         {
             var path = Path.Combine(Application.persistentDataPath, LogWriter.GetLogName());
             if (Application.platform.ToString().ToLower().Contains("windows"))
@@ -33,6 +42,40 @@ namespace Editor.Prg.Util
             }
             Debug.Log($"Editor log {(File.Exists(path) ? "is" : "NOT")} found in: {path}");
             return path;
+        }
+
+        /// <summary>
+        /// Adds a given scripting define symbol to all build target groups
+        /// You can see all scripting define symbols ( not the internal ones, only the one for this project), in the PlayerSettings inspector
+        /// </summary>
+        /// <param name="defineSymbol">Define symbol.</param>
+        /// <param name="targets">Build targets to modify</param>
+        private static void AddScriptingDefineSymbolToAllBuildTargetGroups(string defineSymbol, BuildTarget[] targets)
+        {
+            foreach (var target in targets)
+            {
+                var group = BuildPipeline.GetBuildTargetGroup(target);
+
+                if (group == BuildTargetGroup.Unknown)
+                {
+                    continue;
+                }
+
+                var defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group).Split(';').Select(d => d.Trim()).ToList();
+                if (defineSymbols.Contains(defineSymbol))
+                {
+                    continue;
+                }
+                defineSymbols.Add(defineSymbol);
+                try
+                {
+                    PlayerSettings.SetScriptingDefineSymbolsForGroup(@group, string.Join(";", defineSymbols.ToArray()));
+                }
+                catch (Exception e)
+                {
+                    UnityEngine.Debug.Log($"Could not set Photon {defineSymbol} defines for build target: {target} group: {@group}: {e}");
+                }
+            }
         }
     }
 }
