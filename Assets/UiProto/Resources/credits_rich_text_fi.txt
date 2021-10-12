@@ -9,18 +9,22 @@ Sakari Lukkaroinen
 
 <b>koodaus</b>
 Jari Petäys
-Eeva Myyryläinen 
 Joni Miettinen
 
 <b>koodariharjoittelijat</b>
-Jarkko Heimokari, Behzad Veissi 
+Eeva Myyryläinen, Jarkko Heimokari, 
+Behzad Veissi 
 
+<b>graafinen suunnittelija</b>
+Markku Pyrrö
+Stella Crawford
+Luca Cannavo
+Sampo Rajala
 
 <b>grafiikka</b>
 Markku Pyrrö
 Sampo Rajala
 Luca Cannavo
-Stella Crawford
 Mikael Eskonen
 
 <b>logo</b>
@@ -55,6 +59,7 @@ Anssi Ahola
 Miko Murto
 Santeri Virtanen
 PRG Juurekset
+Taitotalo
 
 
 <b>kiitokset</b>
