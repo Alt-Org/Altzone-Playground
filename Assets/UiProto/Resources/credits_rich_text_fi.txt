@@ -10,10 +10,12 @@ Sakari Lukkaroinen
 <b>koodaus</b>
 Jari Petäys
 Joni Miettinen
+Mikko Härkönen
 
 <b>koodariharjoittelijat</b>
 Eeva Myyryläinen, Jarkko Heimokari, 
 Behzad Veissi 
+
 
 <b>graafinen suunnittelija</b>
 Markku Pyrrö
@@ -26,6 +28,14 @@ Markku Pyrrö
 Sampo Rajala
 Luca Cannavo
 Mikael Eskonen
+Siiri Kytönen
+Pauli Silvan
+Aleksi Saarinen
+Saku Remahl
+Suvi Hokkanen
+Ale Neppius
+Stanislav Nefedov
+Mikko Härkönen
 
 <b>logo</b>
 Emilio Mäkipää
