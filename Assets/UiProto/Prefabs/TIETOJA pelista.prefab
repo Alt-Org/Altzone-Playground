@@ -427,6 +427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialDelay: 3
+  mouseDelay: 1
   scrollSpeed: 60
   repeat: 1
   textToScroll: {fileID: 2145036611236038227}

@@ -9,6 +9,7 @@ namespace Altzone.Scripts.Apu
         private static readonly Vector3[] _worldCorners = new Vector3[4];
 
         public float initialDelay;
+        public float mouseDelay;
         public float scrollSpeed;
         public bool repeat;
         public GameObject textToScroll;
@@ -37,6 +38,10 @@ namespace Altzone.Scripts.Apu
 
         private void Update()
         {
+            if (Input.GetMouseButtonDown(0))
+            {
+                initialDelay = Time.time + mouseDelay;
+            }
             if (textHeight == 0f)
             {
                 // Text measurements must be done when text has been initialized properly by UNITY!
