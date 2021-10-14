@@ -149,6 +149,7 @@ namespace Examples.Config.Scripts
                 using (var writer = new BinaryWriter(stream))
                 {
                     writer.Write(first);
+                    writer.Write(variables.roomStartDelay);
                     writer.Write(variables.ballMoveSpeed);
                     writer.Write(variables.ballLerpSmoothingFactor);
                     writer.Write(variables.ballTeleportDistance);
@@ -178,6 +179,7 @@ namespace Examples.Config.Scripts
                 using (var reader = new BinaryReader(stream))
                 {
                     reader.ReadByte(); // skip first
+                    variables.roomStartDelay = reader.ReadSingle();
                     variables.ballMoveSpeed = reader.ReadSingle();
                     variables.ballLerpSmoothingFactor = reader.ReadSingle();
                     variables.ballTeleportDistance = reader.ReadSingle();

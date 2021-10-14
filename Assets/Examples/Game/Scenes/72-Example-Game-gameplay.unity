@@ -1111,6 +1111,7 @@ GameObject:
   - component: {fileID: 991472591}
   - component: {fileID: 991472594}
   - component: {fileID: 991472595}
+  - component: {fileID: 991472590}
   m_Layer: 0
   m_Name: GameControl
   m_TagString: Untagged
@@ -1118,6 +1119,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &991472590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991472589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97075581ed774bd3a0afffcf81a0b46c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &991472591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1185,8 +1198,6 @@ MonoBehaviour:
     y: 0
     width: 0
     height: 0
-  playerPrefab: {fileID: 626154037994138417, guid: 39ec2ef1312f7794bb694114c27a5699,
-    type: 3}
   brickManager: {fileID: 8687149556316865208}
   collisionToHeadMask:
     serializedVersion: 2

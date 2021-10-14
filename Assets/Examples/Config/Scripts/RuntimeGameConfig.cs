@@ -38,6 +38,8 @@ namespace Examples.Config.Scripts
     [Serializable]
     public class GameVariables
     {
+        [Header("Battle")] public float roomStartDelay;
+
         [Header("Ball")] public float ballMoveSpeed;
         public float ballLerpSmoothingFactor;
         public float ballTeleportDistance;

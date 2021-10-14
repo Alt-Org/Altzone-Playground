@@ -99,9 +99,20 @@ namespace Examples.Game.Scripts
             Debug.Log($"startPlaying IsMine={_photonView.IsMine} isKinematic={_rigidbody.isKinematic} collider={_collider.enabled}");
         }
 
+        private void stopPlaying()
+        {
+            canMove = false;
+            _rigidbody.velocity = Vector2.zero;
+            Debug.Log($"stopPlaying IsMine={_photonView.IsMine} isKinematic={_rigidbody.isKinematic} collider={_collider.enabled}");
+        }
+
+
         public override void OnDisable()
         {
             Debug.Log("OnDisable");
+            // Not perfect solution on room start because
+            // we might have moved a bit before we are told to stop playing until room is ready to start
+            stopPlaying();
             base.OnDisable();
         }
 

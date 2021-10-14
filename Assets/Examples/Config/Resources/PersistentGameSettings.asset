@@ -17,6 +17,7 @@ MonoBehaviour:
     isSPawnMiniBall: 0
     isActivateTeamWithBall: 1
   variables:
+    roomStartDelay: 3
     ballMoveSpeed: 7
     ballLerpSmoothingFactor: 4
     ballTeleportDistance: 1
