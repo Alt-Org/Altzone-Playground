@@ -228,7 +228,7 @@ namespace Examples.Game.Scripts
         {
             // Collect parameters for local player instantiation.
             var player = PhotonNetwork.LocalPlayer;
-            var playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
+            getPlayerProperties(PhotonNetwork.LocalPlayer, out var playerPos, out _);
             if (playerPos < 0 || playerPos >= playerStartPos.Length)
             {
                 throw new UnityException($"invalid player position '{playerPos}' for player {player.GetDebugLabel()}");
@@ -311,6 +311,11 @@ namespace Examples.Game.Scripts
             var width = size.x;
             var height = size.y;
             return new Rect(x, y, width, height);
+        }
+
+        public static void getPlayerProperties(Player player, out int playerPos, out int teamIndex)
+        {
+            LobbyManager.getPlayerProperties(player, out playerPos, out teamIndex);
         }
 
         public class TeamScoreEvent

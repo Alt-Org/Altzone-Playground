@@ -1,9 +1,11 @@
+using Examples.Model.Scripts.Model;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
 using Prg.Scripts.Common.Unity;
 using System.Collections;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -135,6 +137,31 @@ namespace Examples.Lobby.Scripts
             Debug.Log($"OnLeftRoom {PhotonNetwork.LocalPlayer.GetDebugLabel()}");
             Debug.Log($"LoadScene {cancelScene.sceneName}");
             SceneManager.LoadScene(cancelScene.sceneName);
+        }
+
+        public static void getPlayerProperties(Player player, out int playerPos, out int teamIndex)
+        {
+            playerPos = player.GetCustomProperty(playerPositionKey, -1);
+            if (playerPos == 1 || playerPos == 3)
+            {
+                teamIndex = 1;
+            }
+            else
+            {
+                teamIndex = 0;
+            }
+        }
+
+        [Conditional("UNITY_EDITOR")]
+        public static void setDebugPlayerProps()
+        {
+            var player = PhotonNetwork.LocalPlayer;
+            player.SetCustomProperties(new Hashtable
+            {
+                { playerPositionKey, 0 },
+                { playerMainSkillKey, (int)Defence.Deflection }
+            });
+            Debug.LogWarning($"setDebugPlayerProps {player.GetDebugLabel()}");
         }
 
         public class PlayerPosEvent

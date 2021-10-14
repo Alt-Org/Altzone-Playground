@@ -1,11 +1,8 @@
 using Examples.Config.Scripts;
 using Examples.Lobby.Scripts;
-using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
-using System;
-using System.Diagnostics;
 using UnityEngine;
 
 namespace Examples.Game.Scripts
@@ -41,7 +38,8 @@ namespace Examples.Game.Scripts
             {
                 if (isDebugSetPlayerPropsSet)
                 {
-                    if (PhotonNetwork.LocalPlayer.GetCustomProperty(LobbyManager.playerPositionKey, -1) != -1)
+                    GameManager.getPlayerProperties(PhotonNetwork.LocalPlayer, out var playerPos, out var teamIndex);
+                    if (playerPos != -1)
                     {
                         // Player props should be good to go!
                         isDebugSetPlayerPropsWait = false;
@@ -49,7 +47,7 @@ namespace Examples.Game.Scripts
                 }
                 else
                 {
-                    setDebugPlayerProps();
+                    LobbyManager.setDebugPlayerProps();
                     isDebugSetPlayerPropsSet = true;
                 }
                 return;
@@ -85,19 +83,6 @@ namespace Examples.Game.Scripts
                 var playerData = RuntimeGameConfig.Get().playerDataCache;
                 PhotonLobby.connect(playerData.PlayerName);
             }
-        }
-
-        [Conditional("UNITY_EDITOR")]
-        private static void setDebugPlayerProps()
-        {
-            var player = PhotonNetwork.LocalPlayer;
-            player.SetCustomProperties(new Hashtable { { LobbyManager.playerPositionKey, 0 } });
-            player.SetCustomProperties(new Hashtable
-            {
-                { LobbyManager.playerPositionKey, 0 },
-                { LobbyManager.playerMainSkillKey, (int)Model.Scripts.Model.Defence.Deflection }
-            });
-            Debug.LogWarning($"setDebugPlayerProps {player.GetDebugLabel()}");
         }
     }
 }

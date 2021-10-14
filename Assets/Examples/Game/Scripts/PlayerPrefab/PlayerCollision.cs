@@ -1,4 +1,3 @@
-using Examples.Lobby.Scripts;
 using Photon.Pun;
 using Prg.Scripts.Common.PubSub;
 using UnityEngine;
@@ -96,16 +95,7 @@ namespace Examples.Game.Scripts.PlayerPrefab
         {
             enableColliders();
             var player = PhotonView.Get(this).Owner;
-            playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
-            // Select team
-            if (playerPos == 1 || playerPos == 3)
-            {
-                teamIndex = 1;
-            }
-            else
-            {
-                teamIndex = 0;
-            }
+            GameManager.getPlayerProperties(player, out playerPos, out teamIndex);
         }
     }
 }

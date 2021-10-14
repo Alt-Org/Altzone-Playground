@@ -1,5 +1,4 @@
 using Examples.Config.Scripts;
-using Examples.Lobby.Scripts;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
@@ -48,15 +47,7 @@ namespace Examples.Game.Scripts.PlayerPrefab
             actorId = _photonView.OwnerActorNr;
             _transform = GetComponent<Transform>();
             var player = _photonView.Owner;
-            playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
-            if (playerPos == 1 || playerPos == 3)
-            {
-                teamIndex = 1;
-            }
-            else
-            {
-                teamIndex = 0;
-            }
+            GameManager.getPlayerProperties(player, out playerPos, out teamIndex);
             knownPlayers[playerPos] = this;
             teamMate = knownPlayers.FirstOrDefault(x => x != null && x.teamIndex == teamIndex && x.playerPos != playerPos);
             if (teamMate != null)

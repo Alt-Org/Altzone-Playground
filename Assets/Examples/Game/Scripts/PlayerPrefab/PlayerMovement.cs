@@ -1,5 +1,4 @@
 ﻿using Examples.Config.Scripts;
-using Examples.Lobby.Scripts;
 using Photon.Pun;
 using Prg.Scripts.Common.PubSub;
 using UnityEngine;
@@ -145,17 +144,11 @@ namespace Examples.Game.Scripts.PlayerPrefab
             canMove = true; // assume we can move on start but are stationary
             isMoving = false;
             var player = _photonView.Owner;
-            playerPos = player.GetCustomProperty(LobbyManager.playerPositionKey, -1);
-            // Select team
-            if (playerPos == 1 || playerPos == 3)
+            GameManager.getPlayerProperties(player, out playerPos, out teamIndex);
+            if (teamIndex == 1)
             {
-                teamIndex = 1;
                 // Rotate player for upper team
                 _transform.rotation = Quaternion.Euler(0f, 0f, 180f); // Upside down
-            }
-            else
-            {
-                teamIndex = 0;
             }
             if (_photonView.Owner.IsLocal)
             {
