@@ -1,5 +1,6 @@
 using Examples.Config.Scripts;
 using Examples.Lobby.Scripts;
+using Examples.Model.Scripts.Model;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
@@ -21,12 +22,12 @@ namespace Examples.Game.Scripts
 
         public byte[] ToBytes()
         {
-            return new[] { (byte) teamIndex, (byte) headCollisionCount, (byte) wallCollisionCount };
+            return new[] { (byte)teamIndex, (byte)headCollisionCount, (byte)wallCollisionCount };
         }
 
         public static void FromBytes(object data, out int teamIndex, out int headCollisionCount, out int wallCollisionCount)
         {
-            var payload = (byte[]) data;
+            var payload = (byte[])data;
             teamIndex = payload[0];
             headCollisionCount = payload[1];
             wallCollisionCount = payload[2];
@@ -50,7 +51,6 @@ namespace Examples.Game.Scripts
 
         public Transform[] playerStartPos = new Transform[4];
         public Rect[] playerPlayArea = new Rect[4];
-        public GameObject playerPrefab;
         public BrickManager brickManager;
 
         public LayerMask collisionToHeadMask;
@@ -66,6 +66,9 @@ namespace Examples.Game.Scripts
 
         private PhotonEventDispatcher photonEventDispatcher;
 
+        // Configurable settings
+        private GamePrefabs prefabs;
+
         public Camera Camera
         {
             get => _camera;
@@ -74,6 +77,7 @@ namespace Examples.Game.Scripts
 
         private void Awake()
         {
+            prefabs = RuntimeGameConfig.Get().prefabs;
             Debug.Log($"Awake: {PhotonNetwork.NetworkClientState}");
             scores = new[]
             {
@@ -89,14 +93,8 @@ namespace Examples.Game.Scripts
         {
             Debug.Log($"Start: {PhotonNetwork.NetworkClientState}");
             photonEventDispatcher = PhotonEventDispatcher.Get();
-            photonEventDispatcher.registerEventListener(photonEventCode, data =>
-            {
-                handleHeadOrWallCollision(data.CustomData);
-            });
-            photonEventDispatcher.registerEventListener(photonEventCodeBrick, data =>
-            {
-                handleBrickCollision(data.CustomData);
-            });
+            photonEventDispatcher.registerEventListener(photonEventCode, data => { handleHeadOrWallCollision(data.CustomData); });
+            photonEventDispatcher.registerEventListener(photonEventCodeBrick, data => { handleBrickCollision(data.CustomData); });
         }
 
         public override void OnEnable()
@@ -174,13 +172,13 @@ namespace Examples.Game.Scripts
         {
             var brickMarker = brickObject.GetComponent<BrickMarker>();
             Debug.Log($"brickCollision {brickMarker} layer {brickObject.layer}");
-            var payload = (short) brickMarker.BrickId;
+            var payload = (short)brickMarker.BrickId;
             photonEventDispatcher.RaiseEvent(photonEventCodeBrick, payload);
         }
 
         private void handleBrickCollision(object payload)
         {
-            var brickId = (short) payload;
+            var brickId = (short)payload;
             brickManager.deleteBrick(brickId);
         }
 
@@ -189,7 +187,7 @@ namespace Examples.Game.Scripts
             Debug.Log($"headOrWallCollision head {_headCollisionCount} wall {_wallCollisionCount} positionY {positionY}");
             if (_headCollisionCount > 0)
             {
-                GestaltRing.Get().Defence = Defence.Next;
+                GestaltRing.Get().Defence = Defence.None; // Alias for get next defence!
             }
             var collisionSide = positionY > 0 ? 1 : 0; // Select collision side from Y coord
             var teamIndex = collisionSide == 1 ? 0 : 1; // Scores are awarded to opposite side!
@@ -234,10 +232,14 @@ namespace Examples.Game.Scripts
             {
                 throw new UnityException($"invalid player position '{playerPos}' for player {player.GetDebugLabel()}");
             }
+            var playerDataCache = RuntimeGameConfig.Get().playerDataCache;
+            var defence = playerDataCache.CharacterModel.MainDefence;
+            var playerPrefab = getPlayerPrefab(defence);
+
             var instantiationPosition = playerStartPos[playerPos].position;
             var playerName = player.NickName;
             Debug.Log($"instantiateLocalPlayer i={playerPos} {playerName} : {playerPrefab.name} {instantiationPosition}");
-            var instance = _instantiateLocalPlayer(playerPrefab.name, instantiationPosition, playerName);
+            var instance = _instantiateLocalPlayer(playerPrefab.name, instantiationPosition);
             // Calculate player area
             if (playerPlayArea[playerPos].width == 0)
             {
@@ -270,7 +272,30 @@ namespace Examples.Game.Scripts
             }
         }
 
-        private static GameObject _instantiateLocalPlayer(string prefabName, Vector3 instantiationPosition, string playerName)
+        private GameObject getPlayerPrefab(Defence defence)
+        {
+            switch (defence)
+            {
+                case Defence.Desensitisation:
+                    return prefabs.playerForDes;
+                case Defence.Deflection:
+                    return prefabs.playerForDef;
+                case Defence.Introjection:
+                    return prefabs.playerForInt;
+                case Defence.Projection:
+                    return prefabs.playerForPro;
+                case Defence.Retroflection:
+                    return prefabs.playerForRet;
+                case Defence.Egotism:
+                    return prefabs.playerForEgo;
+                case Defence.Confluence:
+                    return prefabs.playerForCon;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(defence), defence, null);
+            }
+        }
+
+        private static GameObject _instantiateLocalPlayer(string prefabName, Vector3 instantiationPosition)
         {
             var instance = PhotonNetwork.Instantiate(prefabName, instantiationPosition, Quaternion.identity);
             return instance;

@@ -13,5 +13,6 @@ namespace Examples.Config.Scripts
     {
         [Header("Game Features")] public GameFeatures features;
         [Header("Game Variables")] public GameVariables variables;
+        [Header("Game Prefabs")] public GamePrefabs prefabs;
     }
 }

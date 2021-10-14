@@ -53,6 +53,26 @@ namespace Examples.Config.Scripts
     }
 
     /// <summary>
+    /// Well known prefabs for the game.
+    /// </summary>
+    [Serializable]
+    public class GamePrefabs
+    {
+        [Header("Battle")] public GameObject playerForDes;
+        public GameObject playerForDef;
+        public GameObject playerForInt;
+        public GameObject playerForPro;
+        public GameObject playerForRet;
+        public GameObject playerForEgo;
+        public GameObject playerForCon;
+
+        public void CopyFrom(GamePrefabs other)
+        {
+            PropertyCopier<GamePrefabs, GamePrefabs>.CopyFields(other, this);
+        }
+    }
+
+    /// <summary>
     /// Player data cache.
     /// </summary>
     /// <remarks>
@@ -100,6 +120,8 @@ namespace Examples.Config.Scripts
                 }
             }
         }
+
+        public CharacterModel CharacterModel => Models.GetById<CharacterModel>(_characterModelId);
 
         /// <summary>
         /// Unique string to identify this player across devices and systems.
@@ -162,8 +184,6 @@ namespace Examples.Config.Scripts
                 if (_Instance == null)
                 {
                     _Instance = UnityExtensions.CreateGameObjectAndComponent<RuntimeGameConfig>(nameof(RuntimeGameConfig), isDontDestroyOnLoad: true);
-                    _Instance._permanentFeatures = new GameFeatures();
-                    _Instance._permanentVariables = new GameVariables();
                     loadGameConfig();
                 }
             }
@@ -174,6 +194,7 @@ namespace Examples.Config.Scripts
 
         [SerializeField] private GameFeatures _permanentFeatures;
         [SerializeField] private GameVariables _permanentVariables;
+        [SerializeField] private GamePrefabs _permanentPrefabs;
         [SerializeField] private PlayerDataCache _playerDataCache;
 
         public GameFeatures features
@@ -188,13 +209,27 @@ namespace Examples.Config.Scripts
             set => _permanentVariables.CopyFrom(value);
         }
 
+        public GamePrefabs prefabs
+        {
+            get => _permanentPrefabs;
+            private set => _permanentPrefabs.CopyFrom(value);
+        }
+
         public PlayerDataCache playerDataCache => _playerDataCache;
 
         private static void loadGameConfig()
         {
+            // We can use models
+            ModelLoader.LoadModels();
+            // Create default values
+            _Instance._permanentFeatures = new GameFeatures();
+            _Instance._permanentVariables = new GameVariables();
+            _Instance._permanentPrefabs = new GamePrefabs();
+            // Set persistent values
             var gameSettings = Resources.Load<PersistentGameSettings>(nameof(PersistentGameSettings));
             _Instance.features = gameSettings.features;
             _Instance.variables = gameSettings.variables;
+            _Instance.prefabs = gameSettings.prefabs;
             _Instance._playerDataCache = loadPlayerDataCache();
         }
 

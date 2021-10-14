@@ -1,4 +1,5 @@
-﻿using Prg.Scripts.Common.Photon;
+﻿using Examples.Model.Scripts.Model;
+using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
 using System;
 using UnityEngine;
@@ -6,19 +7,6 @@ using Random = UnityEngine.Random;
 
 namespace Examples.Game.Scripts
 {
-    public enum Defence
-    {
-        None = 0,
-        Desensitisation = 1,
-        Deflection = 2,
-        Introjection = 3,
-        Projection = 4,
-        Retroflection = 5,
-        Egotism = 6,
-        Confluence = 7,
-        Next = 8,
-    }
-
     /// <summary>
     /// <c>GestaltRing</c> class manages global Gestalt <c>Defence</c> state.
     /// </summary>
@@ -65,7 +53,7 @@ namespace Examples.Game.Scripts
                     throw new UnityException($"Only Master Client can change {nameof(GestaltRing)} {nameof(Defence)} state");
                 }
                 byte payload;
-                if (value == Defence.Next)
+                if (value == Defence.None)
                 {
                     payload = (byte) nextDefence[(int) curDefence];
                 }

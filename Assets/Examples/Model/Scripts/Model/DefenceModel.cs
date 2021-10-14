@@ -8,6 +8,7 @@
     /// </remarks>
     public enum Defence
     {
+        None = 0,
         Desensitisation = 1,
         Deflection = 2,
         Introjection = 3,

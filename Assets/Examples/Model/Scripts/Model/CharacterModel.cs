@@ -1,4 +1,6 @@
-﻿namespace Examples.Model.Scripts.Model
+﻿using Examples.Game.Scripts;
+
+namespace Examples.Model.Scripts.Model
 {
     /// <summary>
     /// Player character model.

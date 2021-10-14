@@ -11,8 +11,7 @@ namespace Tests.Editor.Model
         public void OneTimeSetUp()
         {
             Debug.Log("OneTimeSetUp start");
-            Models.Clear();
-            ModelLoader.LoadModels();
+            ModelLoader.LoadAndClearModels();
             Debug.Log("OneTimeSetUp done");
         }
 

@@ -5,8 +5,21 @@
     /// </summary>
     public static class ModelLoader
     {
+        private static bool isModelsLoaded;
+
         public static void LoadModels()
         {
+            if (!isModelsLoaded)
+            {
+                LoadAndClearModels();
+            }
+        }
+
+        public static void LoadAndClearModels()
+        {
+            isModelsLoaded = true;
+            Models.Clear();
+
             add(Defence.Desensitisation.ToString(), new DefenceModel((int)Defence.Desensitisation, Defence.Desensitisation));
             add(Defence.Deflection.ToString(), new DefenceModel((int)Defence.Deflection, Defence.Deflection));
             add(Defence.Introjection.ToString(), new DefenceModel((int)Defence.Introjection, Defence.Introjection));
