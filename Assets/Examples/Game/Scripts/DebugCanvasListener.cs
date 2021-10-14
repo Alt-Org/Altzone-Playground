@@ -11,14 +11,19 @@ namespace Examples.Game.Scripts
     {
         private static readonly string[] teamName = { "Blue", "Red" };
 
+        public GameObject roomStartPanel;
+        public Text titleText;
+        public Text countdownText;
+        public GameObject scorePanel;
         public Text leftText;
         public Text rightText;
 
         private void OnEnable()
         {
-            leftText.text = "initializing";
-            rightText.text = "initializing";
+            roomStartPanel.SetActive(false);
+            scorePanel.SetActive(false);
             this.Subscribe<GameManager.TeamScoreEvent>(OnTeamScoreEvent);
+            this.Subscribe<GameStartPlaying.CountdownEvent>(OnCountdownEvent);
         }
 
         private void OnDisable()
@@ -26,6 +31,25 @@ namespace Examples.Game.Scripts
             leftText.text = "";
             rightText.text = "";
             this.Unsubscribe();
+        }
+
+        private void OnCountdownEvent(GameStartPlaying.CountdownEvent data)
+        {
+            Debug.Log($"OnCountdownEvent {data}");
+            if (data.maxCountdownValue == data.curCountdownValue)
+            {
+                roomStartPanel.SetActive(true);
+                titleText.text = "Wait for game start:";
+            }
+            countdownText.text = data.curCountdownValue.ToString("N0");
+            if (data.curCountdownValue <= 0)
+            {
+                this.executeAsCoroutine(new WaitForSeconds(0.67f), () =>
+                {
+                    roomStartPanel.SetActive(false);
+                    scorePanel.SetActive(true);
+                });
+            }
         }
 
         private void OnTeamScoreEvent(GameManager.TeamScoreEvent data)
