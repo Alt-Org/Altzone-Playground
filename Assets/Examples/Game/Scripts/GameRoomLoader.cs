@@ -92,6 +92,11 @@ namespace Examples.Game.Scripts
         {
             var player = PhotonNetwork.LocalPlayer;
             player.SetCustomProperties(new Hashtable { { LobbyManager.playerPositionKey, 0 } });
+            player.SetCustomProperties(new Hashtable
+            {
+                { LobbyManager.playerPositionKey, 0 },
+                { LobbyManager.playerMainSkillKey, (int)Model.Scripts.Model.Defence.Deflection }
+            });
             Debug.LogWarning($"setDebugPlayerProps {player.GetDebugLabel()}");
         }
     }

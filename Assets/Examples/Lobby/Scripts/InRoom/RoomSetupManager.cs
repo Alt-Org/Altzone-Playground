@@ -58,10 +58,13 @@ namespace Examples.Lobby.Scripts.InRoom
             var player = PhotonNetwork.LocalPlayer;
             player.CustomProperties.Clear();
             // Guest by default
-            player.SetCustomProperties(new Hashtable { { playerPositionKey, LobbyManager.playerIsGuest } });
-            // Set random main skill
-            var mainSKill = Random.Range(1, 7);
-            player.SetCustomProperties(new Hashtable { { playerMainSkillKey, mainSKill } });
+            var playerDataCache = RuntimeGameConfig.Get().playerDataCache;
+            var defence = playerDataCache.CharacterModel.MainDefence;
+            player.SetCustomProperties(new Hashtable
+            {
+                { playerPositionKey, LobbyManager.playerIsGuest },
+                { playerMainSkillKey, (int)defence }
+            });
             updateStatus();
             PhotonNetwork.AddCallbackTarget(this);
         }
