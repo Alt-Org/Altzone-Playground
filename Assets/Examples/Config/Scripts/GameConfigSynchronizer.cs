@@ -179,7 +179,7 @@ namespace Examples.Config.Scripts
                 using (var reader = new BinaryReader(stream))
                 {
                     reader.ReadByte(); // skip first
-                    variables.roomStartDelay = reader.ReadSingle();
+                    variables.roomStartDelay = reader.ReadInt32();
                     variables.ballMoveSpeed = reader.ReadSingle();
                     variables.ballLerpSmoothingFactor = reader.ReadSingle();
                     variables.ballTeleportDistance = reader.ReadSingle();
@@ -203,6 +203,9 @@ namespace Examples.Config.Scripts
                 {
                     case "Boolean":
                         countBytes += 1;
+                        break;
+                    case "Int32":
+                        countBytes += 4;
                         break;
                     case "Single":
                         countBytes += 4;
