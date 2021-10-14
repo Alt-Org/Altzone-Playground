@@ -1,4 +1,5 @@
 using Examples.Config.Scripts;
+using Examples.Game.Scripts.PlayerPrefab;
 using Examples.Lobby.Scripts;
 using Examples.Model.Scripts.Model;
 using Photon.Pun;

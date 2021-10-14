@@ -4,7 +4,7 @@ using Photon.Pun;
 using Prg.Scripts.Common.PubSub;
 using UnityEngine;
 
-namespace Examples.Game.Scripts
+namespace Examples.Game.Scripts.PlayerPrefab
 {
     /// <summary>
     /// Simple player movement across network clients using mouse or touch.
@@ -12,7 +12,7 @@ namespace Examples.Game.Scripts
     /// <remarks>
     /// Listens input events that control movement to given position and team activation events that control if player can move.
     /// </remarks>
-    public class PlayerMovement : MonoBehaviourPunCallbacks
+    public class PlayerMovement : MonoBehaviourPunCallbacks, IMovablePlayer
     {
         [Header("Live Data"), SerializeField] protected PhotonView _photonView;
         [SerializeField] protected Transform _transform;
@@ -113,7 +113,7 @@ namespace Examples.Game.Scripts
             playArea = area;
         }
 
-        public void moveTo(Vector3 position)
+        void IMovablePlayer.moveTo(Vector3 position)
         {
             if (!canMove)
             {

@@ -6,15 +6,16 @@ namespace Examples.Game.Scripts
     {
         private const float unReachableDistance = 10;
 
-        [Header("Live Data"), SerializeField] private PlayerMovement playerMovement;
-        [SerializeField] private Camera _camera;
+        [Header("Live Data"), SerializeField] private Camera _camera;
         [SerializeField] protected Transform _transform;
         [SerializeField] private float playerPositionZ;
         [SerializeField] private Vector2 joystickPosition;
         [SerializeField] private Vector3 targetPosition;
         [SerializeField] private bool isMoving;
 
-        public PlayerMovement PlayerMovement
+        private IMovablePlayer playerMovement;
+
+        public IMovablePlayer PlayerMovement
         {
             get => playerMovement;
             set

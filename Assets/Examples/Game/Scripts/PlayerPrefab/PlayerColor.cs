@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Examples.Game.Scripts
+namespace Examples.Game.Scripts.PlayerPrefab
 {
     /// <summary>
     /// Manages some player colors during a game.

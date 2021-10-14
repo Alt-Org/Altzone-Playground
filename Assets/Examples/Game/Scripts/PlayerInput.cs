@@ -4,16 +4,22 @@ using UnityEngine;
 
 namespace Examples.Game.Scripts
 {
+    public interface IMovablePlayer
+    {
+        void moveTo(Vector3 position);
+    }
+
     /// <summary>
     /// Listens <c>InputManager</c> click down and up events and forwards them to player for processing.
     /// </summary>
     public class PlayerInput : MonoBehaviour
     {
-        [Header("Live Data"), SerializeField] private PlayerMovement playerMovement;
-        [SerializeField] private Camera _camera;
+        [Header("Live Data"), SerializeField] private Camera _camera;
         [SerializeField] protected Transform _transform;
         [SerializeField] private float playerPositionZ;
         [SerializeField] private Vector3 mousePosition;
+
+        private IMovablePlayer playerMovement;
 
         public Camera Camera
         {
@@ -21,7 +27,7 @@ namespace Examples.Game.Scripts
             set => _camera = value;
         }
 
-        public PlayerMovement PlayerMovement
+        public IMovablePlayer PlayerMovement
         {
             get => playerMovement;
             set

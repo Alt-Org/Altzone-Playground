@@ -5,7 +5,7 @@ using Photon.Realtime;
 using System.Linq;
 using UnityEngine;
 
-namespace Examples.Game.Scripts
+namespace Examples.Game.Scripts.PlayerPrefab
 {
     /// <summary>
     /// Manages player rotation when an other team player is near.<br />
