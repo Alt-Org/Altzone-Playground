@@ -68,6 +68,13 @@ namespace Examples.Game.Scripts.PlayerPrefab
             this.Unsubscribe();
         }
 
+        public void enableGhostMove()
+        {
+            Debug.Log($"enableGhostMove canMove : {canMove} <- true");
+            canMove = true;
+            playerColor.setGhostColor();
+        }
+
         private void OnActiveTeamEvent(BallMovement.ActiveTeamEvent data)
         {
             canMove = data.teamIndex == teamIndex;

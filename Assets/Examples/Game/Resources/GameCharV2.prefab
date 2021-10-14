@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 626154037994138428}
   - component: {fileID: 4520140118193383674}
   - component: {fileID: 187321508311100760}
+  - component: {fileID: 3519728518208100218}
   - component: {fileID: 2972943607577269493}
   - component: {fileID: 2972312603799007176}
   m_Layer: 0
@@ -91,6 +92,31 @@ MonoBehaviour:
   otherPrevPosition: {x: 0, y: 0, z: 0}
   minPlayerRotationAngle: 0
   maxPlayerRotationAngle: 180
+--- !u!114 &3519728518208100218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 626154037994138417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b004528513214128a9ebbc3df9401099, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHead: {fileID: 7415758767160422145}
+  headCollider: {fileID: 89544025719957667}
+  shieldColliders:
+  - {fileID: 2392823646792583434}
+  - {fileID: 7555652290167513146}
+  collisionToHeadMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  collisionToHead: 0
+  playerMovement: {fileID: 4520140118193383674}
+  playerPos: 0
+  teamIndex: 0
+  isCollidersEnabled: 0
 --- !u!114 &2972943607577269493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,6 +155,7 @@ MonoBehaviour:
   headSprite: {fileID: 721351479766600447}
   normalColor: {r: 0.007843138, g: 0.6039216, b: 0.007843138, a: 1}
   disabledColor: {r: 0.3936009, g: 0.5754717, b: 0.3936009, a: 1}
+  ghostColor: {r: 0, g: 0, b: 0, a: 0.49803922}
   _highLightSprite: {fileID: 3279767524950674503}
 --- !u!1 &1595488501015423818
 GameObject:

@@ -10,11 +10,17 @@ namespace Examples.Game.Scripts.PlayerPrefab
         [Header("Settings"), SerializeField] private SpriteRenderer headSprite;
         [SerializeField] private Color normalColor;
         [SerializeField] private Color disabledColor;
+        [SerializeField] private Color ghostColor;
         [SerializeField] private SpriteRenderer _highLightSprite;
 
         public void setNormalColor()
         {
             headSprite.color = normalColor;
+        }
+
+        public void setGhostColor()
+        {
+            headSprite.color = ghostColor;
         }
 
         public void setDisabledColor()
