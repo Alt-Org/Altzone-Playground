@@ -25,7 +25,7 @@ namespace Examples.Model.Scripts.Model
             {
                 throw new UnityException($"model key already exists: {key}");
             }
-            Debug.Log($"Add model: {key}={model}");
+            //-Debug.Log($"Add model: {key}={model}");
             models.Add(key, model);
         }
 
