@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Examples.Game.Scripts.Battle.Ball
 {
+    /// <summary>
+    /// Interface for external ball control, for example for <c>Game Manager</c> to use.
+    /// </summary>
     public interface IBallControl
     {
         void teleportBall(Vector2 position);
@@ -12,12 +15,16 @@ namespace Examples.Game.Scripts.Battle.Ball
         void hideBall();
     }
 
+    /// <summary>
+    /// Simple ball with <c>Rigidbody2D</c> that synchronizes its movement across network using <c>PhotonView</c>.
+    /// </summary>
     public class BallActor : MonoBehaviour, IPunObservable, IBallControl
     {
         [Header("Live Data"), SerializeField] private SpriteRenderer _sprite;
         [SerializeField] private Collider2D _collider;
         [SerializeField] private int curTeamIndex;
         [SerializeField] private float targetSpeed;
+        [SerializeField] private BallCollision ballCollision;
 
         [Header("Photon"), SerializeField] private Vector2 networkPosition;
         [SerializeField] private float networkLag;
@@ -37,22 +44,36 @@ namespace Examples.Game.Scripts.Battle.Ball
             _rigidbody.isKinematic = !_photonView.IsMine;
             _collider.enabled = _photonView.IsMine;
 
-            // Ball starts towards team 1 when started - if nothing is changed externally.
-            curTeamIndex = 0;
+            curTeamIndex = -1;
             targetSpeed = 0;
+            ballCollision = gameObject.AddComponent<BallCollision>();
+            ballCollision.enabled = false;
+            ballCollision.setCurrentTeam = newTeamIndex =>
+            {
+                Debug.Log($"setCurrentTeam ({curTeamIndex}) <- ({newTeamIndex})");
+                curTeamIndex = newTeamIndex;
+            };
+            ballCollision.onCollision2D = onBallCollision;
 
             enabled = false; // Wait until game starts
+        }
+
+        private void onBallCollision(Collision2D other)
+        {
+            Debug.Log($"onBallCollision team={curTeamIndex} other={other.gameObject.name}");
         }
 
         private void OnEnable()
         {
             Debug.Log("OnEnable");
             ((IBallControl)this).showBall();
+            ballCollision.enabled = true;
         }
 
         private void OnDisable()
         {
             Debug.Log("OnDisable");
+            ballCollision.enabled = false;
             ((IBallControl)this).hideBall();
         }
 
