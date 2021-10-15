@@ -48,12 +48,12 @@ namespace Examples.Game.Scripts.Battle.Ball
             targetSpeed = 0;
             ballCollision = gameObject.AddComponent<BallCollision>();
             ballCollision.enabled = false;
-            ballCollision.setCurrentTeam = newTeamIndex =>
+            ((IBallCollisionSource)ballCollision).onCurrentTeamChanged = newTeamIndex =>
             {
                 Debug.Log($"setCurrentTeam ({curTeamIndex}) <- ({newTeamIndex})");
                 curTeamIndex = newTeamIndex;
             };
-            ballCollision.onCollision2D = onBallCollision;
+            ((IBallCollisionSource)ballCollision).onCollision2D = onBallCollision;
 
             enabled = false; // Wait until game starts
         }

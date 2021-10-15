@@ -5,9 +5,25 @@ using UnityEngine;
 namespace Examples.Game.Scripts.Battle.Ball
 {
     /// <summary>
+    /// Interface to provide data about ball collisions.
+    /// </summary>
+    public interface IBallCollisionSource
+    {
+        /// <summary>
+        /// Sets active team index or -1 if either team is decisively active.
+        /// </summary>
+        Action<int> onCurrentTeamChanged { get; set; }
+
+        /// <summary>
+        /// Externalized collision handling.
+        /// </summary>
+        Action<Collision2D> onCollision2D { get; set; }
+    }
+
+    /// <summary>
     /// Collision manager for the ball.
     /// </summary>
-    public class BallCollision : MonoBehaviour
+    public class BallCollision : MonoBehaviour, IBallCollisionSource
     {
         [Header("Live Data"), SerializeField] private bool isUpper;
         [SerializeField] private bool isLower;
@@ -15,15 +31,9 @@ namespace Examples.Game.Scripts.Battle.Ball
         private Collider2D upperTeam;
         private Collider2D lowerTeam;
 
-        /// <summary>
-        /// Sets active team index or -1 if either is decisively active.
-        /// </summary>
-        public Action<int> setCurrentTeam;
+        Action<int> IBallCollisionSource.onCurrentTeamChanged { get; set; }
 
-        /// <summary>
-        /// Externalized collision handling.
-        /// </summary>
-        public Action<Collision2D> onCollision2D;
+        Action<Collision2D> IBallCollisionSource.onCollision2D { get; set; }
 
         private void Awake()
         {
@@ -38,7 +48,7 @@ namespace Examples.Game.Scripts.Battle.Ball
             {
                 return; // Collision events will be sent to disabled MonoBehaviours, to allow enabling Behaviours in response to collisions.
             }
-            onCollision2D?.Invoke(other);
+            ((IBallCollisionSource)this).onCollision2D?.Invoke(other);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -78,17 +88,17 @@ namespace Examples.Game.Scripts.Battle.Ball
             if (isUpper && !isLower)
             {
                 // activate upper team
-                setCurrentTeam?.Invoke(1);
+                ((IBallCollisionSource)this).onCurrentTeamChanged?.Invoke(1);
             }
             else if (isLower && !isUpper)
             {
                 // Activate lower team
-                setCurrentTeam?.Invoke(0);
+                ((IBallCollisionSource)this).onCurrentTeamChanged?.Invoke(0);
             }
             else
             {
                 // between teams
-                setCurrentTeam?.Invoke(-1);
+                ((IBallCollisionSource)this).onCurrentTeamChanged?.Invoke(-1);
             }
         }
     }
