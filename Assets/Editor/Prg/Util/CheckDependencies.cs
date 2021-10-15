@@ -33,12 +33,12 @@ namespace Editor.Prg.Util
                 UnityEngine.Debug.Log($"Selected object is not supported asset: {path}");
                 return;
             }
-            UnityEngine.Debug.Log($"Search dependencies for {selectedGuids.Length} assets (in scenes and prefabs)");
+            UnityEngine.Debug.Log($"Search dependencies for {selectedGuids.Length} assets (in scenes, prefabs, ScriptableObjects)");
             const string assetRoot = "Assets";
             var foundCount = new int[selectedGuids.Length];
             Array.Clear(foundCount, 0, foundCount.Length);
 
-            var assetFilters = new[] { "t:Scene", "t:Prefab" };
+            var assetFilters = new[] { "t:Scene", "t:Prefab", "t:ScriptableObject" };
             var totalCount = 0;
             foreach (var assetFilter in assetFilters)
             {
