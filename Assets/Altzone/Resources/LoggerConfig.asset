@@ -16,16 +16,16 @@ MonoBehaviour:
   colorForClassName: White
   loggerRules: '.*PhotonListener.*=1
 
-    Altzone.*=0
+    ^Altzone.*=0
 
-    Battle.*=0
+    ^Battle.*=0
 
-    Editor.*=0
+    ^Editor.*=0
 
-    Examples.*=0
+    ^Examples.*=0
 
-    Prg.*=0
+    ^Prg.*=0
 
-    Raid.*=0
+    ^Raid.*=0
 
     .*=1'
