@@ -12,8 +12,8 @@ namespace Examples.Lobby.Scripts.InRoom
     /// </summary>
     public class RoomSetupManager : MonoBehaviour, IInRoomCallbacks
     {
-        private const string playerPositionKey = LobbyManager.playerPositionKey;
-        private const string playerMainSkillKey = LobbyManager.playerMainSkillKey;
+        private const string playerPositionKey = PhotonBattle.playerPositionKey;
+        private const string playerMainSkillKey = PhotonBattle.playerMainSkillKey;
         private const int playerIsGuest = LobbyManager.playerIsGuest;
 
         [SerializeField] private Button buttonPlayerP0;

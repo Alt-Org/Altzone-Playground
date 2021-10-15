@@ -1,5 +1,4 @@
 using Examples.Config.Scripts;
-using Examples.Lobby.Scripts;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
@@ -38,7 +37,7 @@ namespace Examples.Game.Scripts
             {
                 if (isDebugSetPlayerPropsSet)
                 {
-                    GameManager.getPlayerProperties(PhotonNetwork.LocalPlayer, out var playerPos, out var teamIndex);
+                    PhotonBattle.getPlayerProperties(PhotonNetwork.LocalPlayer, out var playerPos, out var teamIndex);
                     if (playerPos != -1)
                     {
                         // Player props should be good to go!
@@ -47,7 +46,7 @@ namespace Examples.Game.Scripts
                 }
                 else
                 {
-                    LobbyManager.setDebugPlayerProps();
+                    PhotonBattle.setDebugPlayerProps();
                     isDebugSetPlayerPropsSet = true;
                 }
                 return;

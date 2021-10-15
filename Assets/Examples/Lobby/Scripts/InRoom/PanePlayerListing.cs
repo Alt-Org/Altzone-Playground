@@ -1,4 +1,5 @@
-﻿using ExitGames.Client.Photon;
+﻿using Examples.Config.Scripts;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
@@ -13,8 +14,8 @@ namespace Examples.Lobby.Scripts.InRoom
     /// </summary>
     public class PanePlayerListing : MonoBehaviour, IInRoomCallbacks
     {
-        private const string playerPositionKey = LobbyManager.playerPositionKey;
-        private const string playerMainSkillKey = LobbyManager.playerMainSkillKey;
+        private const string playerPositionKey = PhotonBattle.playerPositionKey;
+        private const string playerMainSkillKey = PhotonBattle.playerMainSkillKey;
         private const int playerIsGuest = LobbyManager.playerIsGuest;
 
         [SerializeField] private Transform contentRoot;

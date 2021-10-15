@@ -1,11 +1,10 @@
-using Examples.Model.Scripts.Model;
+using Examples.Config.Scripts;
 using Photon.Pun;
 using Photon.Realtime;
 using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
 using Prg.Scripts.Common.Unity;
 using System.Collections;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,9 +20,6 @@ namespace Examples.Lobby.Scripts
     /// </remarks>
     public class LobbyManager : MonoBehaviourPunCallbacks
     {
-        public const string playerPositionKey = "pp";
-        public const string playerMainSkillKey = "mk";
-
         public const int playerPosition0 = 0;
         public const int playerPosition1 = 1;
         public const int playerPosition2 = 2;
@@ -86,7 +82,7 @@ namespace Examples.Lobby.Scripts
             {
                 throw new UnityException("only master client can start the game");
             }
-            var masterPosition = PhotonNetwork.LocalPlayer.GetCustomProperty(playerPositionKey, -1);
+            var masterPosition = PhotonNetwork.LocalPlayer.GetCustomProperty(PhotonBattle.playerPositionKey, -1);
             if (masterPosition < playerPosition0 || masterPosition > playerPosition3)
             {
                 throw new UnityException($"master client does not have valid player position: {masterPosition}");
@@ -95,12 +91,12 @@ namespace Examples.Lobby.Scripts
             var players = PhotonNetwork.CurrentRoom.Players.Values.ToList();
             foreach (var player in players)
             {
-                var curValue = player.GetCustomProperty(playerPositionKey, -1);
+                var curValue = player.GetCustomProperty(PhotonBattle.playerPositionKey, -1);
                 if (curValue >= playerPosition0 && curValue <= playerPosition3 || curValue == playerIsSpectator)
                 {
                     continue;
                 }
-                Debug.Log($"KICK and CloseConnection for {player.GetDebugLabel()} {playerPositionKey}={curValue}");
+                Debug.Log($"KICK and CloseConnection for {player.GetDebugLabel()} {PhotonBattle.playerPositionKey}={curValue}");
                 PhotonNetwork.CloseConnection(player);
                 yield return null;
             }
@@ -109,15 +105,15 @@ namespace Examples.Lobby.Scripts
 
         private static void setPlayer(Player player, int playerPosition)
         {
-            if (!player.HasCustomProperty(playerPositionKey))
+            if (!player.HasCustomProperty(PhotonBattle.playerPositionKey))
             {
-                Debug.Log($"setPlayer {playerPositionKey}={playerPosition}");
-                player.SetCustomProperties(new Hashtable { { playerPositionKey, playerPosition } });
+                Debug.Log($"setPlayer {PhotonBattle.playerPositionKey}={playerPosition}");
+                player.SetCustomProperties(new Hashtable { { PhotonBattle.playerPositionKey, playerPosition } });
                 return;
             }
-            var curValue = player.GetCustomProperty<int>(playerPositionKey);
-            Debug.Log($"setPlayer {playerPositionKey}=({curValue}<-){playerPosition}");
-            player.SafeSetCustomProperty(playerPositionKey, playerPosition, curValue);
+            var curValue = player.GetCustomProperty<int>(PhotonBattle.playerPositionKey);
+            Debug.Log($"setPlayer {PhotonBattle.playerPositionKey}=({curValue}<-){playerPosition}");
+            player.SafeSetCustomProperty(PhotonBattle.playerPositionKey, playerPosition, curValue);
         }
 
         public override void OnDisconnected(DisconnectCause cause)
@@ -137,31 +133,6 @@ namespace Examples.Lobby.Scripts
             Debug.Log($"OnLeftRoom {PhotonNetwork.LocalPlayer.GetDebugLabel()}");
             Debug.Log($"LoadScene {cancelScene.sceneName}");
             SceneManager.LoadScene(cancelScene.sceneName);
-        }
-
-        public static void getPlayerProperties(Player player, out int playerPos, out int teamIndex)
-        {
-            playerPos = player.GetCustomProperty(playerPositionKey, -1);
-            if (playerPos == 1 || playerPos == 3)
-            {
-                teamIndex = 1;
-            }
-            else
-            {
-                teamIndex = 0;
-            }
-        }
-
-        [Conditional("UNITY_EDITOR")]
-        public static void setDebugPlayerProps()
-        {
-            var player = PhotonNetwork.LocalPlayer;
-            player.SetCustomProperties(new Hashtable
-            {
-                { playerPositionKey, 0 },
-                { playerMainSkillKey, (int)Defence.Deflection }
-            });
-            Debug.LogWarning($"setDebugPlayerProps {player.GetDebugLabel()}");
         }
 
         public class PlayerPosEvent

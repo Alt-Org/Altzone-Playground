@@ -1,6 +1,5 @@
 using Examples.Config.Scripts;
 using Examples.Game.Scripts.PlayerPrefab;
-using Examples.Lobby.Scripts;
 using Examples.Model.Scripts.Model;
 using Photon.Pun;
 using Photon.Realtime;
@@ -228,10 +227,14 @@ namespace Examples.Game.Scripts
         {
             // Collect parameters for local player instantiation.
             var player = PhotonNetwork.LocalPlayer;
-            getPlayerProperties(PhotonNetwork.LocalPlayer, out var playerPos, out _);
+            getPlayerProperties(PhotonNetwork.LocalPlayer, out var playerPos, out var teamIndex);
             if (playerPos < 0 || playerPos >= playerStartPos.Length)
             {
                 throw new UnityException($"invalid player position '{playerPos}' for player {player.GetDebugLabel()}");
+            }
+            if (teamIndex < 0 || teamIndex > 1)
+            {
+                throw new UnityException($"invalid team index '{teamIndex}' for player {player.GetDebugLabel()}");
             }
             var playerDataCache = RuntimeGameConfig.Get().playerDataCache;
             var defence = playerDataCache.CharacterModel.MainDefence;
@@ -315,7 +318,7 @@ namespace Examples.Game.Scripts
 
         public static void getPlayerProperties(Player player, out int playerPos, out int teamIndex)
         {
-            LobbyManager.getPlayerProperties(player, out playerPos, out teamIndex);
+            PhotonBattle.getPlayerProperties(player, out playerPos, out teamIndex);
         }
 
         public class TeamScoreEvent
