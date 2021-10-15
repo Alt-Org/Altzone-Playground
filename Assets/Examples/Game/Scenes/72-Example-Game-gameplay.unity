@@ -1699,6 +1699,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b30cb4475ddaa1b4487e81aaad620e10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _sprite: {fileID: 1491261276}
+  _collider: {fileID: 1491261278}
+  curTeamIndex: 0
+  targetSpeed: 0
+  networkPosition: {x: 0, y: 0}
+  networkLag: 0
 --- !u!58 &1491261278
 CircleCollider2D:
   m_ObjectHideFlags: 0
