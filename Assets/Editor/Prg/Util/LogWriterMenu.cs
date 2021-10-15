@@ -14,7 +14,19 @@ namespace Editor.Prg.Util
         private static void AddDefine()
         {
             var knownTargets = new[] { BuildTarget.Android, BuildTarget.StandaloneWindows64, BuildTarget.WebGL };
-            AddScriptingDefineSymbolToAllBuildTargetGroups("FORCE_LOG", knownTargets);
+            var count = AddScriptingDefineSymbolToAllBuildTargetGroups("FORCE_LOG", knownTargets);
+            if (count == 0)
+            {
+                Debug.Log("FORCE_LOG seems to be defined already");
+            }
+            else if (count == knownTargets.Length)
+            {
+                Debug.Log("FORCE_LOG define has been added and project should recompile now");
+            }
+            else
+            {
+                Debug.Log("FORCE_LOG define has been added to some build targets");
+            }
         }
 
         [MenuItem("Window/ALT-Zone/Util/Editor Log/Show location")]
@@ -50,8 +62,9 @@ namespace Editor.Prg.Util
         /// </summary>
         /// <param name="defineSymbol">Define symbol.</param>
         /// <param name="targets">Build targets to modify</param>
-        private static void AddScriptingDefineSymbolToAllBuildTargetGroups(string defineSymbol, BuildTarget[] targets)
+        private static int AddScriptingDefineSymbolToAllBuildTargetGroups(string defineSymbol, BuildTarget[] targets)
         {
+            var count = 0;
             foreach (var target in targets)
             {
                 var group = BuildPipeline.GetBuildTargetGroup(target);
@@ -70,12 +83,14 @@ namespace Editor.Prg.Util
                 try
                 {
                     PlayerSettings.SetScriptingDefineSymbolsForGroup(@group, string.Join(";", defineSymbols.ToArray()));
+                    count += 1;
                 }
                 catch (Exception e)
                 {
                     UnityEngine.Debug.Log($"Could not set Photon {defineSymbol} defines for build target: {target} group: {@group}: {e}");
                 }
             }
+            return count;
         }
     }
 }
