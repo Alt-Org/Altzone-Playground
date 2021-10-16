@@ -1,4 +1,5 @@
 using Examples.Config.Scripts;
+using Examples.Game.Scripts.Battle.Room;
 using Examples.Game.Scripts.PlayerPrefab;
 using Examples.Model.Scripts.Model;
 using Photon.Pun;
@@ -45,7 +46,6 @@ namespace Examples.Game.Scripts
     public class GameManager : MonoBehaviourPunCallbacks
     {
         private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 1;
-        private const int photonEventCodeBrick = PhotonEventDispatcher.eventCodeBase + 3;
 
         [SerializeField] private Camera _camera;
 
@@ -94,7 +94,6 @@ namespace Examples.Game.Scripts
             Debug.Log($"Start: {PhotonNetwork.NetworkClientState}");
             photonEventDispatcher = PhotonEventDispatcher.Get();
             photonEventDispatcher.registerEventListener(photonEventCode, data => { handleHeadOrWallCollision(data.CustomData); });
-            photonEventDispatcher.registerEventListener(photonEventCodeBrick, data => { handleBrickCollision(data.CustomData); });
         }
 
         public override void OnEnable()
@@ -162,14 +161,8 @@ namespace Examples.Game.Scripts
         {
             var brickMarker = brickObject.GetComponent<BrickMarker>();
             Debug.Log($"brickCollision {brickMarker} layer {brickObject.layer}");
-            var payload = (short)brickMarker.BrickId;
-            photonEventDispatcher.RaiseEvent(photonEventCodeBrick, payload);
-        }
 
-        private void handleBrickCollision(object payload)
-        {
-            var brickId = (short)payload;
-            brickManager.deleteBrick(brickId);
+            ((IBrickManager)brickManager).deleteBrick(brickMarker.BrickId);
         }
 
         private void headOrWallCollision(int _headCollisionCount, int _wallCollisionCount, float positionY)
