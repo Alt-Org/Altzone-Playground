@@ -9,11 +9,12 @@ using UnityEngine;
 namespace Examples.Game.Scripts.Battle.Room
 {
     /// <summary>
-    /// Game room loader to establish well known state if level is loaded directly from Editor.
+    /// Game room loader to establish a well known state if level is loaded directly from Editor.
     /// </summary>
     public class GameRoomLoader : MonoBehaviourPunCallbacks
     {
-        public GameObject[] objectsToManage;
+        [Header("Settings"), SerializeField] private bool isOfflineMode;
+        [SerializeField] private GameObject[] objectsToManage;
 
         private void Awake()
         {
@@ -25,7 +26,7 @@ namespace Examples.Game.Scripts.Battle.Room
             }
             Debug.Log($"Awake: {PhotonNetwork.NetworkClientState}");
             // Disable game objects until room is ready
-            Array.ForEach(objectsToManage,x => x.SetActive(false));
+            Array.ForEach(objectsToManage, x => x.SetActive(false));
         }
 
         public override void OnEnable()
@@ -36,7 +37,16 @@ namespace Examples.Game.Scripts.Battle.Room
             {
                 Debug.Log($"connect: {PhotonNetwork.NetworkClientState}");
                 var playerData = RuntimeGameConfig.Get().playerDataCache;
-                PhotonLobby.connect(playerData.PlayerName);
+                //PhotonLobby.isAllowOfflineMode = isOfflineMode;
+                PhotonNetwork.OfflineMode = isOfflineMode;
+                if (isOfflineMode)
+                {
+                    PhotonNetwork.JoinRandomRoom();
+                }
+                else
+                {
+                    PhotonLobby.connect(playerData.PlayerName);
+                }
                 return;
             }
             throw new UnityException($"OnEnable: invalid connection state: {PhotonNetwork.NetworkClientState}");
@@ -44,8 +54,11 @@ namespace Examples.Game.Scripts.Battle.Room
 
         public override void OnConnectedToMaster()
         {
-            Debug.Log($"joinLobby: {PhotonNetwork.NetworkClientState}");
-            PhotonLobby.joinLobby();
+            if (!isOfflineMode)
+            {
+                Debug.Log($"joinLobby: {PhotonNetwork.NetworkClientState}");
+                PhotonLobby.joinLobby();
+            }
         }
 
         public override void OnJoinedLobby()
@@ -65,7 +78,7 @@ namespace Examples.Game.Scripts.Battle.Room
             Debug.Log($"Start game for: {player.GetDebugLabel()}");
             enabled = false;
             // Enable game objects when room is ready to play
-            Array.ForEach(objectsToManage,x => x.SetActive(true));
+            Array.ForEach(objectsToManage, x => x.SetActive(true));
         }
     }
 }
