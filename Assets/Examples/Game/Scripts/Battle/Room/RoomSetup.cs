@@ -15,7 +15,7 @@ namespace Examples.Game.Scripts.Battle.Room
             var player = PhotonNetwork.LocalPlayer;
             PhotonBattle.getPlayerProperties(player, out var playerPos, out var teamIndex);
             Debug.Log($"OnEnable pos={playerPos} team={teamIndex} {player.GetDebugLabel()}");
-            var sceneConfig = FindObjectOfType<SceneConfig>();
+            var sceneConfig = SceneConfig.Get();
             var features = RuntimeGameConfig.Get().features;
             if (features.isRotateGameCamera)
             {

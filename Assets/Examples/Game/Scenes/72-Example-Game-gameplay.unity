@@ -1220,6 +1220,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _camera: {fileID: 6780388524306496468}
   actorParent: {fileID: 1374902844}
+  ballParent: {fileID: 0}
+  playerStartPos:
+  - {fileID: 14502046}
+  - {fileID: 1073276108}
+  - {fileID: 2050763084}
+  - {fileID: 133831672}
   upperTeamCollider: {fileID: 1794610310}
   lowerTeamCollider: {fileID: 1826230731}
   upperTeamSprite: {fileID: 1794610311}
@@ -1864,6 +1870,51 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &1344589665
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1344589666}
+  - component: {fileID: 1344589667}
+  m_Layer: 0
+  m_Name: BallSlingShot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1344589666
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344589665}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1344589667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344589665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06ed273dea2fa224c8bb412382b20125, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  positionA: {fileID: 0}
+  positionB: {fileID: 0}
 --- !u!1 &1374902844
 GameObject:
   m_ObjectHideFlags: 0

@@ -37,7 +37,7 @@ namespace Examples.Game.Scripts.Battle.Ball
 
         private void Awake()
         {
-            var sceneConfig = FindObjectOfType<SceneConfig>();
+            var sceneConfig = SceneConfig.Get();
             upperTeam = sceneConfig.upperTeamCollider;
             lowerTeam = sceneConfig.lowerTeamCollider;
         }
