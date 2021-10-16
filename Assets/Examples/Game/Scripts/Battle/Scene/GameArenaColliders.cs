@@ -1,21 +1,26 @@
+using Prg.Scripts.Common.Unity;
 using UnityEngine;
 
-namespace Examples.Game.Scripts
+namespace Examples.Game.Scripts.Battle.Scene
 {
     /// <summary>
-    /// Creates reversed box collider around given sprite that provides the area to be "boxed" by colliders.
+    /// Creates reversed box collider around given template <c>Sprite</c> that provides the area to be "boxed" by colliders.
     /// </summary>
     /// <remarks>
-    /// Collider "wall" thickness and layers are configurable.
+    /// Wall collider parent, "wall" thickness, tag and layer are configurable.
     /// </remarks>
-    public class CreateReversedBoxCollider : MonoBehaviour
+    public class GameArenaColliders : MonoBehaviour
     {
-        [Header("Settings"), SerializeField] private SpriteRenderer areaTemplate;
+        [Header("Settings"), SerializeField] private SpriteRenderer templateSprite;
         [SerializeField] private Transform colliderParent;
         [SerializeField] private float wallThickness;
+        [SerializeField, TagSelector] private string wallTopTag;
         [SerializeField] private int wallTopLayer;
+        [SerializeField, TagSelector] private string wallBottomTag;
         [SerializeField] private int wallBottomLayer;
+        [SerializeField, TagSelector] private string wallLeftTag;
         [SerializeField] private int wallLeftLayer;
+        [SerializeField, TagSelector] private string wallRightTag;
         [SerializeField] private int wallRightLayer;
 
         [Header("Live Data"), SerializeField] private BoxCollider2D wallTop;
@@ -40,7 +45,11 @@ namespace Examples.Game.Scripts
             wallLeft.gameObject.layer = wallLeftLayer;
             wallRight.gameObject.layer = wallRightLayer;
 
-            var size = areaTemplate.size;
+            if (wallThickness == 0)
+            {
+                throw new UnityException("wall thickness can not be zero");
+            }
+            var size = templateSprite.size;
             var width = size.x / 2f;
             var height = size.y / 2f;
             var wallAdjustment = wallThickness / 2f;
