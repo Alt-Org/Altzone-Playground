@@ -1077,9 +1077,13 @@ MonoBehaviour:
   templateSprite: {fileID: 801765303}
   colliderParent: {fileID: 78196425}
   wallThickness: 0.25
+  wallTopTag: TopSide
   wallTopLayer: 11
+  wallBottomTag: BotSide
   wallBottomLayer: 11
+  wallLeftTag: 
   wallLeftLayer: 11
+  wallRightTag: 
   wallRightLayer: 11
   wallTop: {fileID: 0}
   wallBottom: {fileID: 0}

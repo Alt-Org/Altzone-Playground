@@ -15,13 +15,13 @@ namespace Examples.Game.Scripts.Battle.Scene
         [SerializeField] private Transform colliderParent;
         [SerializeField] private float wallThickness;
         [SerializeField, TagSelector] private string wallTopTag;
-        [SerializeField] private int wallTopLayer;
+        [SerializeField, LayerSelector] private int wallTopLayer;
         [SerializeField, TagSelector] private string wallBottomTag;
-        [SerializeField] private int wallBottomLayer;
+        [SerializeField, LayerSelector] private int wallBottomLayer;
         [SerializeField, TagSelector] private string wallLeftTag;
-        [SerializeField] private int wallLeftLayer;
+        [SerializeField, LayerSelector] private int wallLeftLayer;
         [SerializeField, TagSelector] private string wallRightTag;
-        [SerializeField] private int wallRightLayer;
+        [SerializeField, LayerSelector] private int wallRightLayer;
 
         [Header("Live Data"), SerializeField] private BoxCollider2D wallTop;
         [SerializeField] private BoxCollider2D wallBottom;
@@ -35,15 +35,10 @@ namespace Examples.Game.Scripts.Battle.Scene
 
         private void makeWalls()
         {
-            wallTop = createWall("wallTop", colliderParent).GetComponent<BoxCollider2D>();
-            wallBottom = createWall("wallBottom", colliderParent).GetComponent<BoxCollider2D>();
-            wallLeft = createWall("wallLeft", colliderParent).GetComponent<BoxCollider2D>();
-            wallRight = createWall("wallRight", colliderParent).GetComponent<BoxCollider2D>();
-
-            wallTop.gameObject.layer = wallTopLayer;
-            wallBottom.gameObject.layer = wallBottomLayer;
-            wallLeft.gameObject.layer = wallLeftLayer;
-            wallRight.gameObject.layer = wallRightLayer;
+            wallTop = createWall("wallTop", colliderParent,  wallTopTag, wallTopLayer).GetComponent<BoxCollider2D>();
+            wallBottom = createWall("wallBottom", colliderParent, wallBottomTag, wallBottomLayer).GetComponent<BoxCollider2D>();
+            wallLeft = createWall("wallLeft", colliderParent, wallLeftTag, wallLeftLayer).GetComponent<BoxCollider2D>();
+            wallRight = createWall("wallRight", colliderParent, wallRightTag, wallRightLayer).GetComponent<BoxCollider2D>();
 
             if (wallThickness == 0)
             {
@@ -67,10 +62,15 @@ namespace Examples.Game.Scripts.Battle.Scene
             wallRight.size = new Vector2(wallThickness, size.y);
         }
 
-        private static GameObject createWall(string name, Transform parent)
+        private static GameObject createWall(string name, Transform parent, string tag, int layer)
         {
             var wall = new GameObject(name) { isStatic = true };
             wall.transform.SetParent(parent);
+            if (!string.IsNullOrEmpty(tag))
+            {
+                wall.tag = tag;
+            }
+            wall.layer = layer;
             wall.isStatic = true;
             wall.AddComponent<BoxCollider2D>();
             return wall;
