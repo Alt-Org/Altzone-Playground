@@ -28,11 +28,11 @@ namespace Examples.Config.Scripts
         }
 
         [Conditional("UNITY_EDITOR")]
-        public static void setDebugPlayerProps(Player player)
+        public static void setDebugPlayerProps(Player player, int playerPos)
         {
             player.SetCustomProperties(new Hashtable
             {
-                { playerPositionKey, 0 },
+                { playerPositionKey, playerPos },
                 { playerMainSkillKey, (int)Defence.Deflection }
             });
             Debug.LogWarning($"setDebugPlayerProps {player.GetDebugLabel()}");

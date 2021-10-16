@@ -17,6 +17,11 @@ namespace Examples.Config.Scripts
         public bool isRotateGameCamera;
 
         /// <summary>
+        /// Is local player team color always "blue" team color.
+        /// </summary>
+        public bool isLocalPLayerOnTeamBlue;
+
+        /// <summary>
         /// Spawn mini ball aka diamonds.
         /// </summary>
         public bool isSPawnMiniBall;

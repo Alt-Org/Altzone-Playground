@@ -38,8 +38,8 @@ namespace Examples.Game.Scripts.Battle.Ball
         private void Awake()
         {
             var sceneConfig = FindObjectOfType<SceneConfig>();
-            upperTeam = sceneConfig.upperTeam;
-            lowerTeam = sceneConfig.lowerTeam;
+            upperTeam = sceneConfig.upperTeamCollider;
+            lowerTeam = sceneConfig.lowerTeamCollider;
         }
 
         private void OnCollisionEnter2D(Collision2D other)

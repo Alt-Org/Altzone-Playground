@@ -82,11 +82,11 @@ namespace Examples.Config.Scripts
                         throw new UnityException($"invalid synchronization message end: {lastByte}");
                     }
                     var firstByte = bytes[0];
-                    if (firstByte == (byte) What.Features)
+                    if (firstByte == (byte)What.Features)
                     {
                         readFeatures(bytes);
                     }
-                    else if (firstByte == (byte) What.Variables)
+                    else if (firstByte == (byte)What.Variables)
                     {
                         readVariables(bytes);
                     }
@@ -107,6 +107,7 @@ namespace Examples.Config.Scripts
                 {
                     writer.Write(first);
                     writer.Write(features.isRotateGameCamera);
+                    writer.Write(features.isLocalPLayerOnTeamBlue);
                     writer.Write(features.isSPawnMiniBall);
                     writer.Write(features.isActivateTeamWithBall);
                     writer.Write(last);
@@ -133,6 +134,7 @@ namespace Examples.Config.Scripts
                 {
                     reader.ReadByte(); // skip first
                     features.isRotateGameCamera = reader.ReadBoolean();
+                    features.isLocalPLayerOnTeamBlue = reader.ReadBoolean();
                     features.isSPawnMiniBall = reader.ReadBoolean();
                     features.isActivateTeamWithBall = reader.ReadBoolean();
                     reader.ReadByte(); // skip last

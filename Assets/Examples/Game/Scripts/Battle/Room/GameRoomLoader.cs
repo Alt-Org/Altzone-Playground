@@ -14,6 +14,7 @@ namespace Examples.Game.Scripts.Battle.Room
     public class GameRoomLoader : MonoBehaviourPunCallbacks
     {
         [Header("Settings"), SerializeField] private bool isOfflineMode;
+        [SerializeField] private int debugPlayerPos;
         [SerializeField] private GameObject[] objectsToManage;
 
         private void Awake()
@@ -69,7 +70,7 @@ namespace Examples.Game.Scripts.Battle.Room
 
         public override void OnJoinedRoom()
         {
-            PhotonBattle.setDebugPlayerProps(PhotonNetwork.LocalPlayer);
+            PhotonBattle.setDebugPlayerProps(PhotonNetwork.LocalPlayer, debugPlayerPos);
         }
 
         public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, Hashtable changedProps)

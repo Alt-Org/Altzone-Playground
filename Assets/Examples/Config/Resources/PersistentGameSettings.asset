@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   features:
     isRotateGameCamera: 1
+    isLocalPLayerOnTeamBlue: 1
     isSPawnMiniBall: 0
     isActivateTeamWithBall: 1
   variables:
