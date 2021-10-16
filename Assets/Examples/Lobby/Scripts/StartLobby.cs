@@ -1,6 +1,5 @@
 ﻿using Examples.Config.Scripts;
 using Prg.Scripts.Common.Photon;
-using System;
 using UnityEngine;
 
 namespace Examples.Lobby.Scripts
@@ -40,6 +39,7 @@ namespace Examples.Lobby.Scripts
             if (PhotonWrapper.CanConnect)
             {
                 var playerData = RuntimeGameConfig.Get().playerDataCache;
+                PhotonLobby.OfflineMode = false;
                 PhotonLobby.connect(playerData.PlayerName);
             }
         }

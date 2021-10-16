@@ -35,6 +35,12 @@ namespace Prg.Scripts.Common.Photon
 
         private static string __gameVersion => Application.version;
 
+        public static bool OfflineMode
+        {
+            get => PhotonNetwork.OfflineMode;
+            set => PhotonNetwork.OfflineMode = value;
+        }
+
         public static void connect(string playerName, bool isAutomaticallySyncScene = true)
         {
             if (isApplicationQuitting)
