@@ -1,4 +1,5 @@
-﻿using Photon.Pun;
+﻿#if UNITY_EDITOR || FORCE_LOG || DEVELOPMENT_BUILD
+using Photon.Pun;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -180,3 +181,4 @@ namespace Prg.Scripts.Common.Photon
         }
     }
 }
+#endif
