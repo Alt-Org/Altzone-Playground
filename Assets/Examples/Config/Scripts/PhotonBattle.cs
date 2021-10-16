@@ -1,6 +1,5 @@
 ﻿using Examples.Model.Scripts.Model;
 using ExitGames.Client.Photon;
-using Photon.Pun;
 using Photon.Realtime;
 using System.Diagnostics;
 
@@ -18,16 +17,19 @@ namespace Examples.Config.Scripts
             {
                 teamIndex = 1;
             }
-            else
+            else if (playerPos == 0 || playerPos == 2)
             {
                 teamIndex = 0;
+            }
+            else
+            {
+                teamIndex = -1;
             }
         }
 
         [Conditional("UNITY_EDITOR")]
-        public static void setDebugPlayerProps()
+        public static void setDebugPlayerProps(Player player)
         {
-            var player = PhotonNetwork.LocalPlayer;
             player.SetCustomProperties(new Hashtable
             {
                 { playerPositionKey, 0 },
