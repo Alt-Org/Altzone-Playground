@@ -701,6 +701,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 478128108}
+  - component: {fileID: 478128109}
   m_Layer: 0
   m_Name: RoomPreparation
   m_TagString: Untagged
@@ -722,6 +723,20 @@ Transform:
   m_Father: {fileID: 1640577607}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &478128109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 478128107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec4d991767d7437783a4ff6bc3a2b076, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectsToManage:
+  - {fileID: 1936812358}
 --- !u!1 &497427342
 GameObject:
   m_ObjectHideFlags: 0
