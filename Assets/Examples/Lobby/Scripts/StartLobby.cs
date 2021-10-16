@@ -14,6 +14,7 @@ namespace Examples.Lobby.Scripts
 
         private void Start()
         {
+            PhotonLobby.OfflineMode = false;
             inLobby.SetActive(false);
             inRoom.SetActive(false);
         }
@@ -39,7 +40,6 @@ namespace Examples.Lobby.Scripts
             if (PhotonWrapper.CanConnect)
             {
                 var playerData = RuntimeGameConfig.Get().playerDataCache;
-                PhotonLobby.OfflineMode = false;
                 PhotonLobby.connect(playerData.PlayerName);
             }
         }
