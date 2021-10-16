@@ -126,16 +126,6 @@ namespace Examples.Game.Scripts
             }
         }
 
-        public override void OnPlayerLeftRoom(Player otherPlayer)
-        {
-            Debug.Log($"OnPlayerLeftRoom {otherPlayer.GetDebugLabel()}");
-            if (PhotonNetwork.IsMasterClient)
-            {
-                var menu = GetComponent<MainMenu>();
-                menu.GotoMainMenu();
-            }
-        }
-
         private void OnCollisionEvent(BallMovement.CollisionEvent data)
         {
             // var hasLayer = layerMask == (layerMask | 1 << _layer); // unity3d check if layer mask contains a layer
