@@ -1,6 +1,7 @@
 ﻿using Photon.Pun;
 using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.Unity;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -26,6 +27,11 @@ namespace Examples.Game.Scripts.Battle.Room
                 gotoMainMenu();
                 enabled = false;
             }
+        }
+
+        private void OnApplicationQuit()
+        {
+            isLoading = true; // Fake to prevent loading, probably we are over cautious here!?
         }
 
         public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
