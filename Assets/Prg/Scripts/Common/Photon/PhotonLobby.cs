@@ -43,8 +43,7 @@ namespace Prg.Scripts.Common.Photon
             }
             if (PhotonNetwork.OfflineMode)
             {
-                PhotonNetwork.OfflineMode = false;
-                Debug.Log($"Fix OfflineMode: {PhotonNetwork.OfflineMode}");
+                throw new UnityException("PhotonNetwork.OfflineMode not allowed");
             }
             if (PhotonNetwork.NetworkClientState == ClientState.PeerCreated || PhotonNetwork.NetworkClientState == ClientState.Disconnected)
             {
@@ -69,7 +68,7 @@ namespace Prg.Scripts.Common.Photon
             }
             if (PhotonNetwork.OfflineMode)
             {
-                throw new UnityException("PhotonNetwork.OfflineMode not allowed here");
+                throw new UnityException("PhotonNetwork.OfflineMode not allowed");
             }
             if (PhotonNetwork.NetworkClientState == ClientState.ConnectedToMasterServer)
             {
@@ -181,10 +180,6 @@ namespace Prg.Scripts.Common.Photon
 
         private static void connectUsingSettings(AppSettings appSettings, string playerName, bool isAutomaticallySyncScene)
         {
-            if (PhotonNetwork.OfflineMode)
-            {
-                throw new UnityException("PhotonNetwork.OfflineMode not allowed here");
-            }
             // See PhotonNetwork.SendRate (which is 30 times per sec)
             // https://documentation.help/Photon-Unity-Networking-2/class_photon_1_1_pun_1_1_photon_network.html#a7b4c9628657402e59fe292502511dcf4
             // - original 10 times per second is way too slow to keep moving objects synchronized properly without glitches!
