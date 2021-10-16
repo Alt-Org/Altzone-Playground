@@ -18,7 +18,9 @@ namespace Prg.Scripts.Common.Photon
     public class PhotonListener : MonoBehaviour,
         IConnectionCallbacks, ILobbyCallbacks, IMatchmakingCallbacks, IInRoomCallbacks, IPunOwnershipCallbacks
     {
-        private static ulong baseServerTimestamp; // set OnConnectedToMaster and OnJoinedRoom to show only relative times on log
+        private const int maxTimeDifferenceMs = 60 * 60 * 1000;
+        private const int minTimeDifferenceMs = -60 * 60 * 1000;
+        private static int lastServerTimestamp;
 
         private static readonly Dictionary<string, string> photonRoomPropNames;
         private static readonly Dictionary<string, string> photonPlayerPropNames;
@@ -112,7 +114,13 @@ namespace Prg.Scripts.Common.Photon
         private static void _logMessage(string message)
         {
             var c = PhotonNetwork.IsConnectedAndReady ? "r" : PhotonNetwork.IsConnected ? "c" : "-";
-            var deltaTime = (ulong) PhotonNetwork.ServerTimestamp - baseServerTimestamp;
+            var deltaTime = PhotonNetwork.ServerTimestamp - lastServerTimestamp;
+            if (deltaTime > maxTimeDifferenceMs || deltaTime < minTimeDifferenceMs)
+            {
+                lastServerTimestamp = PhotonNetwork.ServerTimestamp;
+                deltaTime = 0;
+                c += ">";
+            }
             Debug.Log($"{c}> {PhotonNetwork.NetworkClientState} {deltaTime} {message}");
         }
 
@@ -150,10 +158,8 @@ namespace Prg.Scripts.Common.Photon
              * https://doc.photonengine.com/en-us/pun/v2/getting-started/feature-overview#versioning_by_gameversion
              * https://forum.photonengine.com/discussion/16543/how-to-prevent-older-versions-of-the-client-from-connecting-to-photonnetwork
              */
-            baseServerTimestamp = 0;
             LogPhotonStatus(
                 $"AppVersion={PhotonNetwork.AppVersion} GameVersion={PhotonNetwork.GameVersion} scene={SceneManager.GetActiveScene().name}");
-            baseServerTimestamp = (ulong) PhotonNetwork.ServerTimestamp;
         }
 
         public void OnDisconnected(DisconnectCause cause)
@@ -237,7 +243,6 @@ namespace Prg.Scripts.Common.Photon
 
         public void OnJoinedRoom()
         {
-            baseServerTimestamp = 0;
             LogPhotonStatus(PhotonNetwork.CurrentRoom.GetDebugLabel());
         }
 
