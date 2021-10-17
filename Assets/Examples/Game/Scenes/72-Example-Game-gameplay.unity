@@ -784,7 +784,6 @@ GameObject:
   m_Component:
   - component: {fileID: 478128108}
   - component: {fileID: 478128109}
-  - component: {fileID: 478128110}
   m_Layer: 0
   m_Name: RoomPreparation
   m_TagString: Untagged
@@ -822,35 +821,6 @@ MonoBehaviour:
   debugPlayerPos: 0
   objectsToManage:
   - {fileID: 1936812358}
-  - {fileID: 1344589665}
---- !u!114 &478128110
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 478128107}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 646714739964ecd4f8f3eae4d3813191, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _config: {fileID: 0}
-  _mouse:
-    zoomSpeed: 0
-    minZoomSpeed: 0
-    maxZoomSpeed: 0
-    panSpeed: 0
-    minPanSpeed: 0
-    maxPanSpeed: 0
-  _touch:
-    zoomSpeed: 0
-    minZoomSpeed: 0
-    maxZoomSpeed: 0
-    panSpeed: 0
-    minPanSpeed: 0
-    maxPanSpeed: 0
-  _handler: {fileID: 0}
 --- !u!1 &497427342
 GameObject:
   m_ObjectHideFlags: 0
@@ -1309,7 +1279,6 @@ GameObject:
   - component: {fileID: 666866953}
   - component: {fileID: 666866952}
   - component: {fileID: 666866954}
-  - component: {fileID: 666866955}
   m_Layer: 0
   m_Name: SceneConfig
   m_TagString: Untagged
@@ -1382,18 +1351,6 @@ MonoBehaviour:
   wallBottom: {fileID: 0}
   wallLeft: {fileID: 0}
   wallRight: {fileID: 0}
---- !u!114 &666866955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 666866951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a78effaaa69b4d44b46b88391e437f59, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &708616386
 GameObject:
   m_ObjectHideFlags: 0
@@ -2421,14 +2378,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1344589665}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 759139972}
   - {fileID: 864228469}
-  m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_Father: {fileID: 1950021913}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1358573330
 GameObject:
@@ -2950,7 +2907,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1640577607}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1517580000
 MonoBehaviour:
@@ -2976,7 +2933,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1640577607}
   m_Layer: 0
-  m_Name: RoomControlScripts
+  m_Name: RoomControlStages
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2995,6 +2952,7 @@ Transform:
   m_Children:
   - {fileID: 478128108}
   - {fileID: 1936812359}
+  - {fileID: 1950021913}
   - {fileID: 1517579999}
   m_Father: {fileID: 0}
   m_RootOrder: 10
@@ -3359,6 +3317,52 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1917076873
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1917076874}
+  - component: {fileID: 1917076875}
+  m_Layer: 0
+  m_Name: BrickManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1917076874
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917076873}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1950021913}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1917076875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917076873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46bb90543eab496bb6527d2a6c699861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upperBricks: {fileID: 7854303782684922245}
+  lowerBricks: {fileID: 2850825117160176794}
+  brickCount: 0
 --- !u!1 &1936812358
 GameObject:
   m_ObjectHideFlags: 0
@@ -3369,13 +3373,15 @@ GameObject:
   m_Component:
   - component: {fileID: 1936812359}
   - component: {fileID: 1936812360}
+  - component: {fileID: 1936812361}
+  - component: {fileID: 1936812362}
   m_Layer: 0
-  m_Name: RoomGamePlay
+  m_Name: RoomSetup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1936812359
 Transform:
   m_ObjectHideFlags: 0
@@ -3402,6 +3408,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03d92f22345b40ceb4083d8a6ffb1bf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1936812361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1936812358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a78effaaa69b4d44b46b88391e437f59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectsToManage:
+  - {fileID: 1950021912}
+  playerActors: []
+--- !u!114 &1936812362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1936812358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 646714739964ecd4f8f3eae4d3813191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _config: {fileID: 0}
+  _mouse:
+    zoomSpeed: 0
+    minZoomSpeed: 0
+    maxZoomSpeed: 0
+    panSpeed: 0
+    minPanSpeed: 0
+    maxPanSpeed: 0
+  _touch:
+    zoomSpeed: 0
+    minZoomSpeed: 0
+    maxZoomSpeed: 0
+    panSpeed: 0
+    minPanSpeed: 0
+    maxPanSpeed: 0
+  _handler: {fileID: 0}
+--- !u!1 &1950021912
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1950021913}
+  m_Layer: 0
+  m_Name: RoomStartPlaying
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1950021913
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950021912}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1917076874}
+  - {fileID: 1344589666}
+  m_Father: {fileID: 1640577607}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2050763083
 GameObject:
   m_ObjectHideFlags: 0
@@ -5973,7 +6054,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3474856872439868356}
   m_Layer: 14
-  m_Name: BotStoneWall
+  m_Name: LowerStoneWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10102,7 +10183,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5087391144455056754}
   m_Layer: 14
-  m_Name: TopStoneWall
+  m_Name: UpperStoneWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10555,7 +10636,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2414136508821493998}
-  - component: {fileID: 8687149556316865208}
   m_Layer: 14
   m_Name: BrickProps
   m_TagString: Untagged
@@ -10563,21 +10643,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
---- !u!114 &8687149556316865208
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8687149556316865207}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46bb90543eab496bb6527d2a6c699861, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  upperBricks: {fileID: 7854303782684922245}
-  lowerBricks: {fileID: 2850825117160176794}
-  brickCount: 0
 --- !u!1 &8699244999118141167
 GameObject:
   m_ObjectHideFlags: 0

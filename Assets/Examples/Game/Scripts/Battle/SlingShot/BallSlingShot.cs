@@ -24,7 +24,7 @@ namespace Examples.Game.Scripts.Battle.SlingShot
         [SerializeField] private LineRenderer line;
 
         [Header("Live Data"), SerializeField] private BallActor ballActor;
-        [SerializeField] Transform followA;
+        [SerializeField] private Transform followA;
         [SerializeField] private Transform followB;
         [SerializeField] private Vector3 a;
         [SerializeField] private Vector3 b;
@@ -38,19 +38,21 @@ namespace Examples.Game.Scripts.Battle.SlingShot
         private void OnEnable()
         {
             var playerActors = FindObjectsOfType<PlayerActor>()
+                .Cast<IPlayerActor>()
                 .Where(x => x.TeamIndex == teamIndex)
                 .OrderBy(x => x.PlayerPos)
                 .ToList();
+            Debug.Log($"OnEnable team={teamIndex} playerActors={playerActors.Count}");
             if (playerActors.Count == 0)
             {
                 gameObject.SetActive(false);
                 return;
             }
             ballActor = FindObjectOfType<BallActor>();
-            followA = playerActors[0].transform;
+            followA = ((PlayerActor)playerActors[0]).transform;
             if (playerActors.Count == 2)
             {
-                followB = playerActors[1].transform;
+                followB = ((PlayerActor)playerActors[1]).transform;
             }
             else
             {

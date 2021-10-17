@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Examples.Game.Scripts
+namespace Examples.Game.Scripts.Battle.GameOver
 {
     /// <summary>
     /// Utility to close this room properly before allowing to exit to main menu!
@@ -41,7 +41,7 @@ namespace Examples.Game.Scripts
             foreach (var score in scores)
             {
                 var key = $"T{score.teamIndex}";
-                var value = room.GetCustomProperty<int>(key, -1);
+                var value = room.GetCustomProperty(key, -1);
                 if (value > 0)
                 {
                     score.wallCollisionCount = value;
@@ -67,7 +67,7 @@ namespace Examples.Game.Scripts
 
         private void GotoMenu()
         {
-            // This is not perfect but will do!
+            // This is not perfect but will do for now!
             if (PhotonNetwork.InRoom)
             {
                 if (isExiting)

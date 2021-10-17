@@ -21,13 +21,11 @@ namespace Examples.Game.Scripts.Battle.Room
         {
             if (PhotonNetwork.InRoom)
             {
-                // Nothing to do!
-                enabled = false;
+                continueToNextStage();
                 return;
             }
             Debug.Log($"Awake: {PhotonNetwork.NetworkClientState}");
-            // Disable game objects until room is ready
-            Array.ForEach(objectsToManage, x => x.SetActive(false));
+            prepareCurrentStage();
         }
 
         public override void OnEnable()
@@ -54,6 +52,19 @@ namespace Examples.Game.Scripts.Battle.Room
             throw new UnityException($"OnEnable: invalid connection state: {PhotonNetwork.NetworkClientState}");
         }
 
+        private void prepareCurrentStage()
+        {
+            // Disable game objects until this room stage is ready
+            Array.ForEach(objectsToManage, x => x.SetActive(false));
+        }
+
+        private void continueToNextStage()
+        {
+            enabled = false;
+            // Enable game objects when this room stage is ready to play
+            Array.ForEach(objectsToManage, x => x.SetActive(true));
+        }
+
         public override void OnConnectedToMaster()
         {
             if (!isOfflineMode)
@@ -78,9 +89,7 @@ namespace Examples.Game.Scripts.Battle.Room
         {
             var player = PhotonNetwork.LocalPlayer;
             Debug.Log($"Start game for: {player.GetDebugLabel()}");
-            enabled = false;
-            // Enable game objects when room is ready to play
-            Array.ForEach(objectsToManage, x => x.SetActive(true));
+            continueToNextStage();
         }
     }
 }

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Examples.Game.Scripts
+namespace Examples.Game.Scripts.Battle.UI
 {
     /// <summary>
     /// Simple temporary UI for debugging.

@@ -35,10 +35,6 @@ namespace Examples.Game.Scripts.Battle.Player
             var instantiationPosition = playerStartPos[playerPos].position;
             var instance = _instantiateLocalPlayer(playerPrefab.name, instantiationPosition);
 
-            // Re-parent and set name
-            instance.transform.parent = sceneConfig.actorParent.transform;
-            instance.name = $"{(player.IsLocal ? "L" : "R")}{playerPos}:{teamIndex}:{player.NickName}";
-
             // Setup input system to move player around
             var playerMovement = instance.AddComponent<PlayerMovement>();
             var playArea = getPlayArea(playerPos);

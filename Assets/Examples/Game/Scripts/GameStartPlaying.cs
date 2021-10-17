@@ -20,7 +20,6 @@ namespace Examples.Game.Scripts
         [SerializeField] private bool isBallFound;
         [SerializeField] private float ballFoundTime;
         [SerializeField] private float roomCountdownTime;
-        [SerializeField] private BallMovement ballMovement;
 
         private PhotonEventDispatcher photonEventDispatcher;
 
@@ -42,6 +41,11 @@ namespace Examples.Game.Scripts
         private void OnEnable()
         {
             Debug.Log($"OnEnable: {PhotonNetwork.NetworkClientState} time={Time.time:0.00}");
+            // Timer start running from here!
+            secondsRemaining = variables.roomStartDelay;
+            ballFoundTime = Time.time;
+            sendRoomTimerProgress();
+            roomCountdownTime = Time.time + 1.0f;
         }
 
         private void OnDisable()
@@ -74,22 +78,6 @@ namespace Examples.Game.Scripts
             {
                 return;
             }
-            if (!isBallFound)
-            {
-                ballMovement = FindObjectOfType<BallMovement>();
-                isBallFound = ballMovement != null;
-                if (isBallFound)
-                {
-                    // Timer start running from here!
-                    secondsRemaining = variables.roomStartDelay;
-                    ballFoundTime = Time.time;
-                    sendRoomTimerProgress();
-                    roomCountdownTime = Time.time + 1.0f;
-                    Debug.Log($"ballFoundTime={ballFoundTime:0.00} roomStartTime={ballFoundTime+secondsRemaining:0.00}");
-                    ballMovement.enabled = false;
-                }
-                return;
-            }
             if (Time.time > roomCountdownTime)
             {
                 secondsRemaining -= 1;
@@ -100,13 +88,10 @@ namespace Examples.Game.Scripts
 
         private void startRoom()
         {
-            Debug.Log($"startRoom={Time.time:0.00}");
-            if (!isBallFound)
-            {
-                ballMovement = FindObjectOfType<BallMovement>(); // We are not master client, grab the ball now
-            }
-            ballMovement.enabled = true;
-        }
+            Debug.Log("*");
+            Debug.Log($"* startRoom={Time.time:0.00}");
+            Debug.Log("*");
+       }
 
         public class CountdownEvent
         {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Examples.Game.Scripts
+namespace Examples.Game.Scripts.Battle.Room
 {
     /// <summary>
     /// Unique marker for a brick so it can be identified over network and destroyed with proper effects.
@@ -27,7 +27,7 @@ namespace Examples.Game.Scripts
 
         public override string ToString()
         {
-            return $"BrickMarker #:{brickId} {gameObject.name}";
+            return $"Brick #:{brickId} {gameObject.name}";
         }
     }
 }
