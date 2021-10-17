@@ -64,6 +64,10 @@ namespace Examples.Game.Scripts.Battle.Player
             {
                 return;
             }
+            if (speed == 0f)
+            {
+                return; // Do not accept movement request if we can not move!
+            }
             inputTarget = position;
             position.x = Mathf.Clamp(inputTarget.x, playArea.xMin, playArea.xMax);
             position.y = Mathf.Clamp(inputTarget.y, playArea.yMin, playArea.yMax);

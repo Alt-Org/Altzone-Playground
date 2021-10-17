@@ -1,6 +1,5 @@
 using Prg.Scripts.Common.PubSub;
 using Prg.Scripts.Common.Unity.Input;
-using System;
 using UnityEngine;
 
 namespace Examples.Game.Scripts.Battle.Player

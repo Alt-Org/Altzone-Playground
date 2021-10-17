@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace Examples.Game.Scripts.Battle.Player
 {
+    /// <summary>
+    /// Instantiates local networked player.
+    /// </summary>
     public class PlayerInstantiate : MonoBehaviour
     {
         private void OnEnable()
@@ -34,7 +37,7 @@ namespace Examples.Game.Scripts.Battle.Player
 
             // Re-parent and set name
             instance.transform.parent = sceneConfig.actorParent.transform;
-            instance.name = player.NickName;
+            instance.name = $"{(player.IsLocal ? "L" : "R")}{playerPos}:{teamIndex}:{player.NickName}";
 
             // Setup input system to move player around
             var playerMovement = instance.AddComponent<PlayerMovement>();

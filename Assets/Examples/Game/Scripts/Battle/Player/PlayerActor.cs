@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Examples.Game.Scripts.Battle.Player
 {
+    /// <summary>
+    /// Player base class for common player data.
+    /// </summary>
     public class PlayerActor : MonoBehaviour
     {
         [Header("Settings"), SerializeField] private GameObject[] shields;

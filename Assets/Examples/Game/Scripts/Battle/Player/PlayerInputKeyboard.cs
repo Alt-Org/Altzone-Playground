@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace Examples.Game.Scripts.Battle.Player
 {
+    /// <summary>
+    /// Polls joystick "Horizontal" and "Vertical" movements and forwards them to <c>IMovablePlayer</c> for processing.
+    /// </summary>
     public class PlayerInputKeyboard : MonoBehaviour
     {
         private const float unReachableDistance = 10;

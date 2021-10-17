@@ -1,9 +1,10 @@
-﻿using Examples.Game.Scripts.Battle.Player;
+﻿using Examples.Game.Scripts.Battle.Ball;
+using Examples.Game.Scripts.Battle.Player;
 using Examples.Game.Scripts.Battle.Scene;
 using System.Linq;
 using UnityEngine;
 
-namespace Examples.Game.Scripts.Battle.Ball
+namespace Examples.Game.Scripts.Battle.SlingShot
 {
     /// <summary>
     ///  Puts the ball on the game using "sling shot" method between two team mates in position A and B.
