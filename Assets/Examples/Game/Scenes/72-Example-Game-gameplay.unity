@@ -815,6 +815,7 @@ GameObject:
   m_Component:
   - component: {fileID: 478128108}
   - component: {fileID: 478128109}
+  - component: {fileID: 478128110}
   m_Layer: 0
   m_Name: RoomPreparation
   m_TagString: Untagged
@@ -853,6 +854,34 @@ MonoBehaviour:
   objectsToManage:
   - {fileID: 1936812358}
   - {fileID: 1344589665}
+--- !u!114 &478128110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 478128107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 646714739964ecd4f8f3eae4d3813191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _config: {fileID: 0}
+  _mouse:
+    zoomSpeed: 0
+    minZoomSpeed: 0
+    maxZoomSpeed: 0
+    panSpeed: 0
+    minPanSpeed: 0
+    maxPanSpeed: 0
+  _touch:
+    zoomSpeed: 0
+    minZoomSpeed: 0
+    maxZoomSpeed: 0
+    panSpeed: 0
+    minPanSpeed: 0
+    maxPanSpeed: 0
+  _handler: {fileID: 0}
 --- !u!1 &497427342
 GameObject:
   m_ObjectHideFlags: 0
@@ -1351,7 +1380,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 666866951}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.1842068, y: 0.45426378, z: -2.7895734}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2779,7 +2808,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1640577606}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.086657, y: -0.68894565, z: -0.32268414}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 478128108}

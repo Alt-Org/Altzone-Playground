@@ -42,6 +42,7 @@ namespace Examples.Game.Scripts.Battle.Room
                 PhotonNetwork.OfflineMode = isOfflineMode;
                 if (isOfflineMode)
                 {
+                    PhotonNetwork.NickName = playerData.PlayerName;
                     PhotonNetwork.JoinRandomRoom();
                 }
                 else

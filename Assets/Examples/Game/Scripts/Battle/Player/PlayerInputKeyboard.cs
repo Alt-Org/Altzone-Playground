@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Examples.Game.Scripts
+namespace Examples.Game.Scripts.Battle.Player
 {
     public class PlayerInputKeyboard : MonoBehaviour
     {

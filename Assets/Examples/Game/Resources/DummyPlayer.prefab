@@ -73,9 +73,9 @@ MonoBehaviour:
   shields:
   - {fileID: 1730748534881358779}
   - {fileID: 2203829940551802393}
-  colliders: []
   playerPos: 0
   teamIndex: 0
+  colliders: []
 --- !u!1 &1730748534881358779
 GameObject:
   m_ObjectHideFlags: 0

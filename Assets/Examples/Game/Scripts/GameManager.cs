@@ -1,6 +1,6 @@
 using Examples.Config.Scripts;
+using Examples.Game.Scripts.Battle.Player;
 using Examples.Game.Scripts.Battle.Room;
-using Examples.Game.Scripts.PlayerPrefab;
 using Examples.Model.Scripts.Model;
 using Photon.Pun;
 using Photon.Realtime;
@@ -8,6 +8,7 @@ using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
 using System;
 using UnityEngine;
+using PlayerMovement = Examples.Game.Scripts.PlayerPrefab.PlayerMovement;
 
 namespace Examples.Game.Scripts
 {

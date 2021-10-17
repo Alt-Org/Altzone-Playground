@@ -1,16 +1,20 @@
 using Prg.Scripts.Common.PubSub;
 using Prg.Scripts.Common.Unity.Input;
+using System;
 using UnityEngine;
 
-namespace Examples.Game.Scripts
+namespace Examples.Game.Scripts.Battle.Player
 {
+    /// <summary>
+    /// Interface to move player towards given position.
+    /// </summary>
     public interface IMovablePlayer
     {
         void moveTo(Vector3 position);
     }
 
     /// <summary>
-    /// Listens <c>InputManager</c> click down and up events and forwards them to player for processing.
+    /// Listens <c>InputManager</c> click down and up events and forwards them to <c>IMovablePlayer</c> for processing.
     /// </summary>
     public class PlayerInput : MonoBehaviour
     {
@@ -37,6 +41,14 @@ namespace Examples.Game.Scripts
                 playerPositionZ = _transform.position.z;
                 this.Subscribe<InputManager.ClickDownEvent>(OnClickDownEvent);
                 this.Subscribe<InputManager.ClickUpEvent>(OnClickUpEvent);
+            }
+        }
+
+        private void Awake()
+        {
+            if (FindObjectOfType<InputManager>() == null)
+            {
+                throw new UnityException("InputManager was not found on the scene");
             }
         }
 

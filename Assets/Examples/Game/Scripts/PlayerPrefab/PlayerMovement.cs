@@ -1,4 +1,5 @@
 ﻿using Examples.Config.Scripts;
+using Examples.Game.Scripts.Battle.Player;
 using Photon.Pun;
 using Prg.Scripts.Common.PubSub;
 using UnityEngine;
