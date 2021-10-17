@@ -148,8 +148,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5966915751449435700}
   - component: {fileID: 4148027263124883360}
-  - component: {fileID: 3939048113445885372}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Highlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,22 +219,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!58 &3939048113445885372
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3553397774836255194}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 1.2
 --- !u!1 &5733253263040378484
 GameObject:
   m_ObjectHideFlags: 0
@@ -247,8 +230,8 @@ GameObject:
   - component: {fileID: 426657933117336867}
   - component: {fileID: 8867521107098597173}
   - component: {fileID: 2380884179259842108}
-  m_Layer: 10
-  m_Name: Shield
+  m_Layer: 8
+  m_Name: Shield0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -444,8 +427,8 @@ GameObject:
   - component: {fileID: 7579439336419794009}
   - component: {fileID: 4787015711496208646}
   - component: {fileID: 6653913521430340255}
-  m_Layer: 10
-  m_Name: Shield
+  m_Layer: 8
+  m_Name: Shield1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -31,6 +31,7 @@ namespace Examples.Game.Scripts.Battle.Ball
 
         private Rigidbody2D _rigidbody;
         private PhotonView _photonView;
+        //--private Vector2 curVelocity;
 
         // Configurable settings
         private GameVariables variables;
@@ -66,7 +67,6 @@ namespace Examples.Game.Scripts.Battle.Ball
         private void OnEnable()
         {
             Debug.Log("OnEnable");
-            ((IBallControl)this).showBall();
             ballCollision.enabled = true;
         }
 
@@ -80,18 +80,26 @@ namespace Examples.Game.Scripts.Battle.Ball
         void IBallControl.teleportBall(Vector2 position)
         {
             _rigidbody.position = position;
+            Debug.Log($"teleportBall position={_rigidbody.position}");
         }
 
         void IBallControl.moveBall(Vector2 direction, float speed)
         {
             targetSpeed = speed;
-            _rigidbody.velocity = direction * speed;
+            _rigidbody.velocity = direction.normalized * speed;
+            //--curVelocity = _rigidbody.velocity;
+            Debug.Log($"moveBall position={_rigidbody.position} velocity={_rigidbody.velocity} speed={targetSpeed}");
         }
 
         void IBallControl.showBall()
         {
+            if (!enabled)
+            {
+                throw new UnityException("ball must be enabled before show");
+            }
             _sprite.enabled = true;
             _collider.enabled = true;
+            Debug.Log($"showBall position={_rigidbody.position}");
         }
 
         void IBallControl.hideBall()
@@ -100,6 +108,8 @@ namespace Examples.Game.Scripts.Battle.Ball
             _collider.enabled = false;
             targetSpeed = 0;
             _rigidbody.velocity = Vector2.zero;
+            //--curVelocity = _rigidbody.velocity;
+            Debug.Log($"hideBall position={_rigidbody.position}");
         }
 
         void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -113,6 +123,7 @@ namespace Examples.Game.Scripts.Battle.Ball
             {
                 networkPosition = (Vector2)stream.ReceiveNext();
                 _rigidbody.velocity = (Vector2)stream.ReceiveNext();
+                //--curVelocity = _rigidbody.velocity;
 
                 networkLag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
                 networkPosition += _rigidbody.velocity * networkLag;
@@ -145,6 +156,11 @@ namespace Examples.Game.Scripts.Battle.Ball
             }
             if (targetSpeed > 0)
             {
+                //--if (curVelocity != _rigidbody.velocity)
+                //--{
+                //--    Debug.Log($"__> curVelocity {curVelocity} != {_rigidbody.velocity} _rigidbody.velocity");
+                //--    curVelocity = _rigidbody.velocity;
+                //--}
                 keepConstantVelocity(Time.fixedDeltaTime);
             }
         }
@@ -158,7 +174,12 @@ namespace Examples.Game.Scripts.Battle.Ball
                 randomReset(curTeamIndex);
                 return;
             }
-            _rigidbody.velocity = Vector2.Lerp(_velocity, targetVelocity, deltaTime * variables.ballLerpSmoothingFactor);
+            if (targetVelocity != _rigidbody.velocity)
+            {
+                //--Debug.Log($"keepConstantVelocity position={_rigidbody.position} velocity={targetVelocity}");
+                _rigidbody.velocity = Vector2.Lerp(_velocity, targetVelocity, deltaTime * variables.ballLerpSmoothingFactor);
+                //--curVelocity = _rigidbody.velocity;
+            }
         }
 
         private void randomReset(int forTeam)
@@ -166,6 +187,8 @@ namespace Examples.Game.Scripts.Battle.Ball
             transform.position = Vector3.zero;
             var direction = forTeam == 0 ? Vector2.up : Vector2.down;
             _rigidbody.velocity = direction * targetSpeed;
+            //--curVelocity = _rigidbody.velocity;
+            //--Debug.Log($"randomReset position={_rigidbody.position} velocity={_rigidbody.velocity} speed={targetSpeed}");
         }
     }
 }
