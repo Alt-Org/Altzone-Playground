@@ -73,6 +73,7 @@ MonoBehaviour:
   shields:
   - {fileID: 1730748534881358779}
   - {fileID: 2203829940551802393}
+  localHighlight: {fileID: 3553397774836255194}
   playerPos: 0
   teamIndex: 0
   colliders: []
@@ -149,12 +150,12 @@ GameObject:
   - component: {fileID: 5966915751449435700}
   - component: {fileID: 4148027263124883360}
   m_Layer: 0
-  m_Name: Highlight
+  m_Name: LocalHighlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5966915751449435700
 Transform:
   m_ObjectHideFlags: 0

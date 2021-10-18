@@ -21,6 +21,7 @@ namespace Examples.Game.Scripts.Battle.Player
     public class PlayerActor : MonoBehaviour, IPlayerActor
     {
         [Header("Settings"), SerializeField] private GameObject[] shields;
+        [SerializeField] private GameObject localHighlight;
 
         [Header("Live Data"), SerializeField] private int playerPos;
         [SerializeField] private int teamIndex;
@@ -81,6 +82,8 @@ namespace Examples.Game.Scripts.Battle.Player
                 var keyboardInput = gameObject.AddComponent<PlayerInputKeyboard>();
                 keyboardInput.PlayerMovement = playerMovement;
             }
+
+            localHighlight.SetActive(true);
         }
 
         private void setupRemotePlayer()
