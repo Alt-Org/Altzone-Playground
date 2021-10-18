@@ -1675,7 +1675,7 @@ MonoBehaviour:
   b: {x: 0, y: 0, z: 0}
   position: {x: 0, y: 0}
   direction: {x: 0, y: 0}
-  speed: 0
+  _currentDistance: 0
 --- !u!4 &759139972
 Transform:
   m_ObjectHideFlags: 0
@@ -1983,7 +1983,7 @@ MonoBehaviour:
   b: {x: 0, y: 0, z: 0}
   position: {x: 0, y: 0}
   direction: {x: 0, y: 0}
-  speed: 0
+  _currentDistance: 0
 --- !u!4 &864228469
 Transform:
   m_ObjectHideFlags: 0
@@ -2740,6 +2740,7 @@ GameObject:
   - component: {fileID: 1491261278}
   - component: {fileID: 1491261280}
   - component: {fileID: 1491261277}
+  - component: {fileID: 1491261281}
   m_Layer: 9
   m_Name: Ball
   m_TagString: Ball
@@ -2825,7 +2826,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sprite: {fileID: 1491261276}
   _collider: {fileID: 1491261278}
-  curTeamIndex: 0
+  _curTeamIndex: 0
   targetSpeed: 0
   ballCollision: {fileID: 0}
   networkPosition: {x: 0, y: 0}
@@ -2890,6 +2891,22 @@ MonoBehaviour:
   sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &1491261281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1491261274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45533e992ef74bf39fd63d709ffb085f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sprite: {fileID: 1491261276}
+  neutralColor: {r: 1, g: 1, b: 0.6, a: 1}
+  upperTeamColor: {r: 0.6, g: 0.8000001, b: 1, a: 1}
+  lowerTeamColor: {r: 1, g: 0.69411767, b: 0.69411767, a: 1}
 --- !u!1 &1517579998
 GameObject:
   m_ObjectHideFlags: 0

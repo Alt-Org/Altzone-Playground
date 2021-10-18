@@ -1,5 +1,6 @@
 ﻿using Examples.Config.Scripts;
 using Photon.Pun;
+using Prg.Scripts.Common.PubSub;
 using UnityEngine;
 
 namespace Examples.Game.Scripts.Battle.Ball
@@ -21,9 +22,10 @@ namespace Examples.Game.Scripts.Battle.Ball
     /// </summary>
     public class BallActor : MonoBehaviour, IPunObservable, IBallControl
     {
-        [Header("Live Data"), SerializeField] private SpriteRenderer _sprite;
+        [Header("Settings"), SerializeField] private SpriteRenderer _sprite;
         [SerializeField] private Collider2D _collider;
-        [SerializeField] private int _curTeamIndex;
+
+        [Header("Live Data"), SerializeField] private int _curTeamIndex;
         [SerializeField] private float targetSpeed;
         [SerializeField] private BallCollision ballCollision;
 
@@ -56,8 +58,10 @@ namespace Examples.Game.Scripts.Battle.Ball
 
         private void onCurrentTeamChanged(int newTeamIndex)
         {
-            Debug.Log($"setCurrentTeam ({_curTeamIndex}) <- ({newTeamIndex})");
+            var oldTemIndex = _curTeamIndex;
             _curTeamIndex = newTeamIndex;
+            Debug.Log($"onCurrentTeamChanged ({oldTemIndex}) <- ({newTeamIndex})");
+            this.Publish(new ActiveTeamEvent(oldTemIndex, newTeamIndex));
         }
 
         private void onBallCollision(Collision2D other)
@@ -212,6 +216,23 @@ namespace Examples.Game.Scripts.Battle.Ball
             else
             {
                 _hideBall();
+            }
+        }
+
+        public class ActiveTeamEvent
+        {
+            public readonly int oldTeamIndex;
+            public readonly int newTeamIndex;
+
+            public ActiveTeamEvent(int oldTeamIndex, int newTeamIndex)
+            {
+                this.oldTeamIndex = oldTeamIndex;
+                this.newTeamIndex = newTeamIndex;
+            }
+
+            public override string ToString()
+            {
+                return $"old: {oldTeamIndex}, new: {newTeamIndex}";
             }
         }
     }
