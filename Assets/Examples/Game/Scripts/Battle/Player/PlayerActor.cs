@@ -1,6 +1,7 @@
 ﻿using Examples.Config.Scripts;
 using Examples.Game.Scripts.Battle.Scene;
 using Photon.Pun;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Examples.Game.Scripts.Battle.Player
@@ -12,6 +13,7 @@ namespace Examples.Game.Scripts.Battle.Player
         int TeamIndex { get; }
         int OppositeTeam { get; }
         void setNormalMode();
+        void setFrozenMode();
         void setGhostedMode();
         void showShield();
         void hideShield();
@@ -23,8 +25,11 @@ namespace Examples.Game.Scripts.Battle.Player
     /// </summary>
     public class PlayerActor : MonoBehaviour, IPlayerActor
     {
+        public static List<IPlayerActor> playerActors;
+
         [Header("Settings"), SerializeField] private GameObject[] shields;
         [SerializeField] private GameObject realPlayer;
+        [SerializeField] private GameObject frozenPlayer;
         [SerializeField] private GameObject ghostPlayer;
         [SerializeField] private GameObject localHighlight;
 
@@ -41,6 +46,8 @@ namespace Examples.Game.Scripts.Battle.Player
         private float _Speed;
         private int myShieldIndex;
         private bool isShieldVisible;
+
+        public int sortKey => 10 * teamIndex + playerPos;
 
         private void Awake()
         {
@@ -112,15 +119,26 @@ namespace Examples.Game.Scripts.Battle.Player
         void IPlayerActor.setNormalMode()
         {
             Debug.Log($"setNormalMode pos={playerPos} team={teamIndex}");
-            ghostPlayer.SetActive(false);
             realPlayer.SetActive(true);
+            frozenPlayer.SetActive(false);
+            ghostPlayer.SetActive(false);
             shields[myShieldIndex].SetActive(isShieldVisible);
+        }
+
+        void IPlayerActor.setFrozenMode()
+        {
+            Debug.Log($"setFrozenMode pos={playerPos} team={teamIndex}");
+            realPlayer.SetActive(false);
+            frozenPlayer.SetActive(true);
+            ghostPlayer.SetActive(false);
+            shields[myShieldIndex].SetActive(false);
         }
 
         void IPlayerActor.setGhostedMode()
         {
             Debug.Log($"setGhostedMode pos={playerPos} team={teamIndex}");
             realPlayer.SetActive(false);
+            frozenPlayer.SetActive(false);
             ghostPlayer.SetActive(true);
             shields[myShieldIndex].SetActive(false);
         }

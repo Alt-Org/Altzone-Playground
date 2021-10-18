@@ -9,7 +9,8 @@ namespace Examples.Game.Scripts.Battle.Ball
     /// </summary>
     public interface IBallControl
     {
-        void teleportBall(Vector2 position);
+        int currentTeamIndex { get; }
+        void teleportBall(Vector2 position, int teamIndex); // We need to know onto which team side we are landing!
         void moveBall(Vector2 direction, float speed);
         void showBall();
         void hideBall();
@@ -22,7 +23,7 @@ namespace Examples.Game.Scripts.Battle.Ball
     {
         [Header("Live Data"), SerializeField] private SpriteRenderer _sprite;
         [SerializeField] private Collider2D _collider;
-        [SerializeField] private int curTeamIndex;
+        [SerializeField] private int _curTeamIndex;
         [SerializeField] private float targetSpeed;
         [SerializeField] private BallCollision ballCollision;
 
@@ -45,21 +46,23 @@ namespace Examples.Game.Scripts.Battle.Ball
             _rigidbody.isKinematic = !_photonView.IsMine;
             _collider.enabled = _photonView.IsMine;
 
-            curTeamIndex = -1;
+            _curTeamIndex = -1;
             targetSpeed = 0;
             ballCollision = gameObject.AddComponent<BallCollision>();
             ballCollision.enabled = false;
-            ((IBallCollisionSource)ballCollision).onCurrentTeamChanged = newTeamIndex =>
-            {
-                Debug.Log($"setCurrentTeam ({curTeamIndex}) <- ({newTeamIndex})");
-                curTeamIndex = newTeamIndex;
-            };
+            ((IBallCollisionSource)ballCollision).onCurrentTeamChanged = onCurrentTeamChanged;
             ((IBallCollisionSource)ballCollision).onCollision2D = onBallCollision;
+        }
+
+        private void onCurrentTeamChanged(int newTeamIndex)
+        {
+            Debug.Log($"setCurrentTeam ({_curTeamIndex}) <- ({newTeamIndex})");
+            _curTeamIndex = newTeamIndex;
         }
 
         private void onBallCollision(Collision2D other)
         {
-            Debug.Log($"onBallCollision team={curTeamIndex} other={other.gameObject.name}");
+            Debug.Log($"onBallCollision team={_curTeamIndex} other={other.gameObject.name}");
         }
 
         private void OnEnable()
@@ -74,8 +77,11 @@ namespace Examples.Game.Scripts.Battle.Ball
             ((IBallControl)this).hideBall();
         }
 
-        void IBallControl.teleportBall(Vector2 position)
+        int IBallControl.currentTeamIndex => _curTeamIndex;
+
+        void IBallControl.teleportBall(Vector2 position, int teamIndex)
         {
+            onCurrentTeamChanged(teamIndex);
             _rigidbody.position = position;
             Debug.Log($"teleportBall position={_rigidbody.position}");
         }
@@ -176,7 +182,7 @@ namespace Examples.Game.Scripts.Battle.Ball
             var targetVelocity = _velocity.normalized * targetSpeed;
             if (targetVelocity == Vector2.zero)
             {
-                randomReset(curTeamIndex);
+                randomReset(_curTeamIndex);
                 return;
             }
             if (targetVelocity != _rigidbody.velocity)

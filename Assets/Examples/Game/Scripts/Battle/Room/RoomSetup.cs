@@ -94,6 +94,8 @@ namespace Examples.Game.Scripts.Battle.Room
                 ((IPlayerActor)playerActor).setGhostedMode();
             }
             Debug.Log($"setupAllPlayers playerCount={playerCount} playerActors={playerActors.Count} ready");
+            // Save current player actor list for our convenience!
+            PlayerActor.playerActors = playerActors.OrderBy(x => x.sortKey).Cast<IPlayerActor>().ToList();
             continueToNextStage();
         }
     }

@@ -105,7 +105,7 @@ namespace Examples.Game.Scripts.Battle.SlingShot
 
         void IBallSlingShot.startBall()
         {
-            starTheBall(ballActor, position, direction, _currentDistance); // Ball takes care of its own network synchronization
+            starTheBall(ballActor, position, teamIndex, direction, _currentDistance); // Ball takes care of its own network synchronization
             sendHideSlingShot();
         }
 
@@ -127,9 +127,9 @@ namespace Examples.Game.Scripts.Battle.SlingShot
             direction = direction.normalized;
         }
 
-        private static void starTheBall(IBallControl ballControl, Vector2 position, Vector2 direction, float speed)
+        private static void starTheBall(IBallControl ballControl, Vector2 position, int teamIndex, Vector2 direction, float speed)
         {
-            ballControl.teleportBall(position);
+            ballControl.teleportBall(position, teamIndex);
             ballControl.showBall();
             ballControl.moveBall(direction, speed);
         }
