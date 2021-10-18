@@ -22,7 +22,7 @@ namespace Examples.Config.Scripts
     /// </remarks>
     public class GameConfigSynchronizer : MonoBehaviour
     {
-        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 4; // synchronize game config
+        private const int msgSynchronize = PhotonEventDispatcher.eventCodeBase + 0;
         private const byte endByte = 0xFE;
         private const int overheadBytes = 2;
 
@@ -39,11 +39,11 @@ namespace Examples.Config.Scripts
             }
             if (what.HasFlag(What.All) || what.HasFlag(What.Features))
             {
-                Get().synchronizeFeatures((byte)What.Features, endByte);
+                Get().sendSynchronizeFeatures((byte)What.Features, endByte);
             }
             if (what.HasFlag(What.All) || what.HasFlag(What.Variables))
             {
-                Get().synchronizeVariables((byte)What.Variables, endByte);
+                Get().sendSynchronizeVariables((byte)What.Variables, endByte);
             }
         }
 
@@ -68,37 +68,39 @@ namespace Examples.Config.Scripts
         private void Awake()
         {
             photonEventDispatcher = PhotonEventDispatcher.Get();
-            photonEventDispatcher.registerEventListener(photonEventCode, data =>
-            {
-                if (data.CustomData is byte[] bytes)
-                {
-                    if (bytes.Length < 3)
-                    {
-                        throw new UnityException($"invalid synchronization message length: {bytes.Length}");
-                    }
-                    var lastByte = bytes[bytes.Length - 1];
-                    if (lastByte != endByte)
-                    {
-                        throw new UnityException($"invalid synchronization message end: {lastByte}");
-                    }
-                    var firstByte = bytes[0];
-                    if (firstByte == (byte)What.Features)
-                    {
-                        readFeatures(bytes);
-                    }
-                    else if (firstByte == (byte)What.Variables)
-                    {
-                        readVariables(bytes);
-                    }
-                    else
-                    {
-                        throw new UnityException($"invalid synchronization message start: {firstByte}");
-                    }
-                }
-            });
+            photonEventDispatcher.registerEventListener(msgSynchronize, data => onSynchronize(data.CustomData));
         }
 
-        private void synchronizeFeatures(byte first, byte last)
+        private static void onSynchronize(object data)
+        {
+            if (data is byte[] bytes)
+            {
+                if (bytes.Length < 3)
+                {
+                    throw new UnityException($"invalid synchronization message length: {bytes.Length}");
+                }
+                var lastByte = bytes[bytes.Length - 1];
+                if (lastByte != endByte)
+                {
+                    throw new UnityException($"invalid synchronization message end: {lastByte}");
+                }
+                var firstByte = bytes[0];
+                if (firstByte == (byte)What.Features)
+                {
+                    readFeatures(bytes);
+                }
+                else if (firstByte == (byte)What.Variables)
+                {
+                    readVariables(bytes);
+                }
+                else
+                {
+                    throw new UnityException($"invalid synchronization message start: {firstByte}");
+                }
+            }
+        }
+
+        private void sendSynchronizeFeatures(byte first, byte last)
         {
             var features = RuntimeGameConfig.Get().features;
             using (var stream = new MemoryStream())
@@ -120,7 +122,7 @@ namespace Examples.Config.Scripts
                 {
                     throw new UnityException($"mismatch in type {type} fields size {fieldsLength} and written fields size {bytes.Length}");
                 }
-                photonEventDispatcher.RaiseEvent(photonEventCode, bytes);
+                photonEventDispatcher.RaiseEvent(msgSynchronize, bytes);
             }
         }
 
@@ -143,7 +145,7 @@ namespace Examples.Config.Scripts
             RuntimeGameConfig.Get().features = features;
         }
 
-        private void synchronizeVariables(byte first, byte last)
+        private void sendSynchronizeVariables(byte first, byte last)
         {
             var variables = RuntimeGameConfig.Get().variables;
             using (var stream = new MemoryStream())
@@ -168,7 +170,7 @@ namespace Examples.Config.Scripts
                 {
                     throw new UnityException($"mismatch in type {type} fields size {fieldsLength} and written fields size {bytes.Length}");
                 }
-                photonEventDispatcher.RaiseEvent(photonEventCode, bytes);
+                photonEventDispatcher.RaiseEvent(msgSynchronize, bytes);
             }
         }
 

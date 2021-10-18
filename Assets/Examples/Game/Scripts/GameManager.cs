@@ -46,7 +46,7 @@ namespace Examples.Game.Scripts
     /// </summary>
     public class GameManager : MonoBehaviourPunCallbacks
     {
-        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 1;
+        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase - 1;
 
         [SerializeField] private Camera _camera;
 

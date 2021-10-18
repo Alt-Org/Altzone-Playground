@@ -26,7 +26,7 @@ namespace Examples.Game.Scripts.Battle.SlingShot
     /// </remarks>
     public class BallSlingShot : MonoBehaviourPunCallbacks, IBallSlingShot
     {
-        private const int msgHideSlingShot = PhotonEventDispatcher.eventCodeBase + 10;
+        private const int msgHideSlingShot = PhotonEventDispatcher.eventCodeBase + 2;
 
         private const float minSpeed = 3f;
         private const float maxSpeed = 9f;

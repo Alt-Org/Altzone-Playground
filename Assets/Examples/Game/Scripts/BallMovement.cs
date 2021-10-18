@@ -17,7 +17,7 @@ namespace Examples.Game.Scripts
     /// </remarks>
     public class BallMovement : MonoBehaviourPunCallbacks, IPunObservable
     {
-        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 2; // Switch active team
+        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase - 1; // Switch active team
         private const float minStartDirection = 0.2f;
 
         public Collider2D upperTeam;

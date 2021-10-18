@@ -15,7 +15,7 @@ namespace Examples.Game.Scripts
     /// </remarks>
     public class GestaltRing : MonoBehaviour
     {
-        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 0;
+        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase - 1;
 
         public static GestaltRing Get()
         {

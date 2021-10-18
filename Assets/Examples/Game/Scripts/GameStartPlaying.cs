@@ -14,7 +14,7 @@ namespace Examples.Game.Scripts
     /// </remarks>
     public class GameStartPlaying : MonoBehaviour
     {
-        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 5;
+        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase - 1;
 
         [SerializeField] private int secondsRemaining;
         [SerializeField] private bool isBallFound;
