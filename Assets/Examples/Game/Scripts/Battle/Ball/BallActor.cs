@@ -16,11 +16,8 @@ namespace Examples.Game.Scripts.Battle.Ball
     }
 
     /// <summary>
-    /// Simple ball with <c>Rigidbody2D</c> that synchronizes its movement across network using <c>PhotonView</c>.
+    /// Simple ball with <c>Rigidbody2D</c> that synchronizes its movement across network using <c>PhotonView</c> and <c>RPC</c>.
     /// </summary>
-    /// <remarks>
-    /// Enable/disable are alias for show/hide.
-    /// </remarks>
     public class BallActor : MonoBehaviour, IPunObservable, IBallControl
     {
         [Header("Live Data"), SerializeField] private SpriteRenderer _sprite;
@@ -31,8 +28,6 @@ namespace Examples.Game.Scripts.Battle.Ball
 
         [Header("Photon"), SerializeField] private Vector2 networkPosition;
         [SerializeField] private float networkLag;
-
-        private bool isVisible => _sprite.enabled;
 
         private Rigidbody2D _rigidbody;
         private PhotonView _photonView;
@@ -70,21 +65,13 @@ namespace Examples.Game.Scripts.Battle.Ball
         private void OnEnable()
         {
             Debug.Log("OnEnable");
-            ballCollision.enabled = true;
-            if (!isVisible)
-            {
-                ((IBallControl)this).showBall();
-            }
+            ((IBallControl)this).showBall();
         }
 
         private void OnDisable()
         {
             Debug.Log("OnDisable");
-            ballCollision.enabled = false;
-            if (isVisible)
-            {
-                ((IBallControl)this).hideBall();
-            }
+            ((IBallControl)this).hideBall();
         }
 
         void IBallControl.teleportBall(Vector2 position)
@@ -103,27 +90,31 @@ namespace Examples.Game.Scripts.Battle.Ball
 
         void IBallControl.showBall()
         {
-            _sprite.enabled = true;
-            _collider.enabled = true;
-            Debug.Log($"showBall position={_rigidbody.position}");
-            if (!enabled)
-            {
-                enabled = true;
-            }
+            _photonView.RPC(nameof(setBallVisibilityRpc), RpcTarget.All, true);
         }
 
         void IBallControl.hideBall()
         {
+            _photonView.RPC(nameof(setBallVisibilityRpc), RpcTarget.All, false);
+        }
+
+        private void _showBall()
+        {
+            ballCollision.enabled = true;
+            _sprite.enabled = true;
+            _collider.enabled = true;
+            Debug.Log($"showBall position={_rigidbody.position}");
+        }
+
+        private void _hideBall()
+        {
+            ballCollision.enabled = false;
             _sprite.enabled = false;
             _collider.enabled = false;
             targetSpeed = 0;
             _rigidbody.velocity = Vector2.zero;
             //--curVelocity = _rigidbody.velocity;
             Debug.Log($"hideBall position={_rigidbody.position}");
-            if (enabled)
-            {
-                enabled = false;
-            }
         }
 
         void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -203,6 +194,19 @@ namespace Examples.Game.Scripts.Battle.Ball
             _rigidbody.velocity = direction * targetSpeed;
             //--curVelocity = _rigidbody.velocity;
             //--Debug.Log($"randomReset position={_rigidbody.position} velocity={_rigidbody.velocity} speed={targetSpeed}");
+        }
+
+        [PunRPC]
+        private void setBallVisibilityRpc(bool isVisible)
+        {
+            if (isVisible)
+            {
+                _showBall();
+            }
+            else
+            {
+                _hideBall();
+            }
         }
     }
 }

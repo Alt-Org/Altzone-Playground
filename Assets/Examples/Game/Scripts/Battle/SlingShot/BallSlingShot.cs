@@ -42,7 +42,6 @@ namespace Examples.Game.Scripts.Battle.SlingShot
         [Header("Debug"), SerializeField] private Vector2 position;
         [SerializeField] private Vector2 direction;
         [SerializeField] private float speed;
-        private float currentForce1;
 
         public override void OnEnable()
         {
@@ -55,14 +54,13 @@ namespace Examples.Game.Scripts.Battle.SlingShot
             Debug.Log($"OnEnable team={teamIndex} playerActors={playerActors.Count}");
             if (playerActors.Count == 0)
             {
-                gameObject.SetActive(false);
+                gameObject.SetActive(false); // No players for our team!
                 return;
             }
+            // Hide ball immediately
             ballActor = FindObjectOfType<BallActor>();
-            if (ballActor.enabled)
-            {
-                ballActor.enabled = false;
-            }
+            ((IBallControl)ballActor).hideBall();
+
             followA = ((PlayerActor)playerActors[0]).transform;
             if (playerActors.Count == 2)
             {
