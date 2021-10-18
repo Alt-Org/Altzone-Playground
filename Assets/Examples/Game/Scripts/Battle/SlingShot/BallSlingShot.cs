@@ -2,6 +2,7 @@
 using Examples.Game.Scripts.Battle.Player;
 using Examples.Game.Scripts.Battle.Scene;
 using Photon.Pun;
+using Prg.Scripts.Common.Photon;
 using System.Linq;
 using UnityEngine;
 
@@ -25,6 +26,8 @@ namespace Examples.Game.Scripts.Battle.SlingShot
     /// </remarks>
     public class BallSlingShot : MonoBehaviourPunCallbacks, IBallSlingShot
     {
+        private const int msgHideSlingShot = PhotonEventDispatcher.eventCodeBase + 10;
+
         private const float minSpeed = 3f;
         private const float maxSpeed = 9f;
 
@@ -42,6 +45,25 @@ namespace Examples.Game.Scripts.Battle.SlingShot
         [Header("Debug"), SerializeField] private Vector2 position;
         [SerializeField] private Vector2 direction;
         [SerializeField] private float speed;
+
+        private PhotonEventDispatcher photonEventDispatcher;
+
+        private void Awake()
+        {
+            Debug.Log("Awake");
+            photonEventDispatcher = PhotonEventDispatcher.Get();
+            photonEventDispatcher.registerEventListener(msgHideSlingShot, data => { onHideSlingShot(); });
+        }
+
+        private void sendHideSlingShot()
+        {
+            photonEventDispatcher.RaiseEvent(msgHideSlingShot, null);
+        }
+
+        private void onHideSlingShot()
+        {
+            gameObject.SetActive(false);
+        }
 
         public override void OnEnable()
         {
@@ -83,8 +105,8 @@ namespace Examples.Game.Scripts.Battle.SlingShot
 
         void IBallSlingShot.startBall()
         {
-            starTheBall(ballActor, position, direction, speed);
-            gameObject.SetActive(false);
+            starTheBall(ballActor, position, direction, speed); // Ball takes care of its own network synchronization
+            sendHideSlingShot();
         }
 
         float IBallSlingShot.currentForce => direction.magnitude;

@@ -14,7 +14,7 @@ namespace Examples.Game.Scripts.Battle.Room
     /// </summary>
     public class BrickManager : MonoBehaviour, IBrickManager
     {
-        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 3;
+        private const int msgDeleteBrick = PhotonEventDispatcher.eventCodeBase + 11;
 
         [SerializeField] private GameObject upperBricks;
         [SerializeField] private GameObject lowerBricks;
@@ -26,20 +26,16 @@ namespace Examples.Game.Scripts.Battle.Room
 
         private void Awake()
         {
+            Debug.Log("Awake");
             createBrickMarkersFor(upperBricks.transform);
             createBrickMarkersFor(lowerBricks.transform);
-        }
-
-        private void Start()
-        {
-            Debug.Log("Start");
             photonEventDispatcher = PhotonEventDispatcher.Get();
-            photonEventDispatcher.registerEventListener(photonEventCode, data => { onDeleteBrick(data.CustomData); });
+            photonEventDispatcher.registerEventListener(msgDeleteBrick, data => { onDeleteBrick(data.CustomData); });
         }
 
         private void sendDeleteBrick(int brickId)
         {
-            photonEventDispatcher.RaiseEvent(photonEventCode, brickId);
+            photonEventDispatcher.RaiseEvent(msgDeleteBrick, brickId);
         }
 
         private void onDeleteBrick(object data)
