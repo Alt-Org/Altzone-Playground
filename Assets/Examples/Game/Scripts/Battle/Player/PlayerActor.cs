@@ -28,6 +28,10 @@ namespace Examples.Game.Scripts.Battle.Player
     {
         public static List<IPlayerActor> playerActors;
 
+        private const int playModeNormal = 0;
+        private const int playModeFrozen = 1;
+        private const int playModeGhosted = 2;
+
         [Header("Settings"), SerializeField] private GameObject[] shields;
         [SerializeField] private GameObject realPlayer;
         [SerializeField] private GameObject frozenPlayer;
@@ -48,6 +52,7 @@ namespace Examples.Game.Scripts.Battle.Player
         private int myShieldIndex;
         private bool isShieldVisible;
         private IRestrictedPlayer restrictedPlayer;
+        private PhotonView _photonView;
 
         public int sortKey => 10 * teamIndex + playerPos;
 
@@ -61,6 +66,7 @@ namespace Examples.Game.Scripts.Battle.Player
             myShieldIndex = teamIndex;
             shields[((IPlayerActor)this).OppositeTeam].SetActive(false);
             colliders = GetComponentsInChildren<Collider2D>(includeInactive: false);
+            _photonView = PhotonView.Get(this);
 
             // Re-parent and set name
             var sceneConfig = SceneConfig.Get();
@@ -120,32 +126,17 @@ namespace Examples.Game.Scripts.Battle.Player
 
         void IPlayerActor.setNormalMode()
         {
-            Debug.Log($"setNormalMode pos={playerPos} team={teamIndex}");
-            realPlayer.SetActive(true);
-            frozenPlayer.SetActive(false);
-            ghostPlayer.SetActive(false);
-            shields[myShieldIndex].SetActive(isShieldVisible);
-            restrictedPlayer.canMove = true;
+            _photonView.RPC(nameof(setPlayerPlayModeRpc), RpcTarget.All, playModeNormal);
         }
 
         void IPlayerActor.setFrozenMode()
         {
-            Debug.Log($"setFrozenMode pos={playerPos} team={teamIndex}");
-            realPlayer.SetActive(false);
-            frozenPlayer.SetActive(true);
-            ghostPlayer.SetActive(false);
-            shields[myShieldIndex].SetActive(false);
-            restrictedPlayer.canMove = false;
+            _photonView.RPC(nameof(setPlayerPlayModeRpc), RpcTarget.All, playModeFrozen);
         }
 
         void IPlayerActor.setGhostedMode()
         {
-            Debug.Log($"setGhostedMode pos={playerPos} team={teamIndex}");
-            realPlayer.SetActive(false);
-            frozenPlayer.SetActive(false);
-            ghostPlayer.SetActive(true);
-            shields[myShieldIndex].SetActive(false);
-            restrictedPlayer.canMove = true;
+            _photonView.RPC(nameof(setPlayerPlayModeRpc), RpcTarget.All, playModeGhosted);
         }
 
         void IPlayerActor.headCollision()
@@ -166,6 +157,55 @@ namespace Examples.Game.Scripts.Battle.Player
             Debug.Log($"hideShield pos={playerPos} team={teamIndex}");
             isShieldVisible = false;
             shields[myShieldIndex].SetActive(isShieldVisible);
+        }
+
+        private void _setNormalMode()
+        {
+            Debug.Log($"setNormalMode pos={playerPos} team={teamIndex}");
+            realPlayer.SetActive(true);
+            frozenPlayer.SetActive(false);
+            ghostPlayer.SetActive(false);
+            shields[myShieldIndex].SetActive(isShieldVisible);
+            restrictedPlayer.canMove = true;
+        }
+
+        private void _setFrozenMode()
+        {
+            Debug.Log($"setFrozenMode pos={playerPos} team={teamIndex}");
+            realPlayer.SetActive(false);
+            frozenPlayer.SetActive(true);
+            ghostPlayer.SetActive(false);
+            shields[myShieldIndex].SetActive(false);
+            restrictedPlayer.canMove = false;
+        }
+
+        private void _setGhostedMode()
+        {
+            Debug.Log($"setGhostedMode pos={playerPos} team={teamIndex}");
+            realPlayer.SetActive(false);
+            frozenPlayer.SetActive(false);
+            ghostPlayer.SetActive(true);
+            shields[myShieldIndex].SetActive(false);
+            restrictedPlayer.canMove = true;
+        }
+
+        [PunRPC]
+        private void setPlayerPlayModeRpc(int playMode)
+        {
+            switch (playMode)
+            {
+                case playModeNormal:
+                    _setNormalMode();
+                    return;
+                case playModeFrozen:
+                    _setFrozenMode();
+                    return;
+                case playModeGhosted:
+                    _setGhostedMode();
+                    return;
+                default:
+                    throw new UnityException($"unknown play mode: {playMode}");
+            }
         }
 
         private static int getTeamMatePos(int playerPos)

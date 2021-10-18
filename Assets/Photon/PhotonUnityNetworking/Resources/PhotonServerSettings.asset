@@ -35,6 +35,7 @@ MonoBehaviour:
   RpcList:
   - MoveTowardsRpc
   - setBallVisibilityRpc
+  - setPlayerPlayModeRpc
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

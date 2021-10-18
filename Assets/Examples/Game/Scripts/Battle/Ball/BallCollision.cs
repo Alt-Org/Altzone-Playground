@@ -48,6 +48,10 @@ namespace Examples.Game.Scripts.Battle.Ball
             {
                 return; // Collision events will be sent to disabled MonoBehaviours, to allow enabling Behaviours in response to collisions.
             }
+            if (other.gameObject.layer == 0)
+            {
+                return; // Ignore colliders without a specific layer(s)!
+            }
             ((IBallCollisionSource)this).onCollision2D?.Invoke(other);
         }
 
