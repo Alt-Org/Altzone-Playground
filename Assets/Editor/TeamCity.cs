@@ -82,7 +82,7 @@ namespace Editor
 
             var indexHtml = Path.Combine(OUTPUT_WEBGL, "index.html");
             var curName = Application.productName;
-            var newName = $"{Application.productName} {Application.version} {PlayerSettings.Android.bundleVersionCode}";
+            var newName = $"{Application.productName} built {DateTime.Now:u}";
             patchIndexHtml(indexHtml, curName, newName);
 
             const string scriptName = "m_BuildScript_PostProcess.bat";
