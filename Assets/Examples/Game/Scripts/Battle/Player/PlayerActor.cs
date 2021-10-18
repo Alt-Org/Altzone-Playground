@@ -1,7 +1,6 @@
 ﻿using Examples.Config.Scripts;
 using Examples.Game.Scripts.Battle.Scene;
 using Photon.Pun;
-using Photon.Realtime;
 using UnityEngine;
 
 namespace Examples.Game.Scripts.Battle.Player
