@@ -14,7 +14,7 @@ namespace Examples.Game.Scripts.Battle.SlingShot
     public interface IBallSlingShot
     {
         void startBall();
-        float currentForce { get; }
+        float currentDistance { get; }
     }
 
     /// <summary>
@@ -28,8 +28,8 @@ namespace Examples.Game.Scripts.Battle.SlingShot
     {
         private const int msgHideSlingShot = PhotonEventDispatcher.eventCodeBase + 2;
 
-        private const float minSpeed = 3f;
-        private const float maxSpeed = 9f;
+        private const float minDistance = 3f;
+        private const float maxDistance = 9f;
 
         [Header("Settings"), SerializeField] private int teamIndex;
         [SerializeField] private SpriteRenderer spriteA;
@@ -44,7 +44,7 @@ namespace Examples.Game.Scripts.Battle.SlingShot
 
         [Header("Debug"), SerializeField] private Vector2 position;
         [SerializeField] private Vector2 direction;
-        [SerializeField] private float speed;
+        [SerializeField] private float _currentDistance;
 
         private PhotonEventDispatcher photonEventDispatcher;
 
@@ -105,11 +105,11 @@ namespace Examples.Game.Scripts.Battle.SlingShot
 
         void IBallSlingShot.startBall()
         {
-            starTheBall(ballActor, position, direction, speed); // Ball takes care of its own network synchronization
+            starTheBall(ballActor, position, direction, _currentDistance); // Ball takes care of its own network synchronization
             sendHideSlingShot();
         }
 
-        float IBallSlingShot.currentForce => direction.magnitude;
+        float IBallSlingShot.currentDistance => _currentDistance;
 
         private void Update()
         {
@@ -123,7 +123,7 @@ namespace Examples.Game.Scripts.Battle.SlingShot
 
             position = a;
             direction = b - a;
-            speed = Mathf.Clamp(direction.magnitude, minSpeed, maxSpeed);
+            _currentDistance = Mathf.Clamp(direction.magnitude, minDistance, maxDistance);
             direction = direction.normalized;
         }
 

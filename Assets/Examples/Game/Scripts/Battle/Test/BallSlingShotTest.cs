@@ -29,10 +29,10 @@ namespace Examples.Game.Scripts.Battle.Test
 
         private static void startTheBall()
         {
-            // Get slingshot with largest force and start it.
+            // Get slingshot with longest distance and start it.
             var ballSlingShot = FindObjectsOfType<BallSlingShot>()
                 .Cast<IBallSlingShot>()
-                .OrderByDescending(x => x.currentForce)
+                .OrderByDescending(x => x.currentDistance)
                 .FirstOrDefault();
 
             ballSlingShot?.startBall();
