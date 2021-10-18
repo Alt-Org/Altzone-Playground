@@ -1,6 +1,7 @@
 ﻿using Examples.Config.Scripts;
 using Examples.Game.Scripts.Battle.Scene;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 
 namespace Examples.Game.Scripts.Battle.Player
@@ -49,10 +50,42 @@ namespace Examples.Game.Scripts.Battle.Player
             transform.parent = sceneConfig.actorParent.transform;
             name = $"{(player.IsLocal ? "L" : "R")}{playerPos}:{teamIndex}:{player.NickName}";
 
+            setupPlayer(player);
+        }
+
+        private void setupPlayer(Photon.Realtime.Player player)
+        {
+            // Setup input system to move player around - PlayerMovement is required on both ends for RPC!
+            var playerMovement = gameObject.AddComponent<PlayerMovement>();
             if (player.IsLocal)
             {
-
+                setupLocalPlayer(playerMovement);
             }
+            else
+            {
+                setupRemotePlayer();
+            }
+        }
+
+        private void setupLocalPlayer(PlayerMovement playerMovement)
+        {
+            var sceneConfig = SceneConfig.Get();
+
+            var playArea = sceneConfig.getPlayArea(playerPos);
+            ((IRestrictedPlayer)playerMovement).setPlayArea(playArea);
+
+            var playerInput = gameObject.AddComponent<PlayerInput>();
+            playerInput.Camera = sceneConfig._camera;
+            playerInput.PlayerMovement = playerMovement;
+            if (!Application.isMobilePlatform)
+            {
+                var keyboardInput = gameObject.AddComponent<PlayerInputKeyboard>();
+                keyboardInput.PlayerMovement = playerMovement;
+            }
+        }
+
+        private void setupRemotePlayer()
+        {
         }
 
         private void OnEnable()

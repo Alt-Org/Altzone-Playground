@@ -58,5 +58,26 @@ namespace Examples.Game.Scripts.Battle.Scene
         }
 
         private static SceneConfig _Instance;
+
+        public Rect getPlayArea(int playerPos)
+        {
+            // For convenience player start positions are kept under corresponding play area as child objects.
+            // - play area is marked by collider to get its bounds for player area calculation!
+            var playAreaTransform = playerStartPos[playerPos].parent;
+            var center = playAreaTransform.position;
+            var bounds = playAreaTransform.GetComponent<Collider2D>().bounds;
+            return calculateRectFrom(center, bounds);
+        }
+
+        private static Rect calculateRectFrom(Vector3 center, Bounds bounds)
+        {
+            var extents = bounds.extents;
+            var size = bounds.size;
+            var x = center.x - extents.x;
+            var y = center.y - extents.y;
+            var width = size.x;
+            var height = size.y;
+            return new Rect(x, y, width, height);
+        }
     }
 }

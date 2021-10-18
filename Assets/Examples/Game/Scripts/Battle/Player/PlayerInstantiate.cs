@@ -30,34 +30,11 @@ namespace Examples.Game.Scripts.Battle.Player
             var defence = playerDataCache.CharacterModel.MainDefence;
             var playerPrefab = getPlayerPrefab(defence);
 
-            Debug.Log($"OnEnable pos={playerPos} team={teamIndex} {PhotonNetwork.LocalPlayer.GetDebugLabel()}");
+            Debug.Log($"Instantiate pos={playerPos} team={teamIndex} prefab={playerPrefab.name} {PhotonNetwork.LocalPlayer.GetDebugLabel()}");
 
             var instantiationPosition = playerStartPos[playerPos].position;
-            var instance = _instantiateLocalPlayer(playerPrefab.name, instantiationPosition);
-
-            // Setup input system to move player around
-            var playerMovement = instance.AddComponent<PlayerMovement>();
-            var playArea = getPlayArea(playerPos);
-            ((IRestrictedPlayer)playerMovement).setPlayArea(playArea);
-            var playerInput = instance.AddComponent<PlayerInput>();
-            playerInput.Camera = sceneConfig._camera;
-            playerInput.PlayerMovement = playerMovement;
-            if (!Application.isMobilePlatform)
-            {
-                var keyboardInput = instance.AddComponent<PlayerInputKeyboard>();
-                keyboardInput.PlayerMovement = playerMovement;
-            }
-        }
-
-        private static GameObject _instantiateLocalPlayer(string prefabName, Vector3 instantiationPosition)
-        {
-            var instance = PhotonNetwork.Instantiate(prefabName, instantiationPosition, Quaternion.identity);
-            return instance;
-        }
-
-        private static Rect getPlayArea(int playerPos)
-        {
-            return new Rect(-10, -10, 20, 20);
+            PhotonNetwork.Instantiate(playerPrefab.name, instantiationPosition, Quaternion.identity);
+            // ... rest of instantiation is done in PlayerActor (or elsewhere) because local and remote requirements can be different.
         }
 
         private static GameObject getPlayerPrefab(Defence defence)
