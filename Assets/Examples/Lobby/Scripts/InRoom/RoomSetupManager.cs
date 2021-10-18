@@ -1,4 +1,5 @@
 using Examples.Config.Scripts;
+using Examples.Model.Scripts.Model;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -59,7 +60,7 @@ namespace Examples.Lobby.Scripts.InRoom
             player.CustomProperties.Clear();
             // Guest by default
             var playerDataCache = RuntimeGameConfig.Get().playerDataCache;
-            var defence = playerDataCache.CharacterModel.MainDefence;
+            var defence = playerDataCache.CharacterModel?.MainDefence ?? Defence.Desensitisation;
             player.SetCustomProperties(new Hashtable
             {
                 { playerPositionKey, LobbyManager.playerIsGuest },
