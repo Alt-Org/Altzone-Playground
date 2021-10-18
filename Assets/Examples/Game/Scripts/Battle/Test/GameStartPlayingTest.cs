@@ -63,6 +63,7 @@ namespace Examples.Game.Scripts.Battle.Test
             if (secondsRemaining <= 0)
             {
                 startRoom();
+                enabled = false;
             }
         }
 
@@ -86,7 +87,7 @@ namespace Examples.Game.Scripts.Battle.Test
             Debug.Log($"* startRoom={Time.time:0.00}");
             Debug.Log("*");
             BallSlingShotTest.startTheBall();
-       }
+        }
 
         public class CountdownEvent
         {

@@ -23,6 +23,9 @@ namespace Examples.Game.Scripts.Battle.UI
         {
             roomStartPanel.SetActive(false);
             scorePanel.SetActive(false);
+            // scorePanel might be get activated but nobody will update it!
+            leftText.text = "";
+            rightText.text = "";
             this.Subscribe<GameManager.TeamScoreEvent>(OnTeamScoreEvent);
             this.Subscribe<GameStartPlayingTest.CountdownEvent>(OnCountdownEvent);
         }
@@ -55,7 +58,7 @@ namespace Examples.Game.Scripts.Battle.UI
 
         private void OnTeamScoreEvent(GameManager.TeamScoreEvent data)
         {
-            Debug.Log($"OnGameDataUpdate {data}");
+            Debug.Log($"OnTeamScoreEvent {data}");
             var score = data.score;
             var text = score.teamIndex == 0 ? leftText : rightText;
             text.text = $"<b>{teamName[score.teamIndex]}</b> head {score.headCollisionCount} wall {score.wallCollisionCount}";
