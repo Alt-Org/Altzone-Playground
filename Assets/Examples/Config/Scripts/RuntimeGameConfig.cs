@@ -128,7 +128,8 @@ namespace Examples.Config.Scripts
             }
         }
 
-        public CharacterModel CharacterModel => Models.GetById<CharacterModel>(_characterModelId);
+        public CharacterModel CharacterModel => Models.GetById<CharacterModel>(_characterModelId) ??
+                                                new CharacterModel(-1, "Dummy", Defence.Desensitisation, 0,0,0,0);
 
         /// <summary>
         /// Unique string to identify this player across devices and systems.

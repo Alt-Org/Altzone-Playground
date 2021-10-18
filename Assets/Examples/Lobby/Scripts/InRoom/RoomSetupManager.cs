@@ -60,7 +60,7 @@ namespace Examples.Lobby.Scripts.InRoom
             player.CustomProperties.Clear();
             // Guest by default
             var playerDataCache = RuntimeGameConfig.Get().playerDataCache;
-            var defence = playerDataCache.CharacterModel?.MainDefence ?? Defence.Desensitisation;
+            var defence = playerDataCache.CharacterModel.MainDefence;
             player.SetCustomProperties(new Hashtable
             {
                 { playerPositionKey, LobbyManager.playerIsGuest },

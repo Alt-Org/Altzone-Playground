@@ -27,7 +27,7 @@ namespace Examples.Game.Scripts.Battle.Player
                 throw new UnityException($"invalid team index '{teamIndex}' for player {player.GetDebugLabel()}");
             }
             var playerDataCache = RuntimeGameConfig.Get().playerDataCache;
-            var defence = playerDataCache.CharacterModel?.MainDefence ?? Defence.Desensitisation;
+            var defence = playerDataCache.CharacterModel.MainDefence;
             var playerPrefab = getPlayerPrefab(defence);
 
             Debug.Log($"Instantiate pos={playerPos} team={teamIndex} prefab={playerPrefab.name} {PhotonNetwork.LocalPlayer.GetDebugLabel()}");
