@@ -1,4 +1,5 @@
-﻿using Prg.Scripts.Common.PubSub;
+﻿using Examples.Game.Scripts.Battle.Test;
+using Prg.Scripts.Common.PubSub;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,7 +24,7 @@ namespace Examples.Game.Scripts.Battle.UI
             roomStartPanel.SetActive(false);
             scorePanel.SetActive(false);
             this.Subscribe<GameManager.TeamScoreEvent>(OnTeamScoreEvent);
-            this.Subscribe<GameStartPlaying.CountdownEvent>(OnCountdownEvent);
+            this.Subscribe<GameStartPlayingTest.CountdownEvent>(OnCountdownEvent);
         }
 
         private void OnDisable()
@@ -33,7 +34,7 @@ namespace Examples.Game.Scripts.Battle.UI
             this.Unsubscribe();
         }
 
-        private void OnCountdownEvent(GameStartPlaying.CountdownEvent data)
+        private void OnCountdownEvent(GameStartPlayingTest.CountdownEvent data)
         {
             Debug.Log($"OnCountdownEvent {data}");
             if (data.maxCountdownValue == data.curCountdownValue)

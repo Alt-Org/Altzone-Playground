@@ -29,7 +29,7 @@ namespace Examples.Game.Scripts.Battle.Test
             }
         }
 
-        private static void startTheBall()
+        public static void startTheBall()
         {
             // Get slingshot with longest distance and start it.
             var ballSlingShot = FindObjectsOfType<BallSlingShot>()

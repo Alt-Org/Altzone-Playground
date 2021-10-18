@@ -4,21 +4,16 @@ using Prg.Scripts.Common.Photon;
 using Prg.Scripts.Common.PubSub;
 using UnityEngine;
 
-namespace Examples.Game.Scripts
+namespace Examples.Game.Scripts.Battle.Test
 {
     /// <summary>
-    /// Script to control when game (room) can start playing.
+    /// Test script to start room using <c>BallSlingShotTest</c> when countdown reaches zero.
     /// </summary>
-    /// <remarks>
-    /// In practice we just wait until we found the ball and disable it for given time (<c>roomStartDelay</c>).
-    /// </remarks>
-    public class GameStartPlaying : MonoBehaviour
+    public class GameStartPlayingTest : MonoBehaviour
     {
-        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase - 1;
+        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 3;
 
-        [SerializeField] private int secondsRemaining;
-        [SerializeField] private bool isBallFound;
-        [SerializeField] private float ballFoundTime;
+        [Header("Live Data"), SerializeField] private int secondsRemaining;
         [SerializeField] private float roomCountdownTime;
 
         private PhotonEventDispatcher photonEventDispatcher;
@@ -43,7 +38,6 @@ namespace Examples.Game.Scripts
             Debug.Log($"OnEnable: {PhotonNetwork.NetworkClientState} time={Time.time:0.00}");
             // Timer start running from here!
             secondsRemaining = variables.roomStartDelay;
-            ballFoundTime = Time.time;
             sendRoomTimerProgress();
             roomCountdownTime = Time.time + 1.0f;
         }
@@ -91,6 +85,7 @@ namespace Examples.Game.Scripts
             Debug.Log("*");
             Debug.Log($"* startRoom={Time.time:0.00}");
             Debug.Log("*");
+            BallSlingShotTest.startTheBall();
        }
 
         public class CountdownEvent
