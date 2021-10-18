@@ -18,6 +18,9 @@ namespace Examples.Game.Scripts.Battle.Ball
     /// <summary>
     /// Simple ball with <c>Rigidbody2D</c> that synchronizes its movement across network using <c>PhotonView</c>.
     /// </summary>
+    /// <remarks>
+    /// Enable/disable are alias for show/hide.
+    /// </remarks>
     public class BallActor : MonoBehaviour, IPunObservable, IBallControl
     {
         [Header("Live Data"), SerializeField] private SpriteRenderer _sprite;
@@ -28,6 +31,8 @@ namespace Examples.Game.Scripts.Battle.Ball
 
         [Header("Photon"), SerializeField] private Vector2 networkPosition;
         [SerializeField] private float networkLag;
+
+        private bool isVisible => _sprite.enabled;
 
         private Rigidbody2D _rigidbody;
         private PhotonView _photonView;
@@ -55,8 +60,6 @@ namespace Examples.Game.Scripts.Battle.Ball
                 curTeamIndex = newTeamIndex;
             };
             ((IBallCollisionSource)ballCollision).onCollision2D = onBallCollision;
-
-            enabled = false; // Wait until game starts
         }
 
         private void onBallCollision(Collision2D other)
@@ -68,13 +71,20 @@ namespace Examples.Game.Scripts.Battle.Ball
         {
             Debug.Log("OnEnable");
             ballCollision.enabled = true;
+            if (!isVisible)
+            {
+                ((IBallControl)this).showBall();
+            }
         }
 
         private void OnDisable()
         {
             Debug.Log("OnDisable");
             ballCollision.enabled = false;
-            ((IBallControl)this).hideBall();
+            if (isVisible)
+            {
+                ((IBallControl)this).hideBall();
+            }
         }
 
         void IBallControl.teleportBall(Vector2 position)
@@ -93,13 +103,13 @@ namespace Examples.Game.Scripts.Battle.Ball
 
         void IBallControl.showBall()
         {
-            if (!enabled)
-            {
-                throw new UnityException("ball must be enabled before show");
-            }
             _sprite.enabled = true;
             _collider.enabled = true;
             Debug.Log($"showBall position={_rigidbody.position}");
+            if (!enabled)
+            {
+                enabled = true;
+            }
         }
 
         void IBallControl.hideBall()
@@ -110,6 +120,10 @@ namespace Examples.Game.Scripts.Battle.Ball
             _rigidbody.velocity = Vector2.zero;
             //--curVelocity = _rigidbody.velocity;
             Debug.Log($"hideBall position={_rigidbody.position}");
+            if (enabled)
+            {
+                enabled = false;
+            }
         }
 
         void IPunObservable.OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

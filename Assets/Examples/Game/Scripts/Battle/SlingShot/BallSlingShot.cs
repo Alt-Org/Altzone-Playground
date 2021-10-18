@@ -8,13 +8,22 @@ using UnityEngine;
 namespace Examples.Game.Scripts.Battle.SlingShot
 {
     /// <summary>
+    /// Interface to start the ball aka put the ball into play by sling shot.
+    /// </summary>
+    public interface IBallSlingShot
+    {
+        void startBall();
+        float currentForce { get; }
+    }
+
+    /// <summary>
     ///  Puts the ball on the game using "sling shot" method between two team mates in position A and B.
     /// </summary>
     /// <remarks>
     /// Position A is end point of aiming and position B is start point of aiming.<br />
     /// Vector A-B provides direction and relative speed (increase or decrease) to the ball when it is started to the game.
     /// </remarks>
-    public class BallSlingShot : MonoBehaviourPunCallbacks
+    public class BallSlingShot : MonoBehaviourPunCallbacks, IBallSlingShot
     {
         private const float minSpeed = 3f;
         private const float maxSpeed = 9f;
@@ -33,8 +42,7 @@ namespace Examples.Game.Scripts.Battle.SlingShot
         [Header("Debug"), SerializeField] private Vector2 position;
         [SerializeField] private Vector2 direction;
         [SerializeField] private float speed;
-
-        public bool startBall;
+        private float currentForce1;
 
         public override void OnEnable()
         {
@@ -51,6 +59,10 @@ namespace Examples.Game.Scripts.Battle.SlingShot
                 return;
             }
             ballActor = FindObjectOfType<BallActor>();
+            if (ballActor.enabled)
+            {
+                ballActor.enabled = false;
+            }
             followA = ((PlayerActor)playerActors[0]).transform;
             if (playerActors.Count == 2)
             {
@@ -71,6 +83,14 @@ namespace Examples.Game.Scripts.Battle.SlingShot
             gameObject.SetActive(false);
         }
 
+        void IBallSlingShot.startBall()
+        {
+            starTheBall(ballActor, position, direction, speed);
+            gameObject.SetActive(false);
+        }
+
+        float IBallSlingShot.currentForce => direction.magnitude;
+
         private void Update()
         {
             a = followA.position;
@@ -85,18 +105,10 @@ namespace Examples.Game.Scripts.Battle.SlingShot
             direction = b - a;
             speed = Mathf.Clamp(direction.magnitude, minSpeed, maxSpeed);
             direction = direction.normalized;
-            if (startBall)
-            {
-                ballActor.enabled = true;
-                starTheBall(ballActor, position, direction, speed);
-                gameObject.SetActive(false);
-            }
         }
 
-        private static void starTheBall(BallActor ballActor, Vector2 position, Vector2 direction, float speed)
+        private static void starTheBall(IBallControl ballControl, Vector2 position, Vector2 direction, float speed)
         {
-            ballActor.enabled = true;
-            IBallControl ballControl = ballActor;
             ballControl.teleportBall(position);
             ballControl.showBall();
             ballControl.moveBall(direction, speed);
