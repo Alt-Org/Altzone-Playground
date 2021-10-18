@@ -91,7 +91,7 @@ namespace Examples.Game.Scripts.Battle.Room
             }
             foreach (var playerActor in playerActors)
             {
-                ((IPlayerActor)playerActor).setGhosted();
+                ((IPlayerActor)playerActor).setGhostedMode();
             }
             Debug.Log($"setupAllPlayers playerCount={playerCount} playerActors={playerActors.Count} ready");
             continueToNextStage();

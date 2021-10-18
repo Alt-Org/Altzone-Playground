@@ -11,7 +11,10 @@ namespace Examples.Game.Scripts.Battle.Player
         int TeamMatePos { get; }
         int TeamIndex { get; }
         int OppositeTeam { get; }
-        void setGhosted();
+        void setNormalMode();
+        void setGhostedMode();
+        void showShield();
+        void hideShield();
         float CurrentSpeed { get; }
     }
 
@@ -21,6 +24,8 @@ namespace Examples.Game.Scripts.Battle.Player
     public class PlayerActor : MonoBehaviour, IPlayerActor
     {
         [Header("Settings"), SerializeField] private GameObject[] shields;
+        [SerializeField] private GameObject realPlayer;
+        [SerializeField] private GameObject ghostPlayer;
         [SerializeField] private GameObject localHighlight;
 
         [Header("Live Data"), SerializeField] private int playerPos;
@@ -34,6 +39,8 @@ namespace Examples.Game.Scripts.Battle.Player
         float IPlayerActor.CurrentSpeed => _Speed;
 
         private float _Speed;
+        private int myShieldIndex;
+        private bool isShieldVisible;
 
         private void Awake()
         {
@@ -42,6 +49,7 @@ namespace Examples.Game.Scripts.Battle.Player
             var model = PhotonBattle.getPlayerCharacterModel(player);
             _Speed = model.Speed;
             Debug.Log($"Awake {player.NickName} pos={playerPos} team={teamIndex}");
+            myShieldIndex = teamIndex;
             shields[((IPlayerActor)this).OppositeTeam].SetActive(false);
             colliders = GetComponentsInChildren<Collider2D>(includeInactive: false);
 
@@ -65,6 +73,7 @@ namespace Examples.Game.Scripts.Battle.Player
             {
                 setupRemotePlayer();
             }
+            // We start in ghosted form
         }
 
         private void setupLocalPlayer(PlayerMovement playerMovement)
@@ -100,9 +109,34 @@ namespace Examples.Game.Scripts.Battle.Player
             Debug.Log($"OnDisable pos={playerPos} team={teamIndex}");
         }
 
-        void IPlayerActor.setGhosted()
+        void IPlayerActor.setNormalMode()
         {
-            Debug.Log($"setGhosted pos={playerPos} team={teamIndex}");
+            Debug.Log($"setNormalMode pos={playerPos} team={teamIndex}");
+            ghostPlayer.SetActive(false);
+            realPlayer.SetActive(true);
+            shields[myShieldIndex].SetActive(isShieldVisible);
+        }
+
+        void IPlayerActor.setGhostedMode()
+        {
+            Debug.Log($"setGhostedMode pos={playerPos} team={teamIndex}");
+            realPlayer.SetActive(false);
+            ghostPlayer.SetActive(true);
+            shields[myShieldIndex].SetActive(false);
+        }
+
+        void IPlayerActor.showShield()
+        {
+            Debug.Log($"showShield pos={playerPos} team={teamIndex}");
+            isShieldVisible = true;
+            shields[myShieldIndex].SetActive(isShieldVisible);
+        }
+
+        void IPlayerActor.hideShield()
+        {
+            Debug.Log($"hideShield pos={playerPos} team={teamIndex}");
+            isShieldVisible = false;
+            shields[myShieldIndex].SetActive(isShieldVisible);
         }
 
         private static int getTeamMatePos(int playerPos)
