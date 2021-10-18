@@ -46,6 +46,7 @@ namespace Examples.Game.Scripts.Battle.Player
         private float _Speed;
         private int myShieldIndex;
         private bool isShieldVisible;
+        private IRestrictedPlayer restrictedPlayer;
 
         public int sortKey => 10 * teamIndex + playerPos;
 
@@ -72,6 +73,7 @@ namespace Examples.Game.Scripts.Battle.Player
         {
             // Setup input system to move player around - PlayerMovement is required on both ends for RPC!
             var playerMovement = gameObject.AddComponent<PlayerMovement>();
+            restrictedPlayer = playerMovement;
             if (player.IsLocal)
             {
                 setupLocalPlayer(playerMovement);
@@ -80,23 +82,21 @@ namespace Examples.Game.Scripts.Battle.Player
             {
                 setupRemotePlayer();
             }
-            // We start in ghosted form
         }
 
-        private void setupLocalPlayer(PlayerMovement playerMovement)
+        private void setupLocalPlayer(IMovablePlayer movablePlayer)
         {
             var sceneConfig = SceneConfig.Get();
-
             var playArea = sceneConfig.getPlayArea(playerPos);
-            ((IRestrictedPlayer)playerMovement).setPlayArea(playArea);
+            restrictedPlayer.setPlayArea(playArea);
 
             var playerInput = gameObject.AddComponent<PlayerInput>();
             playerInput.Camera = sceneConfig._camera;
-            playerInput.PlayerMovement = playerMovement;
+            playerInput.PlayerMovement = movablePlayer;
             if (!Application.isMobilePlatform)
             {
                 var keyboardInput = gameObject.AddComponent<PlayerInputKeyboard>();
-                keyboardInput.PlayerMovement = playerMovement;
+                keyboardInput.PlayerMovement = movablePlayer;
             }
 
             localHighlight.SetActive(true);
@@ -104,6 +104,7 @@ namespace Examples.Game.Scripts.Battle.Player
 
         private void setupRemotePlayer()
         {
+            localHighlight.SetActive(false);
         }
 
         private void OnEnable()
@@ -123,6 +124,7 @@ namespace Examples.Game.Scripts.Battle.Player
             frozenPlayer.SetActive(false);
             ghostPlayer.SetActive(false);
             shields[myShieldIndex].SetActive(isShieldVisible);
+            restrictedPlayer.canMove = true;
         }
 
         void IPlayerActor.setFrozenMode()
@@ -132,6 +134,7 @@ namespace Examples.Game.Scripts.Battle.Player
             frozenPlayer.SetActive(true);
             ghostPlayer.SetActive(false);
             shields[myShieldIndex].SetActive(false);
+            restrictedPlayer.canMove = false;
         }
 
         void IPlayerActor.setGhostedMode()
@@ -141,6 +144,7 @@ namespace Examples.Game.Scripts.Battle.Player
             frozenPlayer.SetActive(false);
             ghostPlayer.SetActive(true);
             shields[myShieldIndex].SetActive(false);
+            restrictedPlayer.canMove = true;
         }
 
         void IPlayerActor.showShield()

@@ -9,6 +9,7 @@ namespace Examples.Game.Scripts.Battle.Player
     public interface IRestrictedPlayer
     {
         void setPlayArea(Rect area);
+        bool canMove { get; set; }
     }
 
     /// <summary>
@@ -27,18 +28,24 @@ namespace Examples.Game.Scripts.Battle.Player
         [SerializeField] private bool isMoving;
         [SerializeField] private Vector3 validTarget;
 
-        [Header("Debug"), SerializeField] private bool canMove;
+        [Header("Debug"), SerializeField] private bool _canMove;
         [SerializeField] private Vector3 inputTarget;
         [SerializeField] private Rect playArea;
 
         private IPlayerActor playerActor;
+
+        bool IRestrictedPlayer.canMove
+        {
+            get => _canMove;
+            set => _canMove = value;
+        }
 
         private void Awake()
         {
             _photonView = PhotonView.Get(this);
             _transform = GetComponent<Transform>();
             playerActor = GetComponent<PlayerActor>();
-            canMove = true;
+            _canMove = true;
         }
 
         private void Update()
@@ -47,7 +54,7 @@ namespace Examples.Game.Scripts.Battle.Player
             {
                 return;
             }
-            if (!canMove)
+            if (!_canMove)
             {
                 return;
             }
@@ -58,7 +65,7 @@ namespace Examples.Game.Scripts.Battle.Player
 
         void IMovablePlayer.moveTo(Vector3 position)
         {
-            if (!canMove)
+            if (!_canMove)
             {
                 return;
             }
