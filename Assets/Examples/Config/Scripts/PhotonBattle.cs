@@ -27,6 +27,12 @@ namespace Examples.Config.Scripts
             }
         }
 
+        public static CharacterModel getPlayerCharacterModel(Player player)
+        {
+            var skillId = player.GetCustomProperty(playerMainSkillKey, -1);
+            return Models.GetById<CharacterModel>(skillId);
+        }
+
         [Conditional("UNITY_EDITOR")]
         public static void setDebugPlayerProps(Player player, int playerPos)
         {

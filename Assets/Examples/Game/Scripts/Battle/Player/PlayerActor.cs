@@ -12,6 +12,7 @@ namespace Examples.Game.Scripts.Battle.Player
         int TeamIndex { get; }
         int OppositeTeam { get; }
         void setGhosted();
+        float CurrentSpeed { get; }
     }
 
     /// <summary>
@@ -29,11 +30,16 @@ namespace Examples.Game.Scripts.Battle.Player
         int IPlayerActor.TeamMatePos => getTeamMatePos(playerPos);
         int IPlayerActor.TeamIndex => teamIndex;
         int IPlayerActor.OppositeTeam => teamIndex == 0 ? 1 : 0;
+        float IPlayerActor.CurrentSpeed => _Speed;
+
+        private float _Speed;
 
         private void Awake()
         {
             var player = PhotonView.Get(this).Owner;
             PhotonBattle.getPlayerProperties(player, out playerPos, out teamIndex);
+            var model = PhotonBattle.getPlayerCharacterModel(player);
+            _Speed = model.Speed;
             Debug.Log($"Awake {player.NickName} pos={playerPos} team={teamIndex}");
             shields[((IPlayerActor)this).OppositeTeam].SetActive(false);
             colliders = GetComponentsInChildren<Collider2D>(includeInactive: false);
@@ -42,6 +48,11 @@ namespace Examples.Game.Scripts.Battle.Player
             var sceneConfig = SceneConfig.Get();
             transform.parent = sceneConfig.actorParent.transform;
             name = $"{(player.IsLocal ? "L" : "R")}{playerPos}:{teamIndex}:{player.NickName}";
+
+            if (player.IsLocal)
+            {
+
+            }
         }
 
         private void OnEnable()

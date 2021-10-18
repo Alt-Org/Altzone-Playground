@@ -1,6 +1,4 @@
 using Photon.Pun;
-using Prg.Scripts.Common.PubSub;
-using System;
 using UnityEngine;
 
 namespace Examples.Game.Scripts.Battle.Player
@@ -25,17 +23,21 @@ namespace Examples.Game.Scripts.Battle.Player
         [Header("Live Data"), SerializeField] protected PhotonView _photonView;
         [SerializeField] protected Transform _transform;
 
-        [SerializeField] private bool canMove;
+        [Header("RPC Input"), SerializeField] private float speed;
         [SerializeField] private bool isMoving;
         [SerializeField] private Vector3 validTarget;
+
+        [Header("Debug"), SerializeField] private bool canMove;
         [SerializeField] private Vector3 inputTarget;
         [SerializeField] private Rect playArea;
-        [SerializeField] private float speed;
+
+        private IPlayerActor playerActor;
 
         private void Awake()
         {
             _photonView = PhotonView.Get(this);
             _transform = GetComponent<Transform>();
+            playerActor = GetComponent<PlayerActor>();
             canMove = true;
         }
 
@@ -64,15 +66,11 @@ namespace Examples.Game.Scripts.Battle.Player
             {
                 return;
             }
-            if (speed == 0f)
-            {
-                return; // Do not accept movement request if we can not move!
-            }
             inputTarget = position;
             position.x = Mathf.Clamp(inputTarget.x, playArea.xMin, playArea.xMax);
             position.y = Mathf.Clamp(inputTarget.y, playArea.yMin, playArea.yMax);
             // Send position to all players
-            _photonView.RPC(nameof(MoveTowardsRpc), RpcTarget.All, position);
+            _photonView.RPC(nameof(MoveTowardsRpc), RpcTarget.All, position, playerActor.CurrentSpeed);
         }
 
         void IRestrictedPlayer.setPlayArea(Rect area)
@@ -81,10 +79,11 @@ namespace Examples.Game.Scripts.Battle.Player
         }
 
         [PunRPC]
-        private void MoveTowardsRpc(Vector3 targetPosition)
+        private void MoveTowardsRpc(Vector3 targetPosition, float targetSpeed)
         {
             isMoving = true;
             validTarget = targetPosition;
+            speed = targetSpeed;
         }
     }
 }
