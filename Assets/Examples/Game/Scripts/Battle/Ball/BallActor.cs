@@ -1,4 +1,5 @@
 ﻿using Examples.Config.Scripts;
+using Examples.Game.Scripts.Battle.Player;
 using Photon.Pun;
 using Prg.Scripts.Common.PubSub;
 using UnityEngine;
@@ -25,6 +26,13 @@ namespace Examples.Game.Scripts.Battle.Ball
         [Header("Settings"), SerializeField] private SpriteRenderer _sprite;
         [SerializeField] private Collider2D _collider;
 
+        [SerializeField] private LayerMask collisionToHeadMask;
+        [SerializeField] private int collisionToHead;
+        [SerializeField] private LayerMask collisionToWallMask;
+        [SerializeField] private int collisionToWall;
+        [SerializeField] private LayerMask collisionToBrickMask;
+        [SerializeField] private int collisionToBrick;
+
         [Header("Live Data"), SerializeField] private int _curTeamIndex;
         [SerializeField] private float targetSpeed;
         [SerializeField] private BallCollision ballCollision;
@@ -33,6 +41,7 @@ namespace Examples.Game.Scripts.Battle.Ball
         [SerializeField] private float networkLag;
 
         private Rigidbody2D _rigidbody;
+
         private PhotonView _photonView;
         //--private Vector2 curVelocity;
 
@@ -47,6 +56,10 @@ namespace Examples.Game.Scripts.Battle.Ball
             _photonView = PhotonView.Get(this);
             _rigidbody.isKinematic = !_photonView.IsMine;
             _collider.enabled = _photonView.IsMine;
+
+            collisionToHead = collisionToHeadMask.value;
+            collisionToWall = collisionToWallMask.value;
+            collisionToBrick = collisionToBrickMask.value;
 
             _curTeamIndex = -1;
             targetSpeed = 0;
@@ -66,7 +79,24 @@ namespace Examples.Game.Scripts.Battle.Ball
 
         private void onBallCollision(Collision2D other)
         {
-            Debug.Log($"onBallCollision team={_curTeamIndex} other={other.gameObject.name}");
+            var otherGameObject = other.gameObject;
+            var colliderMask = 1 << otherGameObject.layer;
+            if (collisionToBrick == (collisionToBrick | colliderMask))
+            {
+                return;
+            }
+            if (collisionToHead == (collisionToHead | colliderMask))
+            {
+                // Contract: player is one level up from head collider
+                var playerActor = otherGameObject.GetComponentInParent<PlayerActor>() as IPlayerActor;
+                playerActor.headCollision();
+                return;
+            }
+            if (collisionToWall == (collisionToWall | colliderMask))
+            {
+                return;
+            }
+            Debug.Log($"onBallCollision UNHANDLED team={_curTeamIndex} other={other.gameObject.name}");
         }
 
         private void OnEnable()
@@ -78,7 +108,10 @@ namespace Examples.Game.Scripts.Battle.Ball
         private void OnDisable()
         {
             Debug.Log("OnDisable");
-            ((IBallControl)this).hideBall();
+            if (PhotonNetwork.InRoom)
+            {
+                ((IBallControl)this).hideBall();
+            }
         }
 
         int IBallControl.currentTeamIndex => _curTeamIndex;

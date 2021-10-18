@@ -2869,6 +2869,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sprite: {fileID: 1491261276}
   _collider: {fileID: 1491261278}
+  collisionToHeadMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  collisionToHead: 0
+  collisionToWallMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  collisionToWall: 0
+  collisionToBrickMask:
+    serializedVersion: 2
+    m_Bits: 16384
+  collisionToBrick: 0
   _curTeamIndex: 0
   targetSpeed: 0
   ballCollision: {fileID: 0}

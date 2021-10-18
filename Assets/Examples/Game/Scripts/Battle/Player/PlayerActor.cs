@@ -17,6 +17,7 @@ namespace Examples.Game.Scripts.Battle.Player
         void setGhostedMode();
         void showShield();
         void hideShield();
+        void headCollision();
         float CurrentSpeed { get; }
     }
 
@@ -145,6 +146,12 @@ namespace Examples.Game.Scripts.Battle.Player
             ghostPlayer.SetActive(true);
             shields[myShieldIndex].SetActive(false);
             restrictedPlayer.canMove = true;
+        }
+
+        void IPlayerActor.headCollision()
+        {
+            Debug.Log($"headCollision pos={playerPos} team={teamIndex}");
+            ((IPlayerActor)this).setGhostedMode();
         }
 
         void IPlayerActor.showShield()
