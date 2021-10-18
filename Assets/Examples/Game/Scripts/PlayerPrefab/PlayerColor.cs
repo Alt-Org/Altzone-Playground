@@ -8,7 +8,7 @@ namespace Examples.Game.Scripts.PlayerPrefab
     /// </summary>
     public class PlayerColor : MonoBehaviour
     {
-        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase + 6;
+        private const int photonEventCode = PhotonEventDispatcher.eventCodeBase - 1;
 
         [Header("Settings"), SerializeField] private SpriteRenderer headSprite;
         [SerializeField] private Color normalColor; // #0
