@@ -1,4 +1,3 @@
-#if UNITY_EDITOR || FORCE_LOG || DEVELOPMENT_BUILD
 using Examples.Game.Scripts.Battle.Ball;
 using Examples.Game.Scripts.Battle.Player;
 using Examples.Game.Scripts.Battle.SlingShot;
@@ -56,4 +55,3 @@ namespace Examples.Game.Scripts.Battle.Test
         }
     }
 }
-#endif
