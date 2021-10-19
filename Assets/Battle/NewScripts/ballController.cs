@@ -8,13 +8,15 @@ namespace Altzone.NewPlayer
     {
         private const float minStartDirection = 0.2f;
 
-        [Header("Settings"), SerializeField, Min(float.Epsilon)] private float ballMoveSpeed;
+        [Header("Settings"), Min(float.Epsilon)] public float ballMoveSpeed;
         [SerializeField, Min(float.Epsilon)] private float lerpSmoothingFactor;
         [SerializeField] private Transform _transform;
 
         [Header("Live Data"), SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private Collider2D _collider;
         [SerializeField] private Vector3 initialPosition;
+        // This bool is used to stop the ball from getting reset constantly (causing a freeze) whenever the ball needs to be stopped.
+        public bool stop = false;
 
         private bool isDebugBallNoRandom;
 
@@ -24,7 +26,7 @@ namespace Altzone.NewPlayer
             _rigidbody = GetComponent<Rigidbody2D>();
             _collider = GetComponent<Collider2D>();
             initialPosition = _transform.position;
-            UnityEngine.Debug.Assert(!GetComponent<SpriteRenderer>().enabled, "keep sprite hidden to avoid scene instantiation lag spike", gameObject);
+            //UnityEngine.Debug.Assert(!GetComponent<SpriteRenderer>().enabled, "keep sprite hidden to avoid scene instantiation lag spike", gameObject);
         }
 
         private void OnEnable()
@@ -49,6 +51,22 @@ namespace Altzone.NewPlayer
 
         private void restart()
         {
+            // Setting the stoppers to function in case this needs a restart due to it being caught, which turned the stoppers off.
+            playerBallStopper[] stoppers;
+            stoppers = FindObjectsOfType<playerBallStopper>();
+            foreach (var stopper in stoppers)
+            {
+                stopper.ballCaught = false;
+            }
+            // Same as above, but with the shieldManager
+            shieldManager[] managers;
+            managers = FindObjectsOfType<shieldManager>();
+            foreach (var manager in managers)
+            {
+                manager.ballCaught = false;
+            }
+
+            _transform.parent = null;
             _transform.position = initialPosition;
             var randomDir = isDebugBallNoRandom ? Vector2.left : getStartDirection();
             _rigidbody.velocity = randomDir * ballMoveSpeed;
@@ -71,7 +89,7 @@ namespace Altzone.NewPlayer
         {
             var _velocity = _rigidbody.velocity;
             var targetVelocity = _velocity.normalized * ballMoveSpeed;
-            if (targetVelocity == Vector2.zero)
+            if (targetVelocity == Vector2.zero && stop == false)
             {
                 restart();
                 return;

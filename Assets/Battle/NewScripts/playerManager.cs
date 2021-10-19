@@ -6,13 +6,17 @@ namespace Altzone.NewPlayer
 {
     public class playerManager : MonoBehaviour
     {
-        // Player movement settings.
+        // A number of settings to keep track of how the player ought to move.
         // Speed at which the player moves.
         [Header("Player Move Settings"), SerializeField] private float playerMoveSpeed;
         // Distance from mouse at which the player teleports to the mouse position to avoid constant overshooting. Should be short.
         [SerializeField] private float teleDist;
         // Distance from mouse at which the player moves at half speed to avoid constant overshooting. Should be short, but not as short as teleDist.
         [SerializeField] private float slowDist;
+
+        // A number of settings relating to the catching and launching of the ball when it hits the players head.
+        // A transform component that's the location where the ball ought to be held.
+        [Header("Ball Launch Settings"), SerializeField] private Transform ballHoldPosition;
 
         // A number of settings for keeping track of the players head squishing as the shield loses HP.
         // Head is used to change out the sprite to one of the sprites below.
@@ -47,20 +51,13 @@ namespace Altzone.NewPlayer
         // Players original movement speed.
         private float orgPlMvSp;
         // A float that is used to count down time.
-        public float targetTime = 0.0f;
+        private float targetTime = 0.0f;
 
         // A function that changes the players sprite as it gets squished between the shields.
         public void squishPlayer(int health)
         {            
             head.sprite = sprites[health];
             headcollider.radius = radi[health];
-        }
-
-        // A function that sets the direction and speed for a ball being launched by a player.
-        public void ballLauncher()
-        {
-            Vector3 dir = (playerTrans.position - teamMateTrans.position).normalized;
-            UnityEngine.Debug.DrawLine(playerTrans.position, playerTrans.position + dir * 10, Color.red, Mathf.Infinity);
         }
 
         // A function that stops the player and changes its head color for a certain time.
@@ -92,37 +89,17 @@ namespace Altzone.NewPlayer
         // Update is called once per frame
         void Update()
         {
-            //Counting down the player stopping timer.            
+            //Counting down the player stopping & carry timer.
             targetTime -= Time.deltaTime;
 
             // Recoloring the players head to black if there is target time left, otherwise leave it at the green.
             if (targetTime > 0.0f)
-            {                
+            {
                 head.color = Color.black;
             }
             else
             { 
                 head.color = new Color(0.0f, 0.5f, 0.0f, 1f);
-            }
-
-            if (teamMateTrans == null)
-            {
-                if(this.transform.tag == "Pelaaja-1")
-                {
-                    teamMateTrans = GameObject.FindWithTag("Pelaaja-3").transform;
-                }
-                else if(this.transform.tag == "Pelaaja-2")
-                {
-                    teamMateTrans = GameObject.FindWithTag("Pelaaja-4").transform;
-                }
-                else if(this.transform.tag == "Pelaaja-3")
-                {
-                    teamMateTrans = GameObject.FindWithTag("Pelaaja-1").transform;
-                }
-                else if(this.transform.tag == "Pelaaja-4")
-                {
-                    teamMateTrans = GameObject.FindWithTag("Pelaaja-2").transform;
-                }
             }
 
             // If the mouse is pressed down.

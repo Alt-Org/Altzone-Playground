@@ -19,6 +19,7 @@ TagManager:
   - Pelaaja-4
   - TopSide
   - BotSide
+  - PlayerHead
   layers:
   - Default
   - TransparentFX
