@@ -1963,6 +1963,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Clan Planet
       objectReference: {fileID: 0}
+    - target: {fileID: 8765216451996415353, guid: 54954f2ad01036e49a55be77506b8f01,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54954f2ad01036e49a55be77506b8f01, type: 3}
 --- !u!1 &1684774364
