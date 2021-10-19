@@ -17,6 +17,8 @@ namespace Altzone.NewPlayer
         [SerializeField] private Collider2D rightCollider;
         [SerializeField] private float angle = 0f;
         [SerializeField] private int health = 4;
+        // A simple public boolean accessed by ballLauncher so that the shield isn't damaged by a caught ball.
+        public bool ballCaught;
 
         // Setting up a couple transforms and a float into which put the distance between them.
         // This is for disabling and enabling the shield with distance.
@@ -54,10 +56,10 @@ namespace Altzone.NewPlayer
         // A function that is called by the collision slaves that either reduces the player HP or stuns them if they are at 0.
         public void collisionWithBall(Collision2D collision)
         {
-            if (health == 0)
+            if (health == 0 && ballCaught == false)
             {
                 player.playerStop(1);
-            } else if (hitReady)
+            } else if (hitReady && ballCaught == false)
             {
                 health -= 1;
                 angle += -15f;
