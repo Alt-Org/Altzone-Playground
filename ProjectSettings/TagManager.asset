@@ -57,3 +57,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: UiTop
+    uniqueID: 74194755
+    locked: 0
+  - name: UiBellow
+    uniqueID: 1841614891
+    locked: 0
