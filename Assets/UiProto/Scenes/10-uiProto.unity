@@ -971,9 +971,9 @@ MonoBehaviour:
   config: {fileID: 11400000, guid: 0d5ad465a61d2db4188c8bdb678730be, type: 2}
   useHighlightedColor: 0
   highlightedColor: {r: 1, g: 1, b: 0, a: 1}
-  showConfigErrors: 1
+  showConfigErrors: 0
   configErrorColor: {r: 1, g: 0, b: 1, a: 1}
-  configErrorInteractable: 1
+  configErrorInteractable: 0
   _currentWindow: {fileID: 0}
   knownWindowsList: []
   stackManager: {fileID: 0}
