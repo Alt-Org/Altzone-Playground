@@ -32,7 +32,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Hoppari_blink_tilemap_4K_1
+  m_Name: Dialogihahmo_tilemap_controller
   serializedVersion: 5
   m_AnimatorParameters: []
   m_AnimatorLayers:
