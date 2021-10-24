@@ -1,22 +1,16 @@
 fileFormatVersion: 2
-guid: ef43478a8244752488efb18f82605153
+guid: 64f2587e9d660b74a8835198a3ad8997
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1309325014433404815
-    second: Hoppari_blink_tilemap_4K_0
+      213: 3111444058401391126
+    second: Dialogihahmo_tilemap_4K_0
   - first:
-      213: -7207677920335546613
-    second: Hoppari_blink_tilemap_4K_1
+      213: -2760092175160782288
+    second: Dialogihahmo_tilemap_4K_1
   - first:
-      213: -6555958311814071320
-    second: Hoppari_blink_tilemap_4K_2
-  - first:
-      213: 6632789690290753116
-    second: Hoppari_blink_tilemap_4K_3
-  - first:
-      213: -4257001901200373698
-    second: Hoppari_blink_tilemap_4K_4
+      213: -8275468861467482462
+    second: Dialogihahmo_tilemap_4K_2
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -79,7 +73,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -91,7 +85,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -103,7 +97,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -115,7 +109,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -127,7 +121,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -138,7 +132,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Hoppari_blink_tilemap_4K_0
+      name: Dialogihahmo_tilemap_4K_0
       rect:
         serializedVersion: 2
         x: 0
@@ -152,14 +146,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f8716dcd928ab2210800000000000000
-      internalID: 1309325014433404815
+      spriteID: 612c38fc2e11e2b20800000000000000
+      internalID: 3111444058401391126
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hoppari_blink_tilemap_4K_1
+      name: Dialogihahmo_tilemap_4K_1
       rect:
         serializedVersion: 2
         x: 1500
@@ -173,14 +167,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b0739fe8e1f29fb90800000000000000
-      internalID: -7207677920335546613
+      spriteID: 032d4305ace22b9d0800000000000000
+      internalID: -2760092175160782288
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hoppari_blink_tilemap_4K_2
+      name: Dialogihahmo_tilemap_4K_2
       rect:
         serializedVersion: 2
         x: 3000
@@ -194,8 +188,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8eb7d0e76ae8405a0800000000000000
-      internalID: -6555958311814071320
+      spriteID: 2a6ac627ae0a72d80800000000000000
+      internalID: -8275468861467482462
       vertices: []
       indices: 
       edges: []
@@ -203,7 +197,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: fbcf9b9b058e72a4fb73b1ad49ede877
+    spriteID: 562c8248f67f47f45b000cff8e42fbd0
     internalID: 0
     vertices: []
     indices: 
