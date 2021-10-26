@@ -64,8 +64,8 @@ namespace Altzone.NewPlayer
         // Source = 1 is a ball hitting the shield at 0 health.
         // Source = 2 is the ball being on the players side. (playerSideStopper)
         public void playerStop(int source) {
-            if(source == 1)
             // If a 0hp shield has been hit.
+            if(source == 1)
             {
                 targetTime = 1.0f;
             }
@@ -73,7 +73,12 @@ namespace Altzone.NewPlayer
             else if((source == 2) && (targetTime <= 0.5f)) 
             {
                 targetTime = 0.5f;
-            }            
+            }
+            // If something needs to allow the players to move.
+            else if (source == 0)
+            {
+                targetTime = 0.0f;
+            }
         }
         
         // Doing some prepping things as the player is enabled.

@@ -52,6 +52,12 @@ namespace Altzone.NewPlayer
                     teammate = GameObject.FindWithTag("Pelaaja-2").transform;
                 }
 
+                // Setting 'targetTime' on both players to 0 to allow them to move.
+                var player1Manager = holdplayer.GetComponent<playerManager>();
+                player1Manager.playerStop(0);
+                var player2Manager = teammate.GetComponent<playerManager>();
+                player2Manager.playerStop(0);
+
                 // Set the carry timer to 3 seconds.
                 carryTimer = 3f;
 
@@ -101,17 +107,24 @@ namespace Altzone.NewPlayer
             // Counting down the carry timer.
             carryTimer -= Time.deltaTime;
 
-            // Doing an if to ensure that the
+            // Doing an if to ensure that the balls position changes accordingly if it is being carried.
             if (carryTimer > 0)
-            {
-                if (holdplayer.CompareTag("Pelaaja-1") || holdplayer.CompareTag("Pelaaja-3"))
-                {
-                    this.transform.localPosition = new Vector2(0, 1.55f);
-                } 
-                else
-                {
-                    this.transform.localPosition = new Vector2(0, -1.55f);
+            {   
+                // Checking if the holder and teammate swap which one is in front and doing teh appropriate changes-
+                if(holdplayer.position.y > teammate.position.y){
+                    // Switching holder and teammate around as we found the teammate to be closer to the center Y.
+                    var temphold = holdplayer;
+                    holdplayer = teammate;
+                    teammate = temphold;
+
+                    // Setting the ball to be the child of the holder for carrying purposes.
+                    this.transform.SetParent(holdplayer);                    
                 }
+
+                // Setting ball position to be pointing away from the teammate at a set distance.
+                this.transform.localPosition = dir.normalized * 1.55f;
+
+
                 controller.stop = true;
                 controller.ballMoveSpeed = 0f;
             }

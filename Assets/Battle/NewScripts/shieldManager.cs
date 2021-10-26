@@ -100,7 +100,7 @@ namespace Altzone.NewPlayer
             // Getting the distance between the player and disabling/enabling shield as appropriate.
             playerDist = Vector2.Distance(thisPlayer.position, teamMate.position);
 
-            if(playerDist>shieldDisableDist)
+            if(playerDist>shieldDisableDist || ballCaught == true)
             {
                 for (int i = 0; i < transform.childCount; i++)
                 {
