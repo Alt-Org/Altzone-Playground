@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ExitGames.Client.Photon;
+using Photon.Pun;
+using Photon.Realtime;
+
 
 namespace Altzone.NewPlayer 
 {
-    public class playerManager : MonoBehaviour
+    public class playerManager : MonoBehaviourPun
     {
         // A number of settings to keep track of how the player ought to move.
         // Speed at which the player moves.
@@ -94,6 +98,12 @@ namespace Altzone.NewPlayer
         // Update is called once per frame
         void Update()
         {
+
+            if (photonView.IsMine == false && PhotonNetwork.IsConnected == true)
+            {
+                return;
+            }
+
             //Counting down the player stopping & carry timer.
             targetTime -= Time.deltaTime;
 
@@ -144,5 +154,24 @@ namespace Altzone.NewPlayer
                 rb.velocity = Vector2.zero; 
             }
         }
+
+        #region IPunObservable implementation
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                // We own this player: send the others our data
+                stream.SendNext(head.color);
+            }
+            else
+            {
+                // Network player, receive data
+                this.head.color = (Color)stream.ReceiveNext();
+            }
+        }
+
+        #endregion
+
     }
 }
