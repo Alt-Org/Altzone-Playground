@@ -8,13 +8,15 @@ namespace Altzone.NewPlayer
     {
         [Header("Ball Settings"), SerializeField] private GameObject thisthing;
         
-        // The only thing this script does is detect if the ball has collided with this, and then sends a signal to ballLauncher.
-        private void OnCollisionEnter2D(Collision2D other)
+        /// <summary>
+        /// This script is added to the players head, and if it detects the ball, it sends the ballLauncher a signal that the player has caught it.
+        /// </summary>
+        private void OnCollisionEnter2D(Collision2D othercollider)
         {
-            Transform asd = other.transform;
-            if(asd.CompareTag("Ball"))
+            Transform other = othercollider.transform;
+            if(other.CompareTag("Ball"))
             {
-                asd.GetComponent<ballLauncher>().collided(this.gameObject);
+                other.GetComponent<ballLauncher>().collided(this.gameObject);
             }
         }
     }

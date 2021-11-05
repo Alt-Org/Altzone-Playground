@@ -6,6 +6,9 @@ namespace Altzone.NewPlayer
 {
     public class shieldManager : MonoBehaviour
     {
+
+        #region Serializable Private Fields
+
         // Assigning the left and right shields as well as the parent playerManager. Also adding a float for the distance at which the shield dissappears.
         [Header("Player Settings"), SerializeField] private Transform leftShieldTransform;
         [SerializeField] private Transform rightShieldTransform;        
@@ -17,21 +20,32 @@ namespace Altzone.NewPlayer
         [SerializeField] private Collider2D rightCollider;
         [SerializeField] private float angle = 0f;
         [SerializeField] private int health = 4;
-        // A simple public boolean accessed by ballLauncher so that the shield isn't damaged by a caught ball.
-        public bool ballCaught;
 
-        // Setting up a couple transforms and a float into which put the distance between them.
+        // Setting up a couple transforms for the players and a float into which put the distance between them.
         // This is for disabling and enabling the shield with distance.
         [SerializeField] private Transform thisPlayer;
         [SerializeField] private Transform teamMate;
         [SerializeField] private float playerDist;
+
+        #endregion
+
+        #region Non-Serialized Fields
+
+        // A simple public boolean accessed by ballLauncher so that the shield isn't damaged by a caught ball.
+        public bool ballCaught;
 
         // Setting some angles and a couple booleans used in the script.
         private Vector3 localEulerAngles = new Vector3(0, 0, 0);
         private bool isInitialized;
         private bool hitReady;
 
-        // A function that is called near or at the start to set the two transforms based on tags.
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// A method that sets the transforms of the player this shield belongs to, as well as his teammate.
+        /// </summary>
         private void setTransforms()
         {
             thisPlayer = this.transform.parent.transform;
@@ -53,7 +67,23 @@ namespace Altzone.NewPlayer
             }
         }
 
-        // A function that is called by the collision slaves that either reduces the player HP or stuns them if they are at 0.
+        /// <summary>
+        /// A Method that is called to create collision slaves on the shield halves.
+        /// </summary>
+        private static void createSlave(GameObject parent, shieldManager master, int layer)
+        {
+            var slave = parent.gameObject.AddComponent<shieldSlave>();
+            slave.master = master;
+            slave.layer = layer;
+        }
+
+        #endregion
+
+        #region Public Method(s)
+
+        /// <summary>
+        /// A Method that is called by the collision slaves that either reduces the player HP or stuns them if they are at 0.
+        /// </summary>
         public void collisionWithBall(Collision2D collision)
         {
             if (health == 0 && ballCaught == false)
@@ -69,28 +99,36 @@ namespace Altzone.NewPlayer
             }
         }
 
-        // Initializing the shields, including creating some collision slave scripts on the shield halves.
+        #endregion
+
+        #region Monobehaviour Callbacks
+
+        /// <summary>
+        /// MonoBehaviour method called on GameObject by Unity during initialization phase.
+        /// </summary>
         void Start()
         {
+            // This hasn't been initialized yet, so let's do dat.
             if (!isInitialized)
             {
+                // First we make sure this ain't repeated.
                 isInitialized = true;
+                // Getting left and right shield colliders
                 leftCollider = leftShieldTransform.GetComponent<Collider2D>();
                 rightCollider = rightShieldTransform.GetComponent<Collider2D>();
+                // adding 'shieldSlave' scripts onto the shields
                 createSlave(leftCollider.gameObject, this, 9);
                 createSlave(rightCollider.gameObject, this, 9);
+                // Ready to take some hits.
                 hitReady = true;
+                // oh and setting transforms.
                 setTransforms();
             }
         }
-        // A coroutine to make use of the 'WaitForSeconds' thing to make sure that hits which collide with both shield halves don't suddenly do double damange.
-        IEnumerator hitWait()
-        {
-            yield return new WaitForSeconds(0.1f);
-
-            hitReady = true;
-        }
-
+    
+        /// <summary>
+        /// MonoBehaviour method called on GameObject by Unity once every frame.
+        /// </summary>
         private void Update()
         {
             // This update makes sure that the angle changes properly, not too much nor too little.
@@ -116,12 +154,20 @@ namespace Altzone.NewPlayer
             }
         }
 
-        // A function that is called to create collision slaves on the shield halves.
-        private static void createSlave(GameObject parent, shieldManager master, int layer)
+        #endregion
+        
+        #region Numerators
+
+        /// <summary>
+        /// A coroutine to make use of 'WaitForSeconds' to make sure that hits which collide with both shield halves don't suddenly do double damange.
+        /// </summary>
+        IEnumerator hitWait()
         {
-            var slave = parent.gameObject.AddComponent<shieldSlave>();
-            slave.master = master;
-            slave.layer = layer;
+            yield return new WaitForSeconds(0.1f);
+
+            hitReady = true;
         }
+
+        #endregion
     }
 }

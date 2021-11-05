@@ -9,6 +9,10 @@ namespace Altzone.NewPlayer
         // The role of this script is the following:
         // When colliding with a player head, to follow the player head.
         // After a 3 second timer, launch away in a direction determined by the orientation of two players.
+
+        #region Serializable Private Fields
+
+        // The controller this ball has.
         [Header("Ball Settings"), SerializeField] private ballController controller;
 
         // A pair of variables to store the player holding this, as well as that players team mate, as transforms for calculating direction to go.
@@ -23,10 +27,21 @@ namespace Altzone.NewPlayer
         // Original speed of the ball.
         [SerializeField] private float orgSpeed;
         // An internal boolean for making sure that the ball is launched only once on relase.
+
+        #endregion
+
+        #region Private Field
+
+        // A simple bool meant to indicate if we are in the state to launch the ball.
         private bool launchState;
 
-        // On collision enter that is called when we collide with a player head.
-        // For some reason, it is not the player head that it gets when colliding, but the player itself.
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Method that's called by the ballSlave and handed what the ball had collided with, which is expected to be a player.
+        /// </summary>
         public void collided(GameObject other) {
             // Making sure we only do something when we hit a player head.
             if(other.transform.CompareTag("PlayerHead"))
@@ -84,19 +99,28 @@ namespace Altzone.NewPlayer
                     manager.ballCaught = true;
                 }
 
-                // Setting launchState boolean to true as we're about to launch it.
+                // Setting launchState boolean to true as we're about to launch the ball.
                 launchState = true;
             }
         }
 
-        // Start is called before the first frame update
+        #endregion
+
+        #region Monobehaviour Callbacks
+
+
+        /// <summary>
+        /// MonoBehaviour method called on GameObject by Unity during initialization phase.
+        /// </summary>
         void Start()
         {
             // Getting the org speed from the ball controller.
             orgSpeed = controller.ballMoveSpeed;
         }
 
-        // Update is called once per frame
+        /// <summary>
+        /// MonoBehaviour method called on GameObject by Unity once every frame.
+        /// </summary>
         void Update()
         {
             // Calculating direction...
@@ -124,15 +148,17 @@ namespace Altzone.NewPlayer
                 // Setting ball position to be pointing away from the teammate at a set distance.
                 this.transform.localPosition = dir.normalized * 1.55f;
 
-
+                // Telling the controller that it's time to stop.
                 controller.stop = true;
                 controller.ballMoveSpeed = 0f;
             }
             else
             {
+                // Telling the controller that we're not stopped anymore, and setting the speed.
                 controller.stop = false;
                 controller.ballMoveSpeed = orgSpeed;
                 
+                // if launchState is true, time to launch the ball.
                 if(launchState)
                 {
                     // Launchstate false since we're now launching.
@@ -166,5 +192,6 @@ namespace Altzone.NewPlayer
                 }
             }
         }
+        #endregion
     }
 }
