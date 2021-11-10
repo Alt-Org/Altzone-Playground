@@ -19,22 +19,22 @@ namespace Editor
     /// </remarks>
     internal static class TeamCity
     {
-        private const string LOG_PREFIX = nameof(TeamCity);
-        private const string LOG_SEPARATOR = "========================================";
+        private const string LogPrefix = nameof(TeamCity);
+        private const string LogSeparator = "========================================";
 
-        private const string OUTPUT_ANDROID = "buildAndroid";
-        private const string OUTPUT_WEBGL = "buildWebGL";
-        private const string OUTPUT_WIN64 = "buildWin64";
+        private const string OutputAndroid = "buildAndroid";
+        private const string OutputWebgl = "buildWebGL";
+        private const string OutputWin64 = "buildWin64";
 
-        private static readonly List<string> logMessages = new List<string>
+        private static readonly List<string> LogMessages = new List<string>
         {
-            $"{LOG_PREFIX} {LOG_SEPARATOR}",
+            $"{LogPrefix} {LogSeparator}",
         };
 
-        private static string outputBaseFilename =>
-            sanitizePath($"{Application.productName}_{Application.version}_{PlayerSettings.Android.bundleVersionCode}");
+        private static string OutputBaseFilename =>
+            SanitizePath($"{Application.productName}_{Application.version}_{PlayerSettings.Android.bundleVersionCode}");
 
-        private static string[] _scenes => EditorBuildSettings.scenes
+        private static string[] Scenes => EditorBuildSettings.scenes
             .Where(x => x.enabled)
             .Select(x => x.path)
             .ToArray();
@@ -44,17 +44,17 @@ namespace Editor
         {
             // We assume that local keystore and password folder is one level up from current working directory
             // - that should be UNITY project folder
-            var keystore = Path.Combine("..", $"local_{getCurrentUser()}", "altzone.keystore");
-            var args = CommandLine.Parse(new string[] { "-buildTarget", "Android", "-keystore", keystore });
+            var keystore = Path.Combine("..", $"local_{GetCurrentUser()}", "altzone.keystore");
+            var args = CommandLine.Parse(new[] { "-buildTarget", "Android", "-keystore", keystore });
             configure_Android(args);
-            Log($"output filename: {getOutputFile(args.buildTarget)}");
+            Log($"output filename: {GetOutputFile(args.BuildTarget)}");
         }
 
         //[MenuItem("Window/ALT-Zone/Build/Test/Android Build Post Processing")]
         private static void do_Android_Build_Post_processing()
         {
             const string scriptName = "m_BuildScript_PostProcess.bat";
-            var symbolsName = $"{outputBaseFilename}-{Application.version}-v{PlayerSettings.Android.bundleVersionCode}.symbols";
+            var symbolsName = $"{OutputBaseFilename}-{Application.version}-v{PlayerSettings.Android.bundleVersionCode}.symbols";
             var script = MyCmdLineScripts.AndroidPostProcessScript.Replace("<<altzone_symbols_name>>", symbolsName);
             File.WriteAllText(scriptName, script);
             UnityEngine.Debug.Log($"PostProcess script '{scriptName}' written");
@@ -63,7 +63,7 @@ namespace Editor
         //[MenuItem("Window/ALT-Zone/Build/Test/WebGL Build Post Processing")]
         private static void do_WebGL_Build_Post_processing()
         {
-            void patchIndexHtml(string htmlFile, string curTitle, string newTitle)
+            void PatchIndexHtml(string htmlFile, string curTitle, string newTitle)
             {
                 var htmlContent = File.ReadAllText(htmlFile);
                 var oldTitleText = $"<div class=\"title\">{curTitle}</div>";
@@ -80,10 +80,14 @@ namespace Editor
                 File.WriteAllText(htmlFile, newHtmlContent);
             }
 
-            var indexHtml = Path.Combine(OUTPUT_WEBGL, "index.html");
+            var indexHtml = Path.Combine(OutputWebgl, "index.html");
             var curName = Application.productName;
-            var newName = $"{Application.productName} built {DateTime.Now:u}";
-            patchIndexHtml(indexHtml, curName, newName);
+            var title = $"{Application.productName} built {DateTime.Now:u}";
+            var gitTagCompliantLabel =
+                title.Substring(0, title.Length - 4) // remove seconds
+                .Replace(" ", "_")
+                .Replace(":", ".");
+            PatchIndexHtml(indexHtml, curName, gitTagCompliantLabel);
 
             const string scriptName = "m_BuildScript_PostProcess.bat";
             File.WriteAllText(scriptName, MyCmdLineScripts.WebGLPostProcessScript);
@@ -94,7 +98,14 @@ namespace Editor
         private static void create_Build_Script()
         {
             const string scriptName = "m_BuildScript.bat";
-            File.WriteAllText(scriptName, MyCmdLineScripts.BuildScript);
+            var sep1 = Path.AltDirectorySeparatorChar.ToString();
+            var sep2 = Path.DirectorySeparatorChar.ToString();
+            var unityName = EditorApplication.applicationPath.Replace(sep1, sep2);
+            var methodName = $"{typeof(TeamCity).FullName}.{nameof(Build)}";
+            var script = MyCmdLineScripts.BuildScript
+                .Replace("<<unity_name>>", unityName)
+                .Replace("<<method_name>>", methodName);
+            File.WriteAllText(scriptName, script);
             UnityEngine.Debug.Log($"Build script '{scriptName}' written");
             var buildTargetName = CommandLine.BuildTargetNameFrom(EditorUserBuildSettings.activeBuildTarget);
             var driverName = $"{Path.GetFileNameWithoutExtension(scriptName)}_{buildTargetName}.bat";
@@ -103,46 +114,46 @@ namespace Editor
             UnityEngine.Debug.Log($"Build script driver '{driverName}' written");
         }
 
-        internal static void build()
+        internal static void Build()
         {
-            BuildResult buildResult = BuildResult.Unknown;
+            BuildResult buildResult;
             try
             {
-                dumpEnvironment();
+                DumpEnvironment();
                 var args = CommandLine.Parse(Environment.GetCommandLineArgs());
                 Log($"build with args: {args}");
                 var buildOptions = BuildOptions.None;
-                if (args.isDevelopmentBuild)
+                if (args.IsDevelopmentBuild)
                 {
                     buildOptions |= BuildOptions.Development;
                 }
                 string outputDir;
                 BuildTargetGroup targetGroup;
-                switch (args.buildTarget)
+                switch (args.BuildTarget)
                 {
                     case BuildTarget.Android:
-                        outputDir = Path.Combine(OUTPUT_ANDROID, getOutputFile(args.buildTarget));
+                        outputDir = Path.Combine(OutputAndroid, GetOutputFile(args.BuildTarget));
                         targetGroup = BuildTargetGroup.Android;
                         configure_Android(args);
                         break;
                     case BuildTarget.WebGL:
-                        outputDir = OUTPUT_WEBGL;
+                        outputDir = OutputWebgl;
                         targetGroup = BuildTargetGroup.WebGL;
                         break;
                     case BuildTarget.StandaloneWindows64:
-                        outputDir = Path.Combine(OUTPUT_WIN64, getOutputFile(args.buildTarget));
+                        outputDir = Path.Combine(OutputWin64, GetOutputFile(args.BuildTarget));
                         targetGroup = BuildTargetGroup.Standalone;
                         break;
                     default:
-                        throw new UnityException($"build target '{args.buildTarget}' not supported");
+                        throw new UnityException($"build target '{args.BuildTarget}' not supported");
                 }
                 // Output (artifacts) should be inside project folder for CI systems to find them
                 var buildPlayerOptions = new BuildPlayerOptions
                 {
-                    locationPathName = Path.Combine(args.projectPath, outputDir),
+                    locationPathName = Path.Combine(args.ProjectPath, outputDir),
                     options = buildOptions,
-                    scenes = _scenes,
-                    target = args.buildTarget,
+                    scenes = Scenes,
+                    target = args.BuildTarget,
                     targetGroup = targetGroup,
                 };
 
@@ -174,11 +185,11 @@ namespace Editor
             }
             finally
             {
-                if (logMessages.Count > 0)
+                if (LogMessages.Count > 0)
                 {
                     // Show all logged messages together without call stack for convenience!
-                    logMessages.Add($"{LOG_PREFIX} {LOG_SEPARATOR}");
-                    UnityEngine.Debug.Log($"{LOG_PREFIX} LOG_MESSAGES:\r\n{string.Join("\r\n", logMessages)}");
+                    LogMessages.Add($"{LogPrefix} {LogSeparator}");
+                    UnityEngine.Debug.Log($"{LogPrefix} LOG_MESSAGES:\r\n{string.Join("\r\n", LogMessages)}");
                 }
             }
             // We must exit outside try-finally block as it seems that EditorApplication.Exit does not allow C# to unwind call stack properly
@@ -188,7 +199,7 @@ namespace Editor
             }
         }
 
-        private static string getOutputFile(BuildTarget buildTarget)
+        private static string GetOutputFile(BuildTarget buildTarget)
         {
             if (buildTarget == BuildTarget.WebGL)
             {
@@ -206,13 +217,13 @@ namespace Editor
                 default:
                     throw new UnityException($"getOutputFile: build target '{buildTarget}' not supported");
             }
-            var filename = $"{outputBaseFilename}.{extension}";
+            var filename = $"{OutputBaseFilename}.{extension}";
             return filename;
         }
 
         private static void configure_Android(CommandLine args)
         {
-            string getLocalPasswordFor(string folder, string filename)
+            string GetLocalPasswordFor(string folder, string filename)
             {
                 var file = Path.Combine(folder, filename);
                 if (File.Exists(file))
@@ -222,7 +233,7 @@ namespace Editor
                 throw new UnityException($"getLocalPasswordFor: file '{file}' not found");
             }
 
-            void logObfuscated(string name, string value)
+            void LogObfuscated(string name, string value)
             {
                 var result = (value == null || value.Length < 9)
                     ? "******"
@@ -237,13 +248,13 @@ namespace Editor
             // - keyaliasPass : read from keystore folder
 
             Log("configure_Android");
-            PlayerSettings.Android.keystoreName = args.keystoreName;
+            PlayerSettings.Android.keystoreName = args.KeystoreName;
             Log($"keystoreName={PlayerSettings.Android.keystoreName}");
 
             // EditorUserBuildSettings
             EditorUserBuildSettings.buildAppBundle = true; // For Google Play this must be always true!
             Log($"buildAppBundle={EditorUserBuildSettings.buildAppBundle}");
-            if (args.isAndroidFull)
+            if (args.IsAndroidFull)
             {
                 EditorUserBuildSettings.androidCreateSymbolsZip = true;
                 EditorUserBuildSettings.androidReleaseMinification = AndroidMinification.Proguard;
@@ -266,15 +277,15 @@ namespace Editor
             }
 
             // Password files must be in same folder where keystore is!
-            var passwordFolder = Path.GetDirectoryName(args.keystoreName);
+            var passwordFolder = Path.GetDirectoryName(args.KeystoreName);
             Log($"passwordFolder={passwordFolder}");
-            PlayerSettings.keystorePass = getLocalPasswordFor(passwordFolder, "keystore_password");
-            logObfuscated("keystorePass", PlayerSettings.keystorePass);
-            PlayerSettings.keyaliasPass = getLocalPasswordFor(passwordFolder, "alias_password");
-            logObfuscated("keyaliasPass", PlayerSettings.keyaliasPass);
+            PlayerSettings.keystorePass = GetLocalPasswordFor(passwordFolder, "keystore_password");
+            LogObfuscated("keystorePass", PlayerSettings.keystorePass);
+            PlayerSettings.keyaliasPass = GetLocalPasswordFor(passwordFolder, "alias_password");
+            LogObfuscated("keyaliasPass", PlayerSettings.keyaliasPass);
         }
 
-        private static string sanitizePath(string path)
+        private static string SanitizePath(string path)
         {
             // https://www.mtu.edu/umc/services/websites/writing/characters-avoid/
             var illegalCharacters = new[]
@@ -297,7 +308,7 @@ namespace Editor
             return path;
         }
 
-        private static string getCurrentUser()
+        private static string GetCurrentUser()
         {
             var variables = Environment.GetEnvironmentVariables();
             foreach (var key in variables.Keys)
@@ -310,7 +321,7 @@ namespace Editor
             throw new ArgumentException("Environment variable 'USERNAME' not found");
         }
 
-        private static void dumpEnvironment()
+        private static void DumpEnvironment()
         {
             var variables = Environment.GetEnvironmentVariables();
             var keys = variables.Keys.Cast<string>().ToList();
@@ -326,8 +337,8 @@ namespace Editor
 
         private static void Log(string message)
         {
-            UnityEngine.Debug.Log($"{LOG_PREFIX} {message}");
-            logMessages.Add(message);
+            UnityEngine.Debug.Log($"{LogPrefix} {message}");
+            LogMessages.Add(message);
         }
 
         /// <summary>
@@ -336,34 +347,34 @@ namespace Editor
         public class CommandLine
         {
             // Standard UNITY command line parameters.
-            public readonly string projectPath;
-            public readonly BuildTarget buildTarget;
+            public readonly string ProjectPath;
+            public readonly BuildTarget BuildTarget;
 
             // Custom build parameters.
-            public readonly string keystoreName;
-            public readonly bool isDevelopmentBuild;
-            public readonly bool isAndroidFull;
+            public readonly string KeystoreName;
+            public readonly bool IsDevelopmentBuild;
+            public readonly bool IsAndroidFull;
 
             private CommandLine(string projectPath, BuildTarget buildTarget, string keystoreName, bool isDevelopmentBuild, bool isAndroidFull)
             {
-                this.projectPath = projectPath;
-                this.buildTarget = buildTarget;
-                this.keystoreName = keystoreName;
-                this.isDevelopmentBuild = isDevelopmentBuild;
-                this.isAndroidFull = isAndroidFull;
+                this.ProjectPath = projectPath;
+                this.BuildTarget = buildTarget;
+                this.KeystoreName = keystoreName;
+                this.IsDevelopmentBuild = isDevelopmentBuild;
+                this.IsAndroidFull = isAndroidFull;
             }
 
             public override string ToString()
             {
                 return
-                    $"{nameof(projectPath)}: {projectPath}, {nameof(buildTarget)}: {buildTarget}, {nameof(keystoreName)}: {keystoreName}" +
-                    $", {nameof(isDevelopmentBuild)}: {isDevelopmentBuild}, {nameof(isAndroidFull)}: {isAndroidFull}";
+                    $"{nameof(ProjectPath)}: {ProjectPath}, {nameof(BuildTarget)}: {BuildTarget}, {nameof(KeystoreName)}: {KeystoreName}" +
+                    $", {nameof(IsDevelopmentBuild)}: {IsDevelopmentBuild}, {nameof(IsAndroidFull)}: {IsAndroidFull}";
             }
 
             // Build target parameter mapping
             // See: https://docs.unity3d.com/Manual/CommandLineArguments.html
             // See: https://docs.unity3d.com/2019.4/Documentation/ScriptReference/BuildTarget.html
-            private static readonly Dictionary<string, BuildTarget> knownBuildTargets = new Dictionary<string, BuildTarget>
+            private static readonly Dictionary<string, BuildTarget> KnownBuildTargets = new Dictionary<string, BuildTarget>
             {
                 { "Win64", BuildTarget.StandaloneWindows64 },
                 { "Android", BuildTarget.Android },
@@ -372,7 +383,7 @@ namespace Editor
 
             public static string BuildTargetNameFrom(BuildTarget buildTarget)
             {
-                var pair = knownBuildTargets.FirstOrDefault(x => x.Value == buildTarget);
+                var pair = KnownBuildTargets.FirstOrDefault(x => x.Value == buildTarget);
                 return !string.IsNullOrEmpty(pair.Key) ? pair.Key : "Unknown";
             }
 
@@ -394,7 +405,7 @@ namespace Editor
                             break;
                         case "-buildTarget":
                             i += 1;
-                            if (!knownBuildTargets.TryGetValue(args[i], out buildTarget))
+                            if (!KnownBuildTargets.TryGetValue(args[i], out buildTarget))
                             {
                                 throw new ArgumentException($"BuildTarget '{args[i]}' is invalid or unsupported");
                             }
@@ -420,12 +431,12 @@ namespace Editor
         /// </summary>
         private static class MyCmdLineScripts
         {
-            public static string BuildScript => _BuildScript;
-            public static string AndroidPostProcessScript => _AndroidPostProcessScript;
-            public static string WebGLPostProcessScript => _WebGLPostProcessScript;
+            public static string BuildScript => BuildScriptContent;
+            public static string AndroidPostProcessScript => AndroidPostProcessScriptContent;
+            public static string WebGLPostProcessScript => WebGLPostProcessScriptContent;
 
-            private const string _BuildScript = @"@echo off
-set UNITY=C:\Program Files\Unity\Hub\Editor\2019.4.28f1\Editor\Unity.exe
+            private const string BuildScriptContent = @"@echo off
+set UNITY=<<unity_name>>
 
 set BUILDTARGET=%1
 if ""%BUILDTARGET%"" == ""Win64"" goto :valid_build
@@ -445,7 +456,7 @@ goto :eof
 :valid_build
 
 set PROJECTPATH=./
-set METHOD=Editor.TeamCity.build
+set METHOD=<<method_name>>
 set LOGFILE=m_Build_%BUILDTARGET%.log
 if ""%BUILDTARGET%"" == ""Android"" (
     set ANDROID_KEYSTORE=-keystore ..\local_%USERNAME%\altzone.keystore
@@ -480,7 +491,7 @@ echo *
 echo Post processing done
 ";
 
-            private const string _AndroidPostProcessScript = @"@echo off
+            private const string AndroidPostProcessScriptContent = @"@echo off
 set BUILD_DIR=BuildAndroid
 set DROPBOX_DIR=C:\Users\%USERNAME%\Dropbox\tekstit\altgame\BuildAndroid
 set ZIP=C:\Program Files\7-Zip\7z.exe
@@ -543,7 +554,7 @@ echo ROBOCOPY result %RESULT%
 goto :eof
 ";
 
-            private const string _WebGLPostProcessScript = @"@echo off
+            private const string WebGLPostProcessScriptContent = @"@echo off
 set BUILD_DIR=BuildWebGL
 set DROPBOX_DIR=C:\Users\%USERNAME%\Dropbox\tekstit\altgame\BuildWebGL
 echo BUILD_DIR=%BUILD_DIR%
