@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: 54fdd228b2f8acc4481627c999ef118f
+guid: 0d83ace3173d1e14aa544e350d63680f
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MAT_Hexagon
+    second: {fileID: 2100000, guid: b4331f5c2f7617d4091cf7edb25197ea, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
@@ -42,7 +47,7 @@ ModelImporter:
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
-    importLights: 0
+    importLights: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 0

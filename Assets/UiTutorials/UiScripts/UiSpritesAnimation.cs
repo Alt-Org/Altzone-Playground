@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Image))]
-public class UiSpritesAnimation : MonoBehaviour
+public class UISpritesAnimation : MonoBehaviour
 {
     public float duration;
 

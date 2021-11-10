@@ -6,15 +6,28 @@ namespace Altzone.NewPlayer
 {
     public class playerBallStopper : MonoBehaviour
     {
+
+        #region Serializable Private Fields
+
         // playerPlaceHolder helps hold the player object for setting the playerManagers.
         [SerializeField] private GameObject playerPlaceHolder;
         [SerializeField] private playerManager player1;
         [SerializeField] private playerManager player2;
 
+        #endregion
+
+        #region Public Field
+
         // Creating a public bool that's set by ballLauncher whenever the ball is caught to basically halt this script while the ball is being held.
         public bool ballCaught = false;
 
+        #endregion
+
+        #region Method.
         
+        /// <summary>
+        /// Method that is called whenever an object within this is moving, and not just now entering or exiting.
+        /// </summary>
         void OnTriggerStay2D(Collider2D other)
         {            
             if(other.gameObject.layer == 9 && ballCaught == false)
@@ -53,5 +66,7 @@ namespace Altzone.NewPlayer
                 }
             }
         }
+
+        #endregion
     }
 }

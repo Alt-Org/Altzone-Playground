@@ -10,6 +10,9 @@ namespace Altzone.NewPlayer
 {
     public class playerManager : MonoBehaviourPun
     {
+        #region Private Serializable Fields
+
+
         // A number of settings to keep track of how the player ought to move.
         // Speed at which the player moves.
         [Header("Player Move Settings"), SerializeField] private float playerMoveSpeed;
@@ -49,24 +52,38 @@ namespace Altzone.NewPlayer
         [SerializeField] private Rigidbody2D rb;
         // An array of the sprites set in Player Squash Settings for easy store and access.
         [SerializeField] private Sprite[] sprites;
+
+        #endregion
         
-        // What direction player is going in. TBH, I dunno how this works.
+        #region Private Unserialized Fields
+
+        // What direction player is going in. TBH, I dunno how this works. - Joni
         private Vector2 direction;
         // Players original movement speed.
         private float orgPlMvSp;
         // A float that is used to count down time.
         private float targetTime = 0.0f;
 
-        // A function that changes the players sprite as it gets squished between the shields.
+        #endregion
+
+        #region Public Methods
+
+
+        /// <summary>
+        /// A function that changes the players sprite as it gets squished between the shields.
+        /// </summary>
         public void squishPlayer(int health)
         {            
             head.sprite = sprites[health];
             headcollider.radius = radi[health];
         }
 
-        // A function that stops the player and changes its head color for a certain time.
-        // Source = 1 is a ball hitting the shield at 0 health.
-        // Source = 2 is the ball being on the players side. (playerSideStopper)
+        
+        /// <summary>
+        /// A function that stops the player and changes its head color for a certain time.
+        /// Source = 1 is a ball hitting the shield at 0 health (shieldManager).
+        /// Source = 2 is the ball being on the players side (playerSideStopper).
+        /// </summary>
         public void playerStop(int source) {
             // If a 0hp shield has been hit.
             if(source == 1)
@@ -85,7 +102,14 @@ namespace Altzone.NewPlayer
             }
         }
         
-        // Doing some prepping things as the player is enabled.
+        #endregion
+
+        #region Monobehaviour Callbacks
+
+        
+        /// <summary>
+        /// MonoBehaviour method called on GameObject by Unity when it is activated.
+        /// </summary>
         void OnEnable()
         {
             playerTrans = GetComponent<Transform>();
@@ -95,10 +119,13 @@ namespace Altzone.NewPlayer
             sprites = new Sprite[]{hp0psrite, hp1psrite, hp2psrite, hp3psrite, hp4psrite};
         }
 
-        // Update is called once per frame
+        
+        /// <summary>
+        /// MonoBehaviour method called on GameObject by Unity once every frame.
+        /// </summary>
         void Update()
         {
-
+            // We do a skip if this isn't our photonView and the network is connected.
             if (photonView.IsMine == false && PhotonNetwork.IsConnected == true)
             {
                 return;
@@ -123,10 +150,12 @@ namespace Altzone.NewPlayer
                 // Get mouse position from the camera and put it in a variable.
                 mousePosition = playerCam.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 temp = playerTrans.position;
-                // Getting a direction for the player to move toward and applying movement.
+
+                // Getting a direction for the player to move toward and applying velocity.
                 direction = (mousePosition - temp).normalized;
                 rb.velocity = new Vector2(direction.x * playerMoveSpeed, direction.y * playerMoveSpeed);
-                //Acquiring the distance between player and mouse for the following 'if, esle if' chain.
+
+                //Acquiring the distance between player and mouse for the following 'if, else if' chain.
                 dist = Vector2.Distance(mousePosition, playerTrans.position);
 
                 // Stopping the player if there is targetTime left
@@ -134,12 +163,12 @@ namespace Altzone.NewPlayer
                 {
                     playerMoveSpeed = 0;
                 } 
-                // Teleporting player if distance is less then teleport Distance.
+                // Teleporting player if distance is less then teleport Distance. This helps remove jitter from constantly overshooting the target.
                 else if (dist < teleDist)
                 {
                     playerTrans.position = mousePosition;
                 }
-                // Slowing down the player if his distance is less than the teleport distance.
+                // Slowing down the player if his distance is less than the slowdown distance. Accomplishes much the same as teleporting.
                 else if (dist < slowDist)
                 {
                     playerMoveSpeed = orgPlMvSp/2;
@@ -154,6 +183,8 @@ namespace Altzone.NewPlayer
                 rb.velocity = Vector2.zero; 
             }
         }
+
+        #endregion
 
         #region IPunObservable implementation
 
@@ -174,4 +205,5 @@ namespace Altzone.NewPlayer
         #endregion
 
     }
+    
 }
