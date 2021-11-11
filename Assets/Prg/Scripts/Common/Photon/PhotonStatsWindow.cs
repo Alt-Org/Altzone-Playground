@@ -1,5 +1,4 @@
-﻿#if UNITY_EDITOR || FORCE_LOG || DEVELOPMENT_BUILD
-using Photon.Pun;
+﻿using Photon.Pun;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -11,9 +10,10 @@ namespace Prg.Scripts.Common.Photon
     /// </summary>
     public class PhotonStatsWindow : MonoBehaviour
     {
-        public bool Visible = true;
+        public bool Visible;
         public KeyCode controlKey = KeyCode.F2;
 
+#if UNITY_EDITOR || FORCE_LOG || DEVELOPMENT_BUILD
         private int WindowId;
         private Rect WindowRect;
         private string WindowTitle;
@@ -21,9 +21,9 @@ namespace Prg.Scripts.Common.Photon
         private GUIStyle guiButtonStyle;
         private GUIStyle guiLabelStyle;
 
-        private void Start()
+        private void OnEnable()
         {
-            WindowId = (int) DateTime.Now.Ticks;
+            WindowId = (int)DateTime.Now.Ticks;
             WindowRect = new Rect(0, 0, Screen.width, Screen.height);
             WindowTitle = $"({controlKey}) Photon";
         }
@@ -87,7 +87,7 @@ namespace Prg.Scripts.Common.Photon
                 var room = PhotonNetwork.CurrentRoom;
                 var props = room.CustomProperties;
                 var keys = props.Keys.ToList();
-                keys.Sort((a, b) => String.Compare(a.ToString(), b.ToString(), StringComparison.Ordinal));
+                keys.Sort((a, b) => string.Compare(a.ToString(), b.ToString(), StringComparison.Ordinal));
                 foreach (var key in keys)
                 {
                     var propValue = props[key].ToString();
@@ -102,7 +102,7 @@ namespace Prg.Scripts.Common.Photon
                     if (props.Count > 0)
                     {
                         keys = props.Keys.ToList();
-                        keys.Sort((a, b) => String.Compare(a.ToString(), b.ToString(), StringComparison.Ordinal));
+                        keys.Sort((a, b) => string.Compare(a.ToString(), b.ToString(), StringComparison.Ordinal));
                         foreach (var key in keys)
                         {
                             var propValue = props[key].ToString();
@@ -179,6 +179,6 @@ namespace Prg.Scripts.Common.Photon
                 return $"avg lag {sum / sampleCount:0.000} s ({sampleCount}) : {sampleCount / samplingDuration: 0.0} msg/s";
             }
         }
+#endif
     }
 }
-#endif

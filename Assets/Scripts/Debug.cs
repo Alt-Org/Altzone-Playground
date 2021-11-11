@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 /// <summary>
@@ -24,16 +25,37 @@ public static class Debug
 #endif
 #endif
 
-    public static bool isDebugEnabled =>
-#if FORCE_LOG || DEVELOPMENT_BUILD
-        true;
-#else
-        false;
-#endif
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void RuntimeInitializeOnLoadMethod()
+    {
+        // Reset static fields even when Domain Reloading is disabled.
+        _isClassNameColor = false;
+        _classNameColor = null;
+        _classNameColorFilter = null;
+        CachedMethods.Clear();
+        _logLineAllowedFilter = null;
+    }
 
-    private static string classNameColorFilter;
-    private static string classNameColor;
-    private static bool isClassNameColor;
+    private static string _classNameColorFilter;
+    private static string _classNameColor;
+    private static bool _isClassNameColor;
+
+    // Cache methods if method lookup is expensive.
+    private static readonly Dictionary<MethodBase, bool> CachedMethods = new Dictionary<MethodBase, bool>();
+
+    /// <summary>
+    /// Filters log lines based on method name or other method properties.
+    /// </summary>
+    private static Func<MethodBase, bool> _logLineAllowedFilter;
+
+    /// <summary>
+    /// Adds log line filter.
+    /// </summary>
+    [Conditional("FORCE_LOG"), Conditional("DEVELOPMENT_BUILD")]
+    public static void AddLogLineAllowedFilter(Func<MethodBase, bool> filter)
+    {
+        _logLineAllowedFilter += filter;
+    }
 
     /// <summary>
     /// Sets color for class name field in debug log line.
@@ -46,38 +68,30 @@ public static class Debug
     /// <param name="colorName">Unity color name</param>
     /// <param name="logLineContentFilter">log writer filter</param>
     [Conditional("FORCE_LOG"), Conditional("DEVELOPMENT_BUILD")]
-    public static void setColorForClassName(string colorName, ref Func<string, string> logLineContentFilter)
+    public static void SetColorForClassName(string colorName, ref Func<string, string> logLineContentFilter)
     {
-        string removeColorFromLogLine(string line)
+        string RemoveColorFromLogLine(string line)
         {
             // getPrefix will add color to be removed here:
             // [<color={classNameColor}>{className}</color>]
-            return line.Replace(classNameColorFilter, "[").Replace("</color>]", "]");
+            return line.Replace(_classNameColorFilter, "[").Replace("</color>]", "]");
         }
 
         if (string.IsNullOrWhiteSpace(colorName))
         {
-            isClassNameColor = false;
-            classNameColor = null;
-            classNameColorFilter = null;
-            logLineContentFilter -= removeColorFromLogLine;
+            _isClassNameColor = false;
+            _classNameColor = null;
+            _classNameColorFilter = null;
+            logLineContentFilter -= RemoveColorFromLogLine;
         }
         else
         {
-            isClassNameColor = true;
-            classNameColor = colorName;
-            classNameColorFilter = $"[<color={classNameColor}>";
-            logLineContentFilter += removeColorFromLogLine;
+            _isClassNameColor = true;
+            _classNameColor = colorName;
+            _classNameColorFilter = $"[<color={_classNameColor}>";
+            logLineContentFilter += RemoveColorFromLogLine;
         }
     }
-
-    // Cache methods if method lookup is expensive.
-    private static readonly Dictionary<MethodBase, bool> cachedMethods = new Dictionary<MethodBase, bool>();
-
-    /// <summary>
-    /// Filters log lines based on method who initiated logging.
-    /// </summary>
-    public static Func<MethodBase, bool> logLineAllowedFilter;
 
     [Conditional("FORCE_LOG"), Conditional("DEVELOPMENT_BUILD")]
     public static void Log(string message)
@@ -88,9 +102,9 @@ public static class Debug
         {
             UnityEngine.Debug.Log(message);
         }
-        else if (isMethodAllowedForLog(method))
+        else if (IsMethodAllowedForLog(method))
         {
-            UnityEngine.Debug.Log($"{getPrefix(method)}{message}");
+            UnityEngine.Debug.Log($"{GETPrefix(method)}{message}");
         }
     }
 
@@ -103,9 +117,9 @@ public static class Debug
         {
             UnityEngine.Debug.LogFormat(format, args);
         }
-        else if (isMethodAllowedForLog(method))
+        else if (IsMethodAllowedForLog(method))
         {
-            UnityEngine.Debug.LogFormat($"{getPrefix(method)}{format}", args);
+            UnityEngine.Debug.LogFormat($"{GETPrefix(method)}{format}", args);
         }
     }
 
@@ -121,7 +135,7 @@ public static class Debug
         UnityEngine.Debug.LogError(message, context);
     }
 
-    private static string getPrefix(MemberInfo method)
+    private static string GETPrefix(MemberInfo method)
     {
         var className = method.ReflectedType?.Name ?? nameof(Debug);
         if (className.StartsWith("<"))
@@ -130,32 +144,32 @@ public static class Debug
             className = method.ReflectedType?.DeclaringType?.Name ?? nameof(Debug);
         }
         // removeColorFromLogLine will remove this if logged to file
-        return isClassNameColor
-            ? $"[<color={classNameColor}>{className}</color>] "
+        return _isClassNameColor
+            ? $"[<color={_classNameColor}>{className}</color>] "
             : $"[{className}] ";
     }
 
-    private static bool isMethodAllowedForLog(MethodBase method)
+    private static bool IsMethodAllowedForLog(MethodBase method)
     {
-        if (logLineAllowedFilter != null)
+        if (_logLineAllowedFilter != null)
         {
-            if (cachedMethods.TryGetValue(method, out var isMethodAllowed))
+            if (CachedMethods.TryGetValue(method, out var isMethodAllowed))
             {
                 return isMethodAllowed;
             }
             // Invocation list works like OR and it will use short-circuit evaluation.
-            var invocationList = logLineAllowedFilter.GetInvocationList();
+            var invocationList = _logLineAllowedFilter.GetInvocationList();
             foreach (var callback in invocationList)
             {
                 var result = callback.DynamicInvoke(method);
                 if (result is bool isAllowed && isAllowed)
                 {
-                    cachedMethods.Add(method, true);
+                    CachedMethods.Add(method, true);
                     return true;
                 }
             }
             // Nobody accepted so it is rejected.
-            cachedMethods.Add(method, false);
+            CachedMethods.Add(method, false);
             return false;
         }
         return true;
@@ -163,27 +177,27 @@ public static class Debug
 
     #region Console log colors
 
-    public static string white(string text)
+    public static string White(string text)
     {
         return $"<color=white>{text}</color>";
     }
 
-    public static string red(string text)
+    public static string Red(string text)
     {
         return $"<color=red>{text}</color>";
     }
 
-    public static string magenta(string text)
+    public static string Magenta(string text)
     {
         return $"<color=magenta>{text}</color>";
     }
 
-    public static string yellow(string text)
+    public static string Yellow(string text)
     {
         return $"<color=yellow>{text}</color>";
     }
 
-    public static string brown(string text)
+    public static string Brown(string text)
     {
         return $"<color=brown>{text}</color>";
     }

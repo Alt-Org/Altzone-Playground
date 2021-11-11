@@ -141,7 +141,7 @@ namespace UiProto.Scripts.Window
                 stackManager.push("placeholder", "");
                 return; // Can not show - level is started without any window!
             }
-            throw new UnityException(Debug.white("WindowNames") + ": window name not found for: " + Debug.red(entry.ToString()));
+            throw new UnityException(Debug.White("WindowNames") + ": window name not found for: " + Debug.Red(entry.ToString()));
         }
 
         private void showWindow(WindowId window, string levelName)
@@ -156,7 +156,7 @@ namespace UiProto.Scripts.Window
                     showWindow(window, level);
                     return;
                 }
-                throw new UnityException(Debug.white("WindowConfig") + ": level not found for: " + Debug.red(levelName));
+                throw new UnityException(Debug.White("WindowConfig") + ": level not found for: " + Debug.Red(levelName));
             }
             showWindow(window);
         }
@@ -173,7 +173,7 @@ namespace UiProto.Scripts.Window
                     var level = LevelNames.getLevel(levelId.levelId);
                     if (level == null)
                     {
-                        throw new UnityException(Debug.white("WindowNames") + ": level not found for: " + Debug.red(levelId.ToString()));
+                        throw new UnityException(Debug.White("WindowNames") + ": level not found for: " + Debug.Red(levelId.ToString()));
                     }
                     stackManager.pushPending(window.windowName);
                     SceneLoader.LoadScene(level);
@@ -182,7 +182,7 @@ namespace UiProto.Scripts.Window
                 showWindow(windows[windowIndex]);
                 return;
             }
-            throw new UnityException(Debug.white("WindowNames") + ": window name not found for: " + Debug.red(window.ToString()));
+            throw new UnityException(Debug.White("WindowNames") + ": window name not found for: " + Debug.Red(window.ToString()));
         }
 
         private void showWindow(WindowId window)
@@ -191,7 +191,7 @@ namespace UiProto.Scripts.Window
             if (windowInstance.windowTemplate == null)
             {
                 Debug.Log($"showWindow WindowId={window}");
-                throw new UnityException(Debug.white("WindowConfig") + ": invalid window template: " + Debug.red(windowInstance.ToString()));
+                throw new UnityException(Debug.White("WindowConfig") + ": invalid window template: " + Debug.Red(windowInstance.ToString()));
             }
             var prevWindow = _currentWindow;
             _currentWindow = loadWindow(gameObject, windowInstance);
@@ -221,7 +221,7 @@ namespace UiProto.Scripts.Window
             {
                 return root;
             }
-            Debug.LogFormat("loadWindow {0}", $"{Debug.white(window.window.ToString())} -> {Debug.yellow(window.windowTemplate.name)}");
+            Debug.LogFormat("loadWindow {0}", $"{Debug.White(window.window.ToString())} -> {Debug.Yellow(window.windowTemplate.name)}");
             if (window.windowTemplate.scene.handle != 0)
             {
                 root = window.windowTemplate; // This is already in the scene, just use it.
@@ -252,7 +252,7 @@ namespace UiProto.Scripts.Window
             var windowInstance = config.windows.FirstOrDefault(x => x.window.windowId == window.windowId);
             if (windowInstance == null)
             {
-                throw new UnityException(Debug.white("WindowConfig") + ": invalid window id: " + Debug.red(window.ToString()));
+                throw new UnityException(Debug.White("WindowConfig") + ": invalid window id: " + Debug.Red(window.ToString()));
             }
             return windowInstance;
         }
@@ -286,7 +286,7 @@ namespace UiProto.Scripts.Window
                 {
                     if (_Instance.showConfigErrors)
                     {
-                        ButtonError($"BUTTON {GetHierarchy(button.gameObject)} has no {Debug.red("OpenWindowButton")} script!", button);
+                        ButtonError($"BUTTON {GetHierarchy(button.gameObject)} has no {Debug.Red("OpenWindowButton")} script!", button);
                         setButtonErrorState(button);
                     }
                     return;
@@ -296,7 +296,7 @@ namespace UiProto.Scripts.Window
                 {
                     if (_Instance.showConfigErrors)
                     {
-                        ButtonError($"Button {GetHierarchy(button.gameObject)} requires valid (non zero) {Debug.red("WINDOW")} id", button);
+                        ButtonError($"Button {GetHierarchy(button.gameObject)} requires valid (non zero) {Debug.Red("WINDOW")} id", button);
                         setButtonErrorState(button);
                     }
                     return;
@@ -307,7 +307,7 @@ namespace UiProto.Scripts.Window
                     if (_Instance.showConfigErrors)
                     {
                         ButtonError(
-                            $"Button {GetHierarchy(button.gameObject)} MISSING {Debug.magenta("window config for")} window name {Debug.red(openWindowButton.window.ToString())}",
+                            $"Button {GetHierarchy(button.gameObject)} MISSING {Debug.Magenta("window config for")} window name {Debug.Red(openWindowButton.window.ToString())}",
                             button);
                         setButtonErrorState(button);
                     }
