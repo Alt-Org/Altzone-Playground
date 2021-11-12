@@ -93,3 +93,4 @@ m_Build*
 
 # Visual Studio 2019
 .vsconfig/
+.vsconfig
