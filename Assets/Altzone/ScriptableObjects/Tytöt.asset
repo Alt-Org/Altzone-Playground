@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0486379f6730a354f83671151376a895, type: 3}
+  m_Name: "Tyt\xF6t"
+  m_EditorClassIdentifier: 
+  MovementSpeed: 7
+  HitResistance: 7
+  AttackSpeed: 1
+  ActivationDistance: 5
+  CharacterPersonality: "Yksi kahden puolesta ja kaksi yhden puolesta. T\xE4t\xE4
+    tiimi\xE4 ei voita kukaan. \n\nN\xE4ilt\xE4 aktiivisilta puolustajilta ei p\xE4\xE4se
+    pallo ohi. "

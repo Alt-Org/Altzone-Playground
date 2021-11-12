@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0486379f6730a354f83671151376a895, type: 3}
+  m_Name: Vitsiniekka
+  m_EditorClassIdentifier: 
+  MovementSpeed: 9
+  HitResistance: 3
+  AttackSpeed: 4
+  ActivationDistance: 4
+  CharacterPersonality: "Huumorin kukalla liukuva vitsiniekka ei suostu kohtaamaan
+    mit\xE4\xE4n kiusallista tai ep\xE4miellytt\xE4v\xE4\xE4. \n\nLiukas ja ketter\xE4
+    v\xE4ist\xE4j\xE4, joka yll\xE4tt\xE4\xE4 suunnan muutoksilla. "
