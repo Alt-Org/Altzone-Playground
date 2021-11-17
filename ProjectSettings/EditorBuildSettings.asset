@@ -6,20 +6,20 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Battle/NewScripts/Launcher.unity
-    guid: 31f423fd6215e2244b99557e51c4654f
+    path: Assets/UiTutorials/IntroScene.unity
+    guid: 33a199c6fc9e95d42aa13ad93f22e838
   - enabled: 1
-    path: Assets/Battle/NewScripts/Test Scene.unity
-    guid: df6d0e8fa3dce724bbd83eb7e653b9d9
-  - enabled: 0
+    path: Assets/Battle/Scenes/40-Battle.unity
+    guid: 7a8d9fd953978cd428ff13df12d5d873
+  - enabled: 1
     path: Assets/UiProto/Scenes/10-uiProto.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 0
-    path: Assets/Battle/Scenes/40-Battle.unity
-    guid: 7a8d9fd953978cd428ff13df12d5d873
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/UiTutorials/IntroScene.unity
-    guid: 33a199c6fc9e95d42aa13ad93f22e838
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
