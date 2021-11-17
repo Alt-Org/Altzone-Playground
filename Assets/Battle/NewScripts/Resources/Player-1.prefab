@@ -176,10 +176,10 @@ MonoBehaviour:
   rightCollider: {fileID: 0}
   angle: 0
   health: 4
-  ballCaught: 0
   thisPlayer: {fileID: 0}
   teamMate: {fileID: 0}
   playerDist: 0
+  ballCaught: 0
 --- !u!1 &3266023072624562328
 GameObject:
   m_ObjectHideFlags: 0

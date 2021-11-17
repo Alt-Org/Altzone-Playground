@@ -8,7 +8,7 @@ using Photon.Realtime;
 
 namespace Altzone.NewPlayer 
 {
-    public class playerManager : MonoBehaviourPun
+    public class playerManager : MonoBehaviourPunCallbacks
     {
         #region Private Serializable Fields
 
@@ -54,7 +54,8 @@ namespace Altzone.NewPlayer
         [SerializeField] private Sprite[] sprites;
 
         #endregion
-        
+
+
         #region Private Unserialized Fields
 
         // What direction player is going in. TBH, I dunno how this works. - Joni
@@ -65,6 +66,15 @@ namespace Altzone.NewPlayer
         private float targetTime = 0.0f;
 
         #endregion
+
+
+        #region Public Fields
+
+        [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
+        public static GameObject LocalPlayerInstance;
+
+        #endregion
+
 
         #region Public Methods
 
@@ -104,21 +114,59 @@ namespace Altzone.NewPlayer
         
         #endregion
 
+
         #region Monobehaviour Callbacks
 
-        
-        /// <summary>
-        /// MonoBehaviour method called on GameObject by Unity when it is activated.
-        /// </summary>
-        void OnEnable()
+        void Start()
         {
             playerTrans = GetComponent<Transform>();
             rb = GetComponent<Rigidbody2D>();
             playerCam = Camera.main;
             orgPlMvSp = playerMoveSpeed;
             sprites = new Sprite[]{hp0psrite, hp1psrite, hp2psrite, hp3psrite, hp4psrite};
-        }
 
+            // #Important
+            // used in gameManager.cs: we keep track of the localPlayer instance to prevent instantiation when levels are synchronized
+            if (photonView.IsMine)
+            {
+                playerManager.LocalPlayerInstance = this.gameObject;
+            }
+            // #Critical
+            // we flag as don't destroy on load so that instance survives level synchronization, thus giving a seamless experience when levels load.
+            DontDestroyOnLoad(this.gameObject);
+
+            
+            // Lastly, setting up which 'Player-#' tag this one should get and setting up the player correctly according to it.
+            for (int i = 1; i < 5; i++)
+            {
+                // For loop goes through numbers 1-4 as 'I' and checks if there is an item with the tag 'Pelaaja-i'
+                var playercheck = GameObject.FindWithTag($"Pelaaja-{i}");
+                
+                // If we found no object with this tag, it means there is no player of that number.
+                if(playercheck is null)
+                {
+                    // Setting this players tag to be the missing player.
+                    this.gameObject.tag = $"Pelaaja-{i}";
+
+                    // Finding game objects with the 'PelaajaAlue' tags to find the Spawn that is appropriate for this player.
+                    // For each object found, we go through the list until we find the 'Spawn' object.
+                    // Then we set the players position to the spawn position.
+                    foreach(GameObject item in GameObject.FindGameObjectsWithTag($"PelaajaAlue-{i}"))
+                    {
+                        if(item.name == "Spawn")
+                        {
+                            this.transform.position = item.transform.position;
+                            break;
+                        }
+                    }
+                    if(i == 1 || i == 3)
+                    {
+                        this.transform.Rotate(0,0,180,Space.World);
+                    }
+                    break;
+                }
+            }
+        }
         
         /// <summary>
         /// MonoBehaviour method called on GameObject by Unity once every frame.
