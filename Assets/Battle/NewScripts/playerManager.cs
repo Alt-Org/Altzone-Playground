@@ -148,22 +148,18 @@ namespace Altzone.NewPlayer
                     // Setting this players tag to be the missing player.
                     this.gameObject.tag = $"Pelaaja-{i}";
 
-                    // Finding game objects with the 'PelaajaAlue' tags to find the Spawn that is appropriate for this player.
-                    // For each object found, we go through the list until we find the 'Spawn' object.
+                    // Finding the game object with the tag 'PelaajaAlue-i' which there is expected to be only one of, that being the relevant players spawn.
                     // Then we set the players position to the spawn position.
-                    foreach(GameObject item in GameObject.FindGameObjectsWithTag($"PelaajaAlue-{i}"))
-                    {
-                        if(item.name == "Spawn")
-                        {
-                            this.transform.position = item.transform.position;
-                            break;
-                        }
-                    }
+                    // for some reason, the player is first set correctly, but then gets moved to spawn 1s position.
+                    this.transform.position = GameObject.FindGameObjectWithTag($"PelaajaAlue-{i}").transform.position;
+
+                    // Flipping players 1 and 3 to face up.
                     if(i == 1 || i == 3)
                     {
                         this.transform.Rotate(0,0,180,Space.World);
                     }
-                    break;
+
+                    return;
                 }
             }
         }

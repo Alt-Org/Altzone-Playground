@@ -23,7 +23,7 @@ namespace Altzone.NewPlayer
 
         #endregion
 
-        #region Method.
+        #region Methods
         
         /// <summary>
         /// Method that is called whenever an object within this is moving, and not just now entering or exiting.
@@ -32,7 +32,7 @@ namespace Altzone.NewPlayer
         {            
             if(other.gameObject.layer == 9 && ballCaught == false)
             {                  
-                if (gameObject.tag == "PelaajaAlue-1")
+                if (gameObject.tag == "BotSide")
                 {
                     if (player1 == null) {
                         playerPlaceHolder = GameObject.FindGameObjectWithTag("Pelaaja-1");
@@ -48,7 +48,7 @@ namespace Altzone.NewPlayer
                         player2.playerStop(2);
                     }
                 }
-                else if (gameObject.tag == "PelaajaAlue-2")
+                else if (gameObject.tag == "TopSide")
                 {
                     if (player1 == null) {
                         playerPlaceHolder = GameObject.FindGameObjectWithTag("Pelaaja-2");
