@@ -29,4 +29,10 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Battle/NewScripts/Launcher.unity
+    guid: 31f423fd6215e2244b99557e51c4654f
+  - enabled: 1
+    path: Assets/Battle/NewScripts/Test Scene.unity
+    guid: df6d0e8fa3dce724bbd83eb7e653b9d9
   m_configObjects: {}
