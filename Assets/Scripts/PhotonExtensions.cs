@@ -1,23 +1,32 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
-using System.Linq;
-using System.Text;
 using UnityEngine;
+using UnityEngine.Assertions;
 
+/// <summary>
+/// Extension methods to Photon <c>Player</c> and <c>Room</c> (<c>RoomInfo</c>) objects.
+/// </summary>
+/// <remarks>
+/// Delete property and <c>null</c> values has a bit fuzzy semantics and this need more work to enforce strict rules.<br />
+/// For now it might be better not to use <c>null </c> values.
+/// </remarks>
 public static class PhotonExtensions
 {
     #region Room
 
-    public static IOrderedEnumerable<Player> GetPlayersByActorNumber(this Room room)
+    public static IEnumerable<Player> GetPlayersByActorNumber(this Room room)
     {
-        return room.Players.Values.OrderBy((x) => x.ActorNumber);
+        return room.Players.Values.OrderBy(x => x.ActorNumber);
     }
 
-    public static IOrderedEnumerable<Player> GetPlayersByNickName(this Room room)
+    public static IEnumerable<Player> GetPlayersByNickName(this Room room)
     {
-        return room.Players.Values.OrderBy((x) => x.NickName);
+        return room.Players.Values.OrderBy(x => x.NickName);
     }
 
     public static bool GetUniquePlayerNameForRoom(this Room room, Player player, string playerName, string separator, out string uniquePlayerName)
@@ -29,7 +38,6 @@ public static class PhotonExtensions
         if (room.PlayerCount > 0)
         {
             foreach (var otherPlayer in PhotonNetwork.PlayerList)
-            {
                 if (!otherPlayer.Equals(player) &&
                     string.Equals(otherPlayer.NickName, playerName, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -37,7 +45,6 @@ public static class PhotonExtensions
                     uniquePlayerName = $"{playerName}{separator}{PhotonNetwork.LocalPlayer.ActorNumber}";
                     return false;
                 }
-            }
         }
         uniquePlayerName = playerName;
         return true;
@@ -52,46 +59,25 @@ public static class PhotonExtensions
         return player.CustomProperties.ContainsKey(key);
     }
 
-    public static bool HasCustomProperty(this RoomInfo room, string key)
+    public static void SetCustomProperty(this Player player, string key, object value)
     {
-        return room.CustomProperties.ContainsKey(key);
+        Assert.IsNotNull(value);
+        var props = new Hashtable { { key, value } };
+        player.SetCustomProperties(props);
     }
 
     public static void SafeSetCustomProperty<T>(this Player player, string key, T newValue, T currentValue) where T : struct
     {
-        // T is limited to some "value types" which struct represents!
-        var isTypeAcceptable = newValue is bool ||
-                               newValue is byte ||
-                               newValue is short ||
-                               newValue is int;
-        if (!isTypeAcceptable)
-        {
-            throw new UnityException($"SafeSetCustomProperty type is not supported: {typeof(T)}");
-        }
-        var props = new Hashtable { { key, newValue } };
-        if (!player.CustomProperties.ContainsKey(key))
-        {
-            player.SetCustomProperties(props); // can not check!
-        }
-        else
-        {
-            var expectedProps = new Hashtable { { key, currentValue } };
-            player.SetCustomProperties(props, expectedProps);
-        }
+        CheckIsTypeAcceptable(newValue);
+        Assert.IsTrue(newValue.GetType() == currentValue.GetType(),"newValue.GetType() == currentValue.GetType()");
+        DoSetCustomProperty(player, key, newValue, currentValue);
     }
 
     public static void SafeSetCustomProperty(this Player player, string key, string newValue, string currentValue)
     {
-        var props = new Hashtable { { key, newValue } };
-        if (!player.CustomProperties.ContainsKey(key))
-        {
-            player.SetCustomProperties(props); // can not check!
-        }
-        else
-        {
-            var expectedProps = new Hashtable { { key, currentValue } };
-            player.SetCustomProperties(props, expectedProps);
-        }
+        Assert.IsFalse(string.IsNullOrWhiteSpace(newValue));
+        Assert.IsFalse(string.IsNullOrWhiteSpace(currentValue));
+        DoSetCustomProperty(player, key, newValue, currentValue);
     }
 
     public static void RemoveCustomProperty(this Player player, string key)
@@ -105,7 +91,7 @@ public static class PhotonExtensions
 
     public static T GetCustomProperty<T>(this Player player, string key, T defaultValue = default)
     {
-        if (player.CustomProperties.TryGetValue(key, out var propValue))
+        if (player.CustomProperties.TryGetValue(key, out var propValue) && propValue != null)
         {
             if (propValue is T valueOfCorrectType)
             {
@@ -117,46 +103,35 @@ public static class PhotonExtensions
         return defaultValue;
     }
 
+    public static bool HasCustomProperty(this RoomInfo room, string key)
+    {
+        return room.CustomProperties.ContainsKey(key);
+    }
+
+    public static void SetCustomProperty(this Room room, string key, object value)
+    {
+        Assert.IsNotNull(value);
+        var props = new Hashtable { { key, value } };
+        room.SetCustomProperties(props);
+    }
+
     public static void SafeSetCustomProperty<T>(this Room room, string key, T newValue, T currentValue) where T : struct
     {
-        // T is limited to some "value types" which struct represents!
-        var isTypeAcceptable = newValue is bool ||
-                               newValue is byte ||
-                               newValue is short ||
-                               newValue is int;
-        if (!isTypeAcceptable)
-        {
-            throw new UnityException($"SafeSetCustomProperty type is not supported: {typeof(T)}");
-        }
-        var props = new Hashtable { { key, newValue } };
-        if (!room.CustomProperties.ContainsKey(key))
-        {
-            room.SetCustomProperties(props); // can not check!
-        }
-        else
-        {
-            var expectedProps = new Hashtable { { key, currentValue } };
-            room.SetCustomProperties(props, expectedProps);
-        }
+        CheckIsTypeAcceptable(newValue);
+        Assert.IsTrue(newValue.GetType() == currentValue.GetType(), "newValue.GetType() == currentValue.GetType()");
+        DoSetCustomProperty(room, key, newValue, currentValue);
     }
 
     public static void SafeSetCustomProperty(this Room room, string key, string newValue, string currentValue)
     {
-        var props = new Hashtable { { key, newValue } };
-        if (!room.CustomProperties.ContainsKey(key))
-        {
-            room.SetCustomProperties(props); // can not check!
-        }
-        else
-        {
-            var expectedProps = new Hashtable { { key, currentValue } };
-            room.SetCustomProperties(props, expectedProps);
-        }
+        Assert.IsFalse(string.IsNullOrWhiteSpace(newValue));
+        Assert.IsFalse(string.IsNullOrWhiteSpace(currentValue));
+        DoSetCustomProperty(room, key, newValue, currentValue);
     }
 
     public static T GetCustomProperty<T>(this RoomInfo room, string key, T defaultValue = default)
     {
-        if (room.CustomProperties.TryGetValue(key, out var propValue))
+        if (room.CustomProperties.TryGetValue(key, out var propValue) && propValue != null)
         {
             if (propValue is T valueOfCorrectType)
             {
@@ -175,6 +150,46 @@ public static class PhotonExtensions
             var props = new Hashtable { { key, null } };
             room.SetCustomProperties(props);
         }
+    }
+
+    private static void DoSetCustomProperty(this Player player, string key, object newValue, object currentValue)
+    {
+        var props = new Hashtable { { key, newValue } };
+        if (!player.CustomProperties.TryGetValue(key, out var propValue))
+        {
+            player.SetCustomProperties(props);
+            return;
+        }
+        Assert.IsTrue(newValue.GetType() == propValue.GetType(), "newValue.GetType() == propValue.GetType()");
+        Assert.IsTrue(!newValue.Equals(currentValue), "!newValue.Equals(currentValue)");
+        Assert.IsTrue(currentValue.Equals(propValue), "currentValue.Equals(propValue)");
+        var expectedProps = new Hashtable { { key, currentValue } };
+        player.SetCustomProperties(props, expectedProps);
+    }
+
+    private static void DoSetCustomProperty(this Room room, string key, object newValue, object currentValue)
+    {
+        var props = new Hashtable { { key, newValue } };
+        if (!room.CustomProperties.TryGetValue(key, out var propValue))
+        {
+            room.SetCustomProperties(props);
+            return;
+        }
+        Assert.IsTrue(newValue.GetType() == propValue.GetType(), "newValue.GetType() == propValue.GetType()");
+        Assert.IsTrue(!newValue.Equals(currentValue), "!newValue.Equals(currentValue)");
+        Assert.IsTrue(currentValue.Equals(propValue), "currentValue.Equals(propValue)");
+        var expectedProps = new Hashtable { { key, currentValue } };
+        room.SetCustomProperties(props, expectedProps);
+    }
+
+    private static void CheckIsTypeAcceptable<T>(T value) where T : struct
+    {
+        // T is limited to some "value types" which struct represents!
+        var isTypeAcceptable = value is bool ||
+                               value is byte ||
+                               value is short ||
+                               value is int;
+        Assert.IsTrue(isTypeAcceptable, $"SafeSetCustomProperty type is not supported: {typeof(T)}");
     }
 
     #endregion
