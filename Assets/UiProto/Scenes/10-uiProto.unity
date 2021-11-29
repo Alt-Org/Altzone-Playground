@@ -1398,7 +1398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 726b3d7a1d68fb94282f34b164f6c72d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 10
+  rotationSpeed: 5
   dragSpeed: 100
   dragGuardDelay: 2
 --- !u!1 &1325258234 stripped
