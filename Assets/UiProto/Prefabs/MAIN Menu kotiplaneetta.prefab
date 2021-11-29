@@ -382,6 +382,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tutorial
       objectReference: {fileID: 0}
+    - target: {fileID: 7302229084271921601, guid: 2bf779bc79797444daa17bdb9a0877d1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7302229084271921606, guid: 2bf779bc79797444daa17bdb9a0877d1,
         type: 3}
       propertyPath: m_RootOrder
