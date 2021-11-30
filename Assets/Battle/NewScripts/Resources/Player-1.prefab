@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1926108578889776}
   - component: {fileID: 627790415474350325}
   - component: {fileID: 5292017101564637538}
+  - component: {fileID: 6292765217675399590}
   m_Layer: 12
   m_Name: Player-1
   m_TagString: Pelaaja-1
@@ -117,12 +118,29 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 1951961693572928681}
-  - {fileID: 1069547069524377988}
-  - {fileID: 5515714954350097314}
+  - {fileID: 6292765217675399590}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &6292765217675399590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1926108578889782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &2553202347352618763
 GameObject:
   m_ObjectHideFlags: 0
@@ -191,7 +209,6 @@ GameObject:
   - component: {fileID: 7633204547968957860}
   - component: {fileID: 2713643091177443445}
   - component: {fileID: 8679398441399114166}
-  - component: {fileID: 5515714954350097314}
   m_Layer: 12
   m_Name: RightHalf
   m_TagString: Untagged
@@ -311,22 +328,6 @@ PolygonCollider2D:
       - {x: 5.08, y: 0.03}
       - {x: 5.08, y: 1.05}
       - {x: 5.06, y: 1.0799999}
---- !u!114 &5515714954350097314
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3266023072624562328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
 --- !u!1 &3504233650738942638
 GameObject:
   m_ObjectHideFlags: 0
@@ -419,7 +420,6 @@ GameObject:
   - component: {fileID: 8201527881032903355}
   - component: {fileID: 8050404542534376202}
   - component: {fileID: 3215285378773810687}
-  - component: {fileID: 1069547069524377988}
   m_Layer: 12
   m_Name: LeftHalf
   m_TagString: Untagged
@@ -535,22 +535,6 @@ PolygonCollider2D:
       - {x: 0, y: 0.03}
       - {x: 0, y: 0.06}
       - {x: -0.03, y: 0.089999996}
---- !u!114 &1069547069524377988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6193725034860862198}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
 --- !u!1 &7952315980785386502
 GameObject:
   m_ObjectHideFlags: 0
@@ -563,7 +547,6 @@ GameObject:
   - component: {fileID: 194953685120655864}
   - component: {fileID: 7952315980785386497}
   - component: {fileID: 7952315980785386496}
-  - component: {fileID: 1951961693572928681}
   m_Layer: 12
   m_Name: Player
   m_TagString: PlayerHead
@@ -664,19 +647,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thisthing: {fileID: 7952315980785386502}
---- !u!114 &1951961693572928681
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7952315980785386502}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1

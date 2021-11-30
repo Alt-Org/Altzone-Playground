@@ -2979,9 +2979,53 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5051435521997850084, guid: 0150fff6c6cb991478146914fca90046,
         type: 3}
+      propertyPath: spawn1
+      value: 
+      objectReference: {fileID: 14502046}
+    - target: {fileID: 5051435521997850084, guid: 0150fff6c6cb991478146914fca90046,
+        type: 3}
+      propertyPath: spawn2
+      value: 
+      objectReference: {fileID: 1073276108}
+    - target: {fileID: 5051435521997850084, guid: 0150fff6c6cb991478146914fca90046,
+        type: 3}
+      propertyPath: spawn3
+      value: 
+      objectReference: {fileID: 2050763084}
+    - target: {fileID: 5051435521997850084, guid: 0150fff6c6cb991478146914fca90046,
+        type: 3}
+      propertyPath: spawn4
+      value: 
+      objectReference: {fileID: 133831672}
+    - target: {fileID: 5051435521997850084, guid: 0150fff6c6cb991478146914fca90046,
+        type: 3}
       propertyPath: playerPrefab
       value: 
       objectReference: {fileID: 1926108578889782, guid: de1d6a9393d13df4496373e6024713f9,
+        type: 3}
+    - target: {fileID: 5051435521997850084, guid: 0150fff6c6cb991478146914fca90046,
+        type: 3}
+      propertyPath: playerPrefab1
+      value: 
+      objectReference: {fileID: 1926108578889782, guid: a11267f9bc2d1cc49bf1b01fc451164d,
+        type: 3}
+    - target: {fileID: 5051435521997850084, guid: 0150fff6c6cb991478146914fca90046,
+        type: 3}
+      propertyPath: playerPrefab2
+      value: 
+      objectReference: {fileID: 1926108578889782, guid: de1d6a9393d13df4496373e6024713f9,
+        type: 3}
+    - target: {fileID: 5051435521997850084, guid: 0150fff6c6cb991478146914fca90046,
+        type: 3}
+      propertyPath: playerPrefab3
+      value: 
+      objectReference: {fileID: 1926108578889782, guid: 99e698a95ce079646a4b6a745edb767f,
+        type: 3}
+    - target: {fileID: 5051435521997850084, guid: 0150fff6c6cb991478146914fca90046,
+        type: 3}
+      propertyPath: playerPrefab4
+      value: 
+      objectReference: {fileID: 1926108578889782, guid: e4b30a183df1d234a8cd8e7bfbefbbf0,
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0150fff6c6cb991478146914fca90046, type: 3}
