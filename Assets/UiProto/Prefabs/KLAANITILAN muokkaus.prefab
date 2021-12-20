@@ -151,7 +151,7 @@ RectTransform:
   m_Children:
   - {fileID: 2063958949430503750}
   - {fileID: 2286820433705124460}
-  - {fileID: 544440936089880098}
+  - {fileID: 1706280029042291676}
   - {fileID: 4815699149438889479}
   m_Father: {fileID: 8631082850878396041}
   m_RootOrder: 0
@@ -448,7 +448,7 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Button
---- !u!1001 &3085679368566886432
+--- !u!1001 &4247276569713141214
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -567,11 +567,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a95c6ec34c96824ca75a7cfa2edec03, type: 3}
---- !u!224 &544440936089880098 stripped
+--- !u!224 &1706280029042291676 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3268688833113216514, guid: 1a95c6ec34c96824ca75a7cfa2edec03,
     type: 3}
-  m_PrefabInstance: {fileID: 3085679368566886432}
+  m_PrefabInstance: {fileID: 4247276569713141214}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7684305828425520982
 PrefabInstance:
