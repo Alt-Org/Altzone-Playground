@@ -3,7 +3,12 @@ guid: 747ebbb48bc0a4748a5dc9b3171a1913
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rouho1
+    second: {fileID: 2100000, guid: 1a10e278dabca9d4ea37bae80dee2ac8, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

@@ -3,7 +3,12 @@ guid: 938e210a6bf121d41a03c8f24434e2d3
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Saniainen
+    second: {fileID: 2100000, guid: 08a8cbf3d56918c49b320c28af989ac3, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
